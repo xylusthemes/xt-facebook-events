@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:       XT Facebook Events
+ * Plugin Name:       Facebook Events
  * Plugin URI:        http://xylusthemes.com/plugins/xt-facebook-events/
  * Description:       Display Facebook Events into your WordPress site anywhere.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Xylus Themes
  * Author URI:        http://xylusthemes.com
  * License:           GPL-2.0+

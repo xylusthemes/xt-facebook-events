@@ -150,22 +150,32 @@ class XT_Facebook_Events_Facebook {
 			$description = isset( $facebook_event->description ) ? $facebook_event->description : '';
 			$short_description = substr( $description, 0, 100 ) . '...';
 			$start_time  = isset( $facebook_event->start_time ) ? $facebook_event->start_time : date('Y-m-d');
-			$end_time    = isset( $facebook_event->end_time ) ? $facebook_event->end_time : date('Y-m-d');
-			$start_time_str = strtotime( $start_time );
-			$end_time_str = strtotime( $end_time );
+			$end_time    = isset( $facebook_event->end_time ) ? $facebook_event->end_time : $start_time;
+
+			$timezone = isset( $facebook_event->timezone ) ? $facebook_event->timezone : '';
+			if( $timezone != '' ){
+				$start_date = new DateTime( $start_time, new DateTimeZone($timezone));
+				$end_date   = new DateTime( $end_time, new DateTimeZone($timezone));
+			}else{
+				$start_date = new DateTime( $start_time );
+				$end_date   = new DateTime( $end_time );
+			}
+
 			$cover_url   = isset( $facebook_event->cover->source ) ? $facebook_event->cover->source : '';
 			$picture_url = isset( $facebook_event->picture->data->url ) ? $facebook_event->picture->data->url : '';
 			$organiser_name = isset( $facebook_event->picture->data->url ) ? $facebook_event->picture->data->url : '';
 			$location = isset( $facebook_event->place->name ) ? $facebook_event->place->name : '';
 
-			$event_date = date('F j (h:i a)', $start_time_str );
+			$event_date = $start_date->format('F j (h:i a)');
 
 			if( 'widget' == $shortcode_type ){
-				if( $start_time_str != '' && $end_time_str != '' && $is_display_enddate ){
-					if( date('Y-m-d', $start_time_str) == date( 'Y-m-d', $end_time_str ) ){
-						$event_date = date('F j', $start_time_str) .' ('. date('h:i a', $start_time_str) . ' - '. date('h:i a', $end_time_str ) .')';
-					} else {
-						$event_date = date('F j (h:i a)', $start_time_str) . ' - ' . date( 'F j (h:i a)', $end_time_str );
+				if( $is_display_enddate ){
+					if( $start_date->format('Y-m-d h:i a') != $end_date->format('Y-m-d h:i a') ){
+						if( $start_date->format('Y-m-d') == $end_date->format('Y-m-d') ){
+							$event_date = $start_date->format('F j') .' ('. $start_date->format('h:i a') . ' - '. $end_date->format('h:i a') .')';
+						} else {
+							$event_date = $start_date->format('F j (h:i a)') . ' - ' . $end_date->format('F j (h:i a)' );
+						}
 					}
 				}
 

@@ -18,8 +18,8 @@
 		} else {
 			?>
 			<div class="event_date">
-				<span class="month"><?php echo date('M', $start_time_str) ; ?></span>
-				<span class="date"> <?php echo date('d', $start_time_str) ; ?> </span>
+				<span class="month"><?php echo $start_date->format('M'); ?></span>
+				<span class="date"> <?php echo $start_date->format('d'); ?> </span>
 			</div>
 			<?php
 		} ?>					
