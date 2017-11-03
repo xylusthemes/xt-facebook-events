@@ -78,9 +78,12 @@ class XT_Facebook_Events_Admin {
 	 */
 	function enqueue_admin_styles( $hook ) {
 
-	  	$css_dir = XTFE_PLUGIN_URL . 'assets/css/';
-	 	wp_enqueue_style('jquery-ui', $css_dir . 'jquery-ui.css', false, "1.12.0" );
-	 	wp_enqueue_style('xt-facebook-events', $css_dir . 'xt-facebook-events-admin.css', false, "" );
+		global $pagenow;
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+		if( 'wpfb_events' == $page || $pagenow == 'widgets.php' ){
+		  	$css_dir = XTFE_PLUGIN_URL . 'assets/css/';
+		 	wp_enqueue_style('xt-facebook-events', $css_dir . 'xt-facebook-events-admin.css', false, "" );
+		}
 	}
 
 	/**
