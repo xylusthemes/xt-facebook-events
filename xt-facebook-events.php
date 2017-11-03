@@ -154,7 +154,7 @@ class XT_Facebook_Events{
 		load_plugin_textdomain(
 			'xt-facebook-events',
 			false,
-			XTFE_PLUGIN_DIR . '/languages/'
+			basename( dirname( __FILE__ ) ) . '/languages'
 		);
 
 	}
