@@ -3,16 +3,16 @@
  * Bootstrap Grid Only 1.0.0 (v3.3.5 (http://getbootstrap.com))
  * Copyright 2011-2016 Twitter, Inc.
  */
-body {
+.xtfacebook_events_widget, .xtfe_containter {
   margin: 0;
 }
-* {
+.xtfe_containter * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-*:before,
-*:after {
+.xtfe_containter *:before,
+.xtfe_containter *:after {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -709,21 +709,7 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-.pull-right {
-  float: right !important;
-}
-.pull-left {
-  float: left !important;
-}
-.hide {
-  display: none !important;
-}
-.show {
-  display: block !important;
-}
-.invisible {
-  visibility: hidden;
-}
+
 .text-hide {
   font: 0/0 a;
   color: transparent;
@@ -731,28 +717,14 @@ body {
   background-color: transparent;
   border: 0;
 }
+
 .hidden {
   display: none !important;
 }
+
 .affix {
   position: fixed;
 }
-
-.organizermain{ padding:40px; width:100%; background:#fafafa; border:1px solid #eeeeee; margin:30px 0;}
-.organizermain:after{ clear: both; }
-.details { float: left; width: 50%;}
-.details > a { display: block; line-height:18px;}
-.details > p {margin-bottom: 10px;margin-top:0;}
-.venue{ float:left; width:35%;}
-.map {border:2px solid #ddd;float: left;width:64%; border-radius:2px;}
-.footer{ width:100%; float:left; border-top:1px solid #e5e5e5; padding:30px 0 15px 0;}
-.footerright{ float:right;}
-.footerleft{ float:left;}
-.footer .calendar{text-decoration:underline; font-weight:normal;}
-.titlemain{ font-size:18px; font-weight:bold; color:#444444; margin-bottom:10px;}
-.margin{ margin-bottom:10px;}
-.title1 strong {display:block;line-height:12px;margin:25px 0 0;}
-.organizermain.library{ margin-top:0;}
 
 .event_date {
     background-color: #039ED7;
@@ -808,7 +780,7 @@ body {
     padding: 8px 10px;
 }
 
-.event_desc .event_address{
+.event_desc .event_address, .event_desc .event_title {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -816,25 +788,25 @@ body {
 }
 
 .event_desc .event_name {
-  font-size: 1.2em;
-  color: #039ED7;
-  line-height: 1.3em;
+    font-size: 1.2em;
+    color: #039ED7;
+    line-height: 1.3em;
 }
 
 .img_placeholder{
-  background-size: cover !important;
-  min-height: 130px;
+    background-size: cover !important;
+    min-height: 130px;
 }
 .archive-event .wepa_event{
-  height: 205px;
+    height: 205px;
 }
 
 .event_wiget_style2 .event_details{
-  height: auto;
+    height: auto;
 }
 
 .fbevents_widget{
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .xtfacebook_events_widget {
