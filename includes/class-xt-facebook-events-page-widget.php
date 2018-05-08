@@ -219,6 +219,6 @@ class XT_Facebook_Events_Page_Widget extends WP_Widget {
 			$attr_array[]= 'small_header ="'.$instance["small_header"].'"';
 		}
 		$attr_str = implode(' ', $attr_array );
-		echo do_shortcode( '[xtfb_page_widget ' . $attr_str . ']' );
+		echo do_shortcode( '[fb_event_widget ' . $attr_str . ']' );
 	}
 }

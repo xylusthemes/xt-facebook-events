@@ -41,7 +41,7 @@ class XT_Facebook_Events_Facebook {
 		$this->fb_app_secret = isset( $options['facebook_app_secret'] ) ? $options['facebook_app_secret'] : '';
 		$this->fb_graph_url = 'https://graph.facebook.com/v2.8/';
 		add_shortcode( 'wpfb_events', array( $this, 'render_facebook_events' ) );
-		add_shortcode( 'xtfb_page_widget', array( $this, 'render_facebook_page_widget' ) );
+		add_shortcode( 'fb_event_widget', array( $this, 'render_facebook_page_widget' ) );
 	}
 
 	/**
@@ -91,7 +91,7 @@ class XT_Facebook_Events_Facebook {
 	}
 
 	/**
-	 * render shortcode for [xtfb_page_widget]
+	 * render shortcode for [fb_event_widget]
 	 *
 	 * @since  1.0.0
 	 * @param  array $atts shortcode attributes
