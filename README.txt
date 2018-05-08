@@ -12,6 +12,15 @@ Easiest way to display Facebook events from your Facebook page to your website u
 
 == Description ==
 
+<h3>NOTICE:</h3>
+
+>**Facebook has restricted access of Events in API from 4th April due to recent Privacy issue. They have new policy & rules to get Event data and restricted events data over API, So You are not able to import events from Facebook for now. Facebook is making changes in their Platform and they will fix these issues soon. We appreciate your continued support and patience as these changes are not directly under our control. So, Custom Facebook events list is not working currently due Facebook API changes**
+>
+>**[Here](https://developers.facebook.com/blog/post/2018/04/04/facebook-api-platform-product-changes/) is post from facebook about same.**
+>
+>**GOOD NEWS: We have added support for Facebook's Embeddable page widget. So, for now you can show your page's event on your website using it.**
+>
+
 XT Facebook Events allow you to display Facebook events from your Facebook page to your website using widget or shortcode.
 
 - Display facebook event in your website 
@@ -23,6 +32,11 @@ XT Facebook Events allow you to display Facebook events from your Facebook page 
 You can add Facebook App ID and Facebook Secret in "Facebook Events" Menu.
 
 Example shortcode: <strong>[wpfb_events page_id="YOUR_PAGE_ID" new_window="1" col="3" max_events="10"]</strong>
+
+<strong>2 Ways for display Facebook Events using Facebook's Embeddable page widget</strong><br>
+
+* <strong>Using Shortcode:</strong> You can display Facebook Events (Facebook's Embeddable page widget) any where in your website using Shortcode. example shortcode: <strong>[fb_event_widget page_url="https://www.facebook.com/redbull/" width="340" height="500" hide_cover="false" hide_cta="true" small_header="true"]</strong>
+* <strong>Using WP widget:</strong> You can display Facebook Events (Facebook's Embeddable page widget) using WP widget called "Facebook Page Event Widget".
 
 ><strong>New All in one Event Import Tool!</strong><br>
 >We’ve developed bulk events import tool. This add-on service for The Events Calendar allows you import events from your favorite sources like Facebook, Meetup, Eventbrite, iCalendar, and ICS.
@@ -49,7 +63,9 @@ Example shortcode: <strong>[wpfb_events page_id="YOUR_PAGE_ID" new_window="1" co
 4. Shortcode for display events in page/post.
 5. Facebook Events with 2 column layout.
 6. Facebook Events with 3 column layout.
-7. Settings
+7. WP widget for display Facebook's Embeddable page widget.
+8. Facebook's Embeddable page widget.
+9. Settings
 
 == Installation ==
 
