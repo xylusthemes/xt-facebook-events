@@ -1,10 +1,10 @@
 === Facebook Events ===
-Contributors: xylus
+Contributors: xylus,Dharm1025
 Donate link: http://xylusthemes.com/
 Tags: facebook, facebook widget, facebook event, facebook events, event, event list, facebook event list, embed facebook, embed facebook events, widget, shortcode, event widget, facebook event widget, event shortcode
 Requires at least: 4.0
 Tested up to: 4.8
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,12 @@ Example shortcode: <strong>[wpfb_events page_id="YOUR_PAGE_ID" new_window="1" co
 
 
 == Changelog ==
+
+= 1.0.2 =
+* ADDED: Support for Facebook events using Page widget (Facebook's Embeddable page widget)
+* ADDED: Shortcode for Facebook Page widget example: [fb_event_widget page_url="https://www.facebook.com/redbull/" width="340" height="500" hide_cover="false" hide_cta="true" small_header="true"]
+* ADDED: WP Widget for Facebook Page widget
+* FIXED: Some bug fixes.
 
 = 1.0.1 =
 * FIXED: Some bug fixes.
