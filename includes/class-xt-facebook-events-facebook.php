@@ -41,6 +41,7 @@ class XT_Facebook_Events_Facebook {
 		$this->fb_app_secret = isset( $options['facebook_app_secret'] ) ? $options['facebook_app_secret'] : '';
 		$this->fb_graph_url = 'https://graph.facebook.com/v2.8/';
 		add_shortcode( 'wpfb_events', array( $this, 'render_facebook_events' ) );
+		add_shortcode( 'xtfb_page_widget', array( $this, 'render_facebook_page_widget' ) );
 	}
 
 	/**
@@ -86,6 +87,62 @@ class XT_Facebook_Events_Facebook {
 		if( !empty( $facebook_events ) ){
 			$this->render_facebook_event_listing( $facebook_events, $atts );
 		}
+		return ob_get_clean();
+	}
+
+	/**
+	 * render shortcode for [xtfb_page_widget]
+	 *
+	 * @since  1.0.0
+	 * @param  array $atts shortcode attributes
+	 * @return string Generate HTML
+	 */
+	public function render_facebook_page_widget( $atts = array() ){
+
+		$event_args = array(
+			'page_url' 	 			=> '',
+			'tabs' 					=> 'events',
+			'width' 				=> 340,
+			'height'				=> 500,
+			'hide_cover' 			=> 'false',
+			'show_facepile' 	 	=> 'false',
+			'hide_cta' 				=> 'false',
+			'small_header'  		=> 'false',
+			'adapt_container_width'	=> 'true',
+		);
+		$atts = wp_parse_args( (array) $atts, $event_args );
+
+		ob_start();
+		if( $this->fb_app_id == '' ){
+			_e( 'Please insert Facebook app ID.', 'xt-facebook-events');
+			return ob_get_clean();
+		}
+		if( !isset( $atts['page_url'] ) || $atts['page_url'] == '' ){
+			_e( 'Please insert Facebook page URL for display page widget.', 'xt-facebook-events');
+			return ob_get_clean();
+		}
+
+		?>
+		<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0&appId=<?php echo $this->fb_app_id; ?>';
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));</script>
+
+		<div class="fb-page"
+		data-href="<?php echo $atts['page_url']; ?>"
+		data-tabs="<?php echo $atts['tabs']; ?>"
+		data-width="<?php echo $atts['width']; ?>"
+		data-height="<?php echo $atts['height']; ?>"
+		data-small-header="<?php echo $atts['small_header']; ?>"
+		data-adapt-container-width="<?php echo $atts['adapt_container_width']; ?>"
+		data-hide-cover="<?php echo $atts['hide_cover']; ?>"
+		data-show-facepile="<?php echo $atts['show_facepile']; ?>"
+		data-hide-cta="<?php echo $atts['hide_cta']; ?>"></div>
+		<?php
 		return ob_get_clean();
 	}
 

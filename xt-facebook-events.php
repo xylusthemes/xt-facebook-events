@@ -140,6 +140,7 @@ class XT_Facebook_Events{
 		require_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-common.php';
 		require_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-admin.php';		
 		require_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-widget.php';
+		require_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-page-widget.php';
 	}
 
 	/**

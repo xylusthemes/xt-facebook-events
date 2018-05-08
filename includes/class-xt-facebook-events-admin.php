@@ -33,6 +33,7 @@ class XT_Facebook_Events_Admin {
 		// register the widget
 		add_action( 'widgets_init', function(){
 			register_widget( 'XT_Facebook_Events_Widget' );
+			register_widget( 'XT_Facebook_Events_Page_Widget' );
 		});
 		add_action( 'admin_menu', array( $this, 'add_menu_pages') );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts') );
