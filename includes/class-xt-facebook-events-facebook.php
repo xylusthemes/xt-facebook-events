@@ -176,30 +176,30 @@ class XT_Facebook_Events_Facebook {
 		} else {
 			$css_class = 'col-xtfe-md-4';
 			if( isset( $event_args['col'] ) && $event_args['col'] != '' && is_numeric( $event_args['col'] ) ){
-			$col = $event_args['col'];
-			switch ( $col ) {
-				case '1':
-					$css_class = 'col-xtfe-md-12';
-					break;
+				$col = $event_args['col'];
+				switch ( $col ) {
+					case '1':
+						$css_class = 'col-xtfe-md-12';
+						break;
 
-				case '2':
-					$css_class = 'col-xtfe-md-6';
-					break;
+					case '2':
+						$css_class = 'col-xtfe-md-6';
+						break;
 
-				case '3':
-					$css_class = 'col-xtfe-md-4';
-					break;
+					case '3':
+						$css_class = 'col-xtfe-md-4';
+						break;
 
-				case '4':
-					$css_class = 'col-xtfe-md-3';
-					break;
-				
-				default:
-					$css_class = 'col-xtfe-md-4';
-					break;
+					case '4':
+						$css_class = 'col-xtfe-md-3';
+						break;
+
+					default:
+						$css_class = 'col-xtfe-md-4';
+						break;
+				}
+				$cover_image = '';
 			}
-			$cover_image = '';
-		}
 			echo '<div class="xtfacebook_events xtfe_containter"><div class="row_grid">';
 		}
 
@@ -224,6 +224,10 @@ class XT_Facebook_Events_Facebook {
 			}
 
 			$cover_url   = isset( $facebook_event->cover->source ) ? $facebook_event->cover->source : '';
+			if(empty($cover_url) ){
+				$image_date = date_i18n('F+d', strtotime($start_date->format('Y-m-d h:i a')) );
+				$cover_url = "http://placehold.it/420x150?text=".$image_date;
+			}
 			$picture_url = isset( $facebook_event->picture->data->url ) ? $facebook_event->picture->data->url : '';
 			$organiser_name = isset( $facebook_event->picture->data->url ) ? $facebook_event->picture->data->url : '';
 			$location = isset( $facebook_event->place->name ) ? $facebook_event->place->name : '';
