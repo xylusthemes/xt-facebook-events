@@ -51,6 +51,7 @@ class XT_Facebook_Events{
 			self::$instance->setup_constants();
 
 			add_action( 'plugins_loaded', array( self::$instance, 'load_textdomain' ) );
+			add_action( 'plugins_loaded', array( self::$instance, 'load_authorize_class' ), 20 );
 			add_action( 'wp_enqueue_scripts', array( self::$instance, 'xtfe_enqueue_style' ) );
 			add_action( 'wp_enqueue_scripts', array( self::$instance, 'xtfe_enqueue_script' ) );
 
@@ -159,7 +160,24 @@ class XT_Facebook_Events{
 		);
 
 	}
-	
+
+	/**
+	 * Loads the facebook authorize class
+	 *
+	 * @access public
+	 * @since 1.1
+	 * @return void
+	 */
+	public function load_authorize_class(){
+		if( !class_exists( 'XT_Facebook_Events_FB_Authorize', false ) ){
+			include_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-fb-authorize.php';
+			global $xtfe_events;
+			if( class_exists('XT_Facebook_Events_FB_Authorize', false ) && !empty( $xtfe_events ) ){
+				$xtfe_events->fb_authorize = new XT_Facebook_Events_FB_Authorize();
+			}
+		}
+	}
+
 	/**
 	 * enqueue style front-end
 	 * 

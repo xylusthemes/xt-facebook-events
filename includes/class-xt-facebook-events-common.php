@@ -19,6 +19,7 @@ class XT_Facebook_Events_Common {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
+		add_action( 'admin_init', array( $this, 'setup_success_messages' ) );
 		add_action( 'admin_init', array( $this, 'handle_import_settings_submit' ), 99 );
 	}
 
@@ -34,11 +35,43 @@ class XT_Facebook_Events_Common {
 			$xtfe_options = array();
 			$xtfe_options = isset( $_POST['xtfe'] ) ? $_POST['xtfe'] : array();
 			
-			$is_update = update_option( XTFE_OPTIONS, $xtfe_options );
-			if( $is_update ){
-				$xtfe_success_msg[] = __( 'Import settings has been saved successfully.', 'xt-facebook-events' );
-			}else{
-				$xtfe_errors[] = __( 'Something went wrong! please try again.', 'xt-facebook-events' );
+			update_option( XTFE_OPTIONS, $xtfe_options );
+			$xtfe_success_msg[] = __( 'Import settings has been saved successfully.', 'xt-facebook-events' );
+		}
+	}
+
+	/**
+	 * Check for user have Authorized user Token
+	 *
+	 * @since    1.2
+	 * @return /boolean
+	 */
+	public function has_authorized_user_token() {
+		$xtfe_user_token_options = get_option( 'xtfe_user_token_options', array() );
+		if( !empty( $xtfe_user_token_options ) ){
+			$authorize_status =	isset( $xtfe_user_token_options['authorize_status'] ) ? $xtfe_user_token_options['authorize_status'] : 0;
+			$access_token = isset( $xtfe_user_token_options['access_token'] ) ? $xtfe_user_token_options['access_token'] : '';
+			if( 1 == $authorize_status && $access_token != '' ){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Setup Success Messages.
+	 *
+	 * @since    1.0.0
+	 */
+	public function setup_success_messages() {
+		global $xtfe_success_msg, $xtfe_errors;
+		if ( isset( $_GET['xtauthorize'] ) && trim( $_GET['xtauthorize'] ) != '' ) {
+			if( trim( $_GET['xtauthorize'] ) == '1' ){
+				$xtfe_success_msg[] = esc_html__( 'Authorized Successfully.', 'xt-facebook-events' );
+			} elseif( trim( $_GET['xtauthorize'] ) == '2' ){
+				$xtfe_errors[] = esc_html__( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' );
+			} elseif( trim( $_GET['xtauthorize'] ) == '0' ){
+				$xtfe_errors[] = esc_html__( 'Something went wrong during authorization. Please try again.', 'xt-facebook-events' );
 			}
 		}
 	}

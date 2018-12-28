@@ -50,7 +50,7 @@ class XT_Facebook_Events_Admin {
 	 */
 	public function add_menu_pages() {
 
-		add_menu_page( __( 'Facebook Events', 'xt-facebook-events' ), __( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', 'wpfb_events', array( $this, 'admin_page' ), 'dashicons-admin-generic', '70' );
+		add_menu_page( __( 'Facebook Events', 'xt-facebook-events' ), __( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', 'wpfb_events', array( $this, 'admin_page' ), 'dashicons-facebook', '70' );
 	}
 
 	/**

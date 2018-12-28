@@ -28,6 +28,11 @@ class XT_Facebook_Events_Facebook {
 	*/
 	public $fb_graph_url;
 
+	/*
+	*	Facebook Access Token
+	*/
+	private $fb_access_token;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -39,7 +44,7 @@ class XT_Facebook_Events_Facebook {
 		$options = xtfe_get_options();
 		$this->fb_app_id = isset( $options['facebook_app_id'] ) ? $options['facebook_app_id'] : '';
 		$this->fb_app_secret = isset( $options['facebook_app_secret'] ) ? $options['facebook_app_secret'] : '';
-		$this->fb_graph_url = 'https://graph.facebook.com/v2.8/';
+		$this->fb_graph_url = 'https://graph.facebook.com/v3.2/';
 		add_shortcode( 'wpfb_events', array( $this, 'render_facebook_events' ) );
 		add_shortcode( 'fb_event_widget', array( $this, 'render_facebook_page_widget' ) );
 	}
@@ -260,20 +265,44 @@ class XT_Facebook_Events_Facebook {
 	 * @since 1.0.0
 	 */
 	public function get_access_token(){
+
+		if( $this->fb_access_token != '' ){
+			return $this->fb_access_token;
+		}
+
 		$args = array(
 			'grant_type' => 'client_credentials', 
 			'client_id'  => $this->fb_app_id,
 			'client_secret' => $this->fb_app_secret
 			);
 		$access_token_url = add_query_arg( $args, $this->fb_graph_url . 'oauth/access_token' );
-	
 		$access_token_response = wp_remote_get( $access_token_url );
 		$access_token_response_body = wp_remote_retrieve_body( $access_token_response );
 		$access_token_data = json_decode( $access_token_response_body );
-
 		$access_token = ! empty( $access_token_data->access_token ) ? $access_token_data->access_token : null;
-		
-		return $access_token;
+		$xtfe_user_token_options = get_option( 'xtfe_user_token_options', array() );
+		if( !empty( $xtfe_user_token_options ) && $access_token != '' ){
+			$authorize_status =	isset( $xtfe_user_token_options['authorize_status'] ) ? $xtfe_user_token_options['authorize_status'] : 0;
+			$user_access_token = isset( $xtfe_user_token_options['access_token'] ) ? $xtfe_user_token_options['access_token'] : '';
+			if( 1 == $authorize_status && $user_access_token != '' ){
+				$args = array(
+					'input_token' => $user_access_token,
+					'access_token'  => $access_token,
+					);
+				$access_token_url = add_query_arg( $args, $this->fb_graph_url . 'debug_token' );
+				$access_token_response = wp_remote_get( $access_token_url );
+				$access_token_response_body = wp_remote_retrieve_body( $access_token_response );
+				$access_token_data = json_decode( $access_token_response_body );
+				if( !isset( $access_token_data->error ) && $access_token_data->data->is_valid == 1 ){
+					$access_token = $user_access_token;
+				}else{
+					$xtfe_user_token_options['authorize_status'] = 0;
+					update_option( 'xtfe_user_token_options', $xtfe_user_token_options );
+				}
+			}
+		}
+		$this->fb_access_token = apply_filters( 'xtfe_facebook_access_token', $access_token );
+		return $this->fb_access_token;
 	}
 	
 	/**
@@ -281,12 +310,40 @@ class XT_Facebook_Events_Facebook {
 	 *
 	 * @since 1.0.0
 	 */
-	public function generate_facebook_api_url( $path = '', $query_args = array() ) {
+	public function generate_facebook_api_url( $path = '', $query_args = array(), $access_token = '' ) {
 		$query_args = array_merge( $query_args, array( 'access_token' => $this->get_access_token() ) );
-		
+		if( !empty( $access_token ) ){
+			$query_args['access_token'] = $access_token;
+		}
 		$url = add_query_arg( $query_args, $this->fb_graph_url . $path );
-
 		return $url;
+	}
+
+	/**
+	 * Get organizer Name based on Organiser ID.
+	 *
+	 * @since    1.0.0
+	 * @param array $organizer_id Organizer event.
+	 * @return array
+	 */
+	public function get_organizer_name_by_id( $organizer_id, $full_data = false ) {
+		if( !$organizer_id || $organizer_id == '' ){
+			return;
+		}
+		$organizer_raw_data = $this->get_facebook_response_data( $organizer_id, array() );
+		if( isset( $organizer_raw_data->error->message ) ){
+			return false;
+		}
+
+		if( ! isset( $organizer_raw_data->name ) ){
+			return false;
+		}
+		if( $full_data ){
+			return $organizer_raw_data;
+		}
+
+		$oraganizer_name = isset( $organizer_raw_data->name ) ? $organizer_raw_data->name : '';
+		return $oraganizer_name;
 	}
 
 	/**
@@ -353,29 +410,47 @@ class XT_Facebook_Events_Facebook {
 		if( $facebook_page_id == '' ){ return array(); }
 		$max_events = isset( $facebook_args['max_events'] ) ? $facebook_args['max_events'] : 10;
 
+		$fields = array(
+			'id',
+			'name',
+			'description',
+			'start_time',
+			'end_time',
+			'event_times',
+			'cover',
+			'ticket_uri',
+			'timezone',
+			'place',
+		);
+		$include_owner = apply_filters( 'xtfe_import_owner', false );
+		if( $include_owner ){
+			$fields[] = 'owner';
+		}
+
 		$args = array(
-			'limit' => 999,
-			'since' => date( 'Y-m-d' ),
-			'fields' => implode(
-					',',
-					array(
-						'id',
-						'name',
-						'description',
-						'start_time',
-						'end_time',
-						'updated_time',
-						'cover',
-						'picture',
-						'ticket_uri',
-						'timezone',
-						'owner',
-						'place',
-					)
-				),
+			'limit'       => 999,
+			'time_filter' => 'upcoming',
+			'fields'      => implode(
+				',',
+				$fields
+			)
 		);
 
+		$page_token = false;
+		$user_fb_pages = get_option('xtfe_fb_user_pages', array() );
+		if( !empty( $user_fb_pages ) ){
+			$page_data = $this->get_organizer_name_by_id( $facebook_page_id, true );
+			if( isset( $page_data->id ) && isset( $user_fb_pages[$page_data->id] ) ){
+				if( isset( $user_fb_pages[$page_data->id]['access_token'] ) && $user_fb_pages[$page_data->id]['access_token'] !== ''){
+					$page_token = $user_fb_pages[$page_data->id]['access_token'];
+				}
+			}
+		}
+
 		$url = $this->generate_facebook_api_url( $facebook_page_id . '/events', $args );
+		if( $page_token && !empty( $page_token ) ){
+			$url = $this->generate_facebook_api_url( $facebook_page_id . '/events', $args, $page_token );
+		}
 
 		$response = $this->get_json_response_from_url( $url );
 		$response_data = !empty( $response->data ) ? (array) $response->data : array();
