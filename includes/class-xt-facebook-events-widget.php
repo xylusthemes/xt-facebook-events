@@ -105,6 +105,7 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 	 * @return array Settings to save or bool false to cancel saving.
 	 */
 	public function update( $new_instance, $old_instance ) {
+		global $xtfe_events;
 		$instance = $old_instance;
 		$instance['title'] = sanitize_text_field( $new_instance['title'] );
 		$instance['page_id'] = sanitize_text_field( $new_instance['page_id'] );
@@ -115,6 +116,8 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 		$instance['display_event_location'] = $new_instance['display_event_location'] ? 1 : 0;
 		$instance['display_event_enddate'] = $new_instance['display_event_enddate'] ? 1 : 0;
 		$instance['display_event_desc'] = $new_instance['display_event_desc'] ? 1 : 0;
+		// purge transient.
+		$xtfe_events->facebook->xtfe_purge_transient();
 		return $instance;
 	}
 

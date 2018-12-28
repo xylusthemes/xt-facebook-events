@@ -88,11 +88,57 @@ class XT_Facebook_Events_Facebook {
 		if( !isset( $atts['page_id'] ) || $atts['page_id'] == '' ){
 			_e( 'Please insert Facebook page ID for display events.', 'xt-facebook-events');
 		}
-		$facebook_events = $this->get_events_for_facebook_page( $atts );
+
+		$xtfe_transient_key = 'xtfe_';
+		$xtfe_transient_key .= md5(json_encode($atts));
+		$facebook_events = get_transient( $xtfe_transient_key );
+		if ( false === $facebook_events ) {
+			$facebook_events = $this->get_events_for_facebook_page( $atts );
+
+			// Save the Facebook Events.
+			set_transient( $xtfe_transient_key, $facebook_events, HOUR_IN_SECONDS );
+			$this->xtfe_update_transient_keys( $xtfe_transient_key );
+		}
+
 		if( !empty( $facebook_events ) ){
 			$this->render_facebook_event_listing( $facebook_events, $atts );
 		}
 		return ob_get_clean();
+	}
+
+	/**
+	 * Update transient key to option.
+	 *
+	 * @param string $new_transient_key
+	 * @return void
+	 */
+	function xtfe_update_transient_keys( $new_transient_key ) {
+		// Get the current list of transients.
+		$transient_keys = get_option( 'xtfe_transient_keys', array() );
+
+		// Append our new one.
+		$transient_keys[]= $new_transient_key;
+
+		// Save it to the DB.
+		update_option( 'xtfe_transient_keys', $transient_keys );
+	}
+
+	/**
+	 * Purge all transients stored by plugin
+	 *
+	 * @return void
+	 */
+	public function xtfe_purge_transient(){
+		// Get our list of transient keys from the DB.
+		$transient_keys = get_option( 'xtfe_transient_keys', array() );
+
+		// For each key, delete that transient.
+		foreach( $transient_keys as $t ) {
+			delete_transient( $t );
+		}
+
+		// Reset our DB value.
+		update_option( 'xtfe_transient_keys', array() );
 	}
 
 	/**
