@@ -16,42 +16,42 @@ $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
         if( !isset( $_SERVER['HTTPS'] ) && false === stripos( $site_url, 'https' ) ) {
             ?>
             <div class="widefat xtfe_settings_error">
-                <?php printf( '%1$s <b><a href="https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/" target="_blank">%2$s</a></b> %3$s', __( "It looks like you don't have HTTPS enabled on your website. Please enable it. HTTPS is required for authorize your facebook account.","import-facebook-events" ), __( 'Click here','import-facebook-events' ), __( 'for more information.','import-facebook-events' ) ); ?>
+                <?php printf( '%1$s <b><a href="https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/" target="_blank">%2$s</a></b> %3$s', __( "It looks like you don't have HTTPS enabled on your website. Please enable it. HTTPS is required for authorize your facebook account.",'xt-facebook-events' ), __( 'Click here','xt-facebook-events' ), __( 'for more information.','xt-facebook-events' ) ); ?>
             </div>
         <?php
         } ?>
         <div class="widefat xtfe_settings_notice">
-            <?php printf( '<b>%1$s</b> %2$s <b><a href="https://developers.facebook.com/apps" target="_blank">%3$s</a></b> %4$s',  __( 'Note : ','import-facebook-events' ), __( 'You have to create a Facebook application before filling the following details.','import-facebook-events' ), __( 'Click here','import-facebook-events' ),  __( 'to create new Facebook application.','import-facebook-events' ) ); ?>
+            <?php printf( '<b>%1$s</b> %2$s <b><a href="https://developers.facebook.com/apps" target="_blank">%3$s</a></b> %4$s',  __( 'Note : ','xt-facebook-events' ), __( 'You have to create a Facebook application before filling the following details.','xt-facebook-events' ), __( 'Click here','xt-facebook-events' ),  __( 'to create new Facebook application.','xt-facebook-events' ) ); ?>
             <br/>
-            <?php _e( 'For detailed step by step instructions ', 'import-facebook-events' ); ?>
-            <strong><a href="http://docs.xylusthemes.com/docs/import-facebook-events/creating-facebook-application/" target="_blank"><?php _e( 'Click here', 'import-facebook-events' ); ?></a></strong>.
+            <?php _e( 'For detailed step by step instructions ', 'xt-facebook-events' ); ?>
+            <strong><a href="http://docs.xylusthemes.com/docs/import-facebook-events/creating-facebook-application/" target="_blank"><?php _e( 'Click here', 'xt-facebook-events' ); ?></a></strong>.
             <br/>
-            <?php _e( '<strong>Set the site url as : </strong>', 'import-facebook-events' ); ?>
+            <?php _e( '<strong>Set the site url as : </strong>', 'xt-facebook-events' ); ?>
             <span style="color: green;"><?php echo get_site_url(); ?></span>
             <br/>
-            <?php _e( '<strong>Set Valid OAuth redirect URI : </strong>', 'import-facebook-events' ); ?>
+            <?php _e( '<strong>Set Valid OAuth redirect URI : </strong>', 'xt-facebook-events' ); ?>
             <span style="color: green;"><?php echo admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' ); ?></span>
         </div>
 
         <?php
         if( $facebook_app_id != '' && $facebook_app_secret != '' ){
             ?>
-            <h3 class="setting_bar"><?php esc_attr_e( 'Authorize your Facebook Account', 'import-facebook-events' ); ?></h3>
+            <h3 class="setting_bar"><?php esc_attr_e( 'Authorize your Facebook Account', 'xt-facebook-events' ); ?></h3>
             <div class="fb_authorize">
                 <table class="form-table">
                     <tbody>
                         <tr>
                             <th scope="row">
-                                <?php _e( 'Facebook Authorization','import-facebook-events' ); ?> :
+                                <?php _e( 'Facebook Authorization','xt-facebook-events' ); ?> :
                             </th>
                             <td>
                                 <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
                                     <input type="hidden" name="action" value="xtfe_facebook_authorize_action"/>
                                     <?php wp_nonce_field('xtfe_facebook_authorize_action', 'xtfe_facebook_authorize_nonce'); ?>
                                     <?php
-                                    $button_value = __('Authorize', 'import-facebook-events');
+                                    $button_value = __('Authorize', 'xt-facebook-events');
                                     if( isset( $xtfe_user_token_options['authorize_status'] ) && $xtfe_user_token_options['authorize_status'] == 1 && isset(  $xtfe_user_token_options['access_token'] ) &&  $xtfe_user_token_options['access_token'] != '' ){
-                                        $button_value = __('Reauthorize', 'import-facebook-events');
+                                        $button_value = __('Reauthorize', 'xt-facebook-events');
                                     }
                                     ?>
                                     <input type="submit" class="button" name="xtfe_facebook_authorize" value="<?php echo $button_value; ?>" />
@@ -59,14 +59,14 @@ $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
                                     if( !empty( $xtfe_fb_authorize_user ) && isset( $xtfe_fb_authorize_user['name'] ) && $xtfe_events->common->has_authorized_user_token() ){
                                         $fbauthname = sanitize_text_field( $xtfe_fb_authorize_user['name'] );
                                         if( $fbauthname != '' ){
-                                           printf( __(' ( Authorized as: %s )', 'import-facebook-events'), '<b>'.$fbauthname.'</b>' );
+                                           printf( __(' ( Authorized as: %s )', 'xt-facebook-events'), '<b>'.$fbauthname.'</b>' );
                                         }
                                     }
                                     ?>
                                 </form>
 
                                 <span class="xtfe_small">
-                                    <?php _e( 'Please authorize your facebook account for import facebook events. Please authorize with account which you have used for create an facebook app.','import-facebook-events' ); ?>
+                                    <?php _e( 'Please authorize your facebook account for import facebook events. Please authorize with account which you have used for create an facebook app.','xt-facebook-events' ); ?>
                                 </span>
                             </td>
                         </tr>

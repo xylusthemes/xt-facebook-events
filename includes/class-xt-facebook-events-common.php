@@ -21,6 +21,7 @@ class XT_Facebook_Events_Common {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'setup_success_messages' ) );
 		add_action( 'admin_init', array( $this, 'handle_import_settings_submit' ), 99 );
+		add_action( 'xtfe_render_pro_notice', array( $this, 'render_pro_notice' ) );
 	}
 
 	/**
@@ -75,4 +76,37 @@ class XT_Facebook_Events_Common {
 			}
 		}
 	}
+
+	/**
+	 * Display upgrade to pro notice in form.
+	 *
+	 * @since 1.1.0
+	 */
+	public function render_pro_notice(){
+		if( !xtfe_is_pro() ){
+			?>
+			<span class="xtfe_small">
+				<?php printf( '<span style="color: red">%s</span> <a href="' . XTFE_PLUGIN_BUY_NOW_URL . '" target="_blank" >%s</a>', __( 'Available in Pro version.', 'xt-facebook-events' ), __( 'Upgrade to PRO', 'xt-facebook-events' ) ); ?>
+			</span>
+			<?php
+		}
+	}
+}
+
+/**
+ * Check if Pro addon is enabled or not.
+ *
+ * @since 1.0.0
+ */
+function xtfe_is_pro(){
+	if( !function_exists( 'is_plugin_active' ) ){
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	}
+	if ( is_plugin_active( 'xt-facebook-events-pro/xt-facebook-events-pro.php' ) ) {
+		return true;
+	}
+	if( class_exists('XT_Facebook_Events_Pro', false) ){
+		return true;
+	}
+	return false;
 }

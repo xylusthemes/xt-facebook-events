@@ -106,7 +106,11 @@ class XT_Facebook_Events_Admin {
 		        <div id="post-body" class="metabox-holder columns-2">
 
 		            <div id="postbox-container-1" class="postbox-container">
-		            	<?php require_once XTFE_PLUGIN_DIR . '/templates/admin-sidebar.php'; ?>
+						<?php
+						if( !xtfe_is_pro() ){
+							require_once XTFE_PLUGIN_DIR . '/templates/admin-sidebar.php';
+						}
+						?>
 		            </div>
 		            <div id="postbox-container-2" class="postbox-container">
 

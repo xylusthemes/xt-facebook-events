@@ -44,11 +44,11 @@ class XT_Facebook_Events_FB_Authorize {
 				header("Location: " . $dialog_url);
 
 			}else{
-				die( __( 'Please insert Facebook App ID and Secret.', 'import-facebook-events-pro' ) );
+				die( __( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' ) );
 			}
 
 		} else {
-			die( __('You have not access to doing this operations.', 'import-facebook-events-pro' ) );
+			die( __('You have not access to doing this operations.', 'xt-facebook-events' ) );
 		}
 	}
 
@@ -124,10 +124,10 @@ class XT_Facebook_Events_FB_Authorize {
 				$redirect_url = admin_url('admin.php?page=wpfb_events&xtauthorize=2');
 				wp_redirect($redirect_url);
 				exit();
-				die( __( 'Please insert Facebook App ID and Secret.', 'import-facebook-events-pro' ) );
+				die( __( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' ) );
 			}
 		} else {
-			die( __('You have not access to doing this operations.', 'import-facebook-events-pro' ) );
+			die( __('You have not access to doing this operations.', 'xt-facebook-events' ) );
 		}
 	}
 }

@@ -125,7 +125,7 @@ class XT_Facebook_Events{
 
 		// Pro plugin Buy now Link.
 		if( ! defined( 'XTFE_PLUGIN_BUY_NOW_URL' ) ){
-			define( 'XTFE_PLUGIN_BUY_NOW_URL', 'http://xylusthemes.com/plugins/xt-facebook-events/?utm_source=insideplugin&utm_medium=web&utm_content=sidebar&utm_campaign=freeplugin' );
+			define( 'XTFE_PLUGIN_BUY_NOW_URL', 'https://xylusthemes.com/plugins/xt-facebook-events/?utm_source=insideplugin&utm_medium=web&utm_content=sidebar&utm_campaign=freeplugin' );
 		}
 	}
 
@@ -142,6 +142,8 @@ class XT_Facebook_Events{
 		require_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-admin.php';		
 		require_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-widget.php';
 		require_once XTFE_PLUGIN_DIR . 'includes/class-xt-facebook-events-page-widget.php';
+		// Gutenberg Block
+		require_once XTFE_PLUGIN_DIR . 'blocks/facebook-events/index.php';
 	}
 
 	/**

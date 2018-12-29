@@ -76,7 +76,7 @@ class XT_Facebook_Events_Facebook {
 				'page_id' 	 => '',
 				'max_events' => 10,
 				'new_window' => 0,
-				'type' 		 => 'page',
+				'type'       => 'page',
 			);
 			$atts = wp_parse_args( (array) $atts, $event_args );
 		}
@@ -220,36 +220,17 @@ class XT_Facebook_Events_Facebook {
 
 			echo '<div class="xtfacebook_events_widget">';	
 		} else {
-			$css_class = 'col-xtfe-md-4';
-			if( isset( $event_args['col'] ) && $event_args['col'] != '' && is_numeric( $event_args['col'] ) ){
-				$col = $event_args['col'];
-				switch ( $col ) {
-					case '1':
-						$css_class = 'col-xtfe-md-12';
-						break;
-
-					case '2':
-						$css_class = 'col-xtfe-md-6';
-						break;
-
-					case '3':
-						$css_class = 'col-xtfe-md-4';
-						break;
-
-					case '4':
-						$css_class = 'col-xtfe-md-3';
-						break;
-
-					default:
-						$css_class = 'col-xtfe-md-4';
-						break;
-				}
-				$cover_image = '';
+			if( xtfe_is_pro() ) {
+				do_action( 'xtfe_render_wpfb_events_shortcode', $facebook_events, $event_args);
+			} else {
+				?>
+				<div class="components-placeholder editor-media-placeholder wp-block-image">
+					<?php do_action( 'xtfe_render_pro_notice' ); ?>
+				</div>
+				<?php
 			}
-			echo '<div class="xtfacebook_events xtfe_containter"><div class="row_grid">';
 		}
 
-		
 		foreach ($facebook_events as $facebook_event ) {
 			$event_id 	= isset( $facebook_event->id ) ? $facebook_event->id : '';
 			if( $event_id == '' ){ continue; }
@@ -296,16 +277,11 @@ class XT_Facebook_Events_Facebook {
 				} else {
 					include XTFE_PLUGIN_DIR . '/templates/event-widget-style1.php';
 				}
-			} else {
-				include XTFE_PLUGIN_DIR . '/templates/event-shortcode-style1.php';
 			}
-
 		}
 		if( 'widget' == $shortcode_type ){
 			echo '</div>';
-		} else {
-			echo '</div></div>';	
-		}		
+		}
 		echo '<div style="clear: both"></div>';
 	}
 
@@ -437,12 +413,11 @@ class XT_Facebook_Events_Facebook {
 	}
 
 	/**
-	* Get body data from url and return decoded data.
-	*
-	* @since 1.0.0
-	*/
+	 * Get body data from url and return decoded data.
+	 *
+	 * @since 1.0.0
+	 */
 	public function get_json_response_from_url( $url ) {
-		
 		$response = wp_remote_get( $url );
 		$response = json_decode( wp_remote_retrieve_body( $response ) );
 		return $response;
