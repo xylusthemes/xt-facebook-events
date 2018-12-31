@@ -1,0 +1,422 @@
+# Copyright (C) 2018 Facebook Events
+# This file is distributed under the same license as the Facebook Events package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Facebook Events 1.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/xt-facebook-"
+"events\n"
+"POT-Creation-Date: 2018-12-31 15:51:30+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#. #-#-#-#-#  xt-facebook-events.pot (Facebook Events 1.1.0)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: includes/class-xt-facebook-events-admin.php:53
+#: includes/class-xt-facebook-events-admin.php:100
+#: includes/class-xt-facebook-events-page-widget.php:71
+#: includes/class-xt-facebook-events-widget.php:51
+#: includes/class-xt-facebook-events-widget.php:83
+msgid "Facebook Events"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:119
+msgid "Settings"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:122
+msgid "Support & Help"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:212
+msgid " Rate %1$sXT Facebook Events%2$s %3$s"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:229
+msgid "WP Event Aggregator"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:230
+#: templates/admin-sidebar.php:23
+msgid "Import Facebook Events"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:231
+msgid "Import Eventbrite Events"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:232
+msgid "Import Meetup Events"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:233
+msgid "WP Bulk Delete"
+msgstr ""
+
+#: includes/class-xt-facebook-events-admin.php:234
+msgid "Event Schema / Structured Data"
+msgstr ""
+
+#: includes/class-xt-facebook-events-common.php:40
+msgid "Import settings has been saved successfully."
+msgstr ""
+
+#: includes/class-xt-facebook-events-common.php:71
+msgid "Authorized Successfully."
+msgstr ""
+
+#: includes/class-xt-facebook-events-common.php:73
+#: includes/class-xt-facebook-events-fb-authorize.php:47
+#: includes/class-xt-facebook-events-fb-authorize.php:127
+msgid "Please insert Facebook App ID and Secret."
+msgstr ""
+
+#: includes/class-xt-facebook-events-common.php:75
+msgid "Something went wrong during authorization. Please try again."
+msgstr ""
+
+#: includes/class-xt-facebook-events-common.php:89
+msgid "Available in Pro version."
+msgstr ""
+
+#: includes/class-xt-facebook-events-common.php:89
+msgid "Upgrade to PRO"
+msgstr ""
+
+#: includes/class-xt-facebook-events-facebook.php:86
+msgid "Please insert Facebook app ID and app Secret."
+msgstr ""
+
+#: includes/class-xt-facebook-events-facebook.php:89
+msgid "Please insert Facebook page ID for display events."
+msgstr ""
+
+#: includes/class-xt-facebook-events-facebook.php:168
+msgid "Please insert Facebook app ID."
+msgstr ""
+
+#: includes/class-xt-facebook-events-facebook.php:172
+msgid "Please insert Facebook page URL for display page widget."
+msgstr ""
+
+#: includes/class-xt-facebook-events-fb-authorize.php:51
+#: includes/class-xt-facebook-events-fb-authorize.php:130
+msgid "You have not access to doing this operations."
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:40
+#: includes/class-xt-facebook-events-page-widget.php:43
+msgid "Facebook Page Events Widget"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:120
+#: includes/class-xt-facebook-events-widget.php:136
+msgid "Title:"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:121
+msgid "Facebook Page URL:"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:122
+msgid "Width:"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:123
+msgid "Height:"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:124
+msgid "Use Small Header"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:125
+msgid "Show Friend's Faces"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:126
+msgid "Hide Cover Photo"
+msgstr ""
+
+#: includes/class-xt-facebook-events-page-widget.php:127
+msgid "Hide call to action button (if available)"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:48
+msgid "Display Facebook Events."
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:66
+msgid "Style 1"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:67
+msgid "Style 2 (coming soon)"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:137
+msgid "Facebook Page ID:"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:138
+msgid "Max. Events:"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:139
+msgid "Select Event listing style"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:140
+msgid "Open Events in new window"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:141
+msgid "Display Event Image"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:142
+msgid "Display Event Location"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:143
+msgid "Display Event Enddate"
+msgstr ""
+
+#: includes/class-xt-facebook-events-widget.php:144
+msgid "Display Event Description"
+msgstr ""
+
+#: templates/admin-sidebar.php:15 templates/admin-sidebar.php:18
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: templates/admin-sidebar.php:16
+msgid ""
+"Unlock more power features to facebook events like Event grid, Gutenberg "
+"Block etc... Upgrade today!!"
+msgstr ""
+
+#: templates/admin-sidebar.php:24
+msgid ""
+"Want to import Facebook Events instead of just showing them? Buy Now Import "
+"Facebook Events Pro!!"
+msgstr ""
+
+#: templates/admin-sidebar.php:26 templates/xt-facebook-events-support.php:83
+msgid "Buy Now"
+msgstr ""
+
+#: templates/admin-sidebar.php:31
+msgid "Custom WordPress Development Services"
+msgstr ""
+
+#: templates/admin-sidebar.php:32
+msgid ""
+"From small blog to complex web apps, we push the limits of what's possible "
+"with WordPress."
+msgstr ""
+
+#: templates/admin-sidebar.php:34
+msgid "Hire Us"
+msgstr ""
+
+#: templates/admin-sidebar.php:40
+msgid "Would you like to remove these ads?"
+msgstr ""
+
+#: templates/admin-sidebar.php:42
+msgid "Get Premium"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:13
+msgid "Facebook Settings"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:19
+msgid ""
+"It looks like you don't have HTTPS enabled on your website. Please enable "
+"it. HTTPS is required for authorize your facebook account."
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:19
+#: templates/xt-facebook-events-settings.php:24
+#: templates/xt-facebook-events-settings.php:27
+msgid "Click here"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:19
+msgid "for more information."
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:24
+msgid "Note : "
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:24
+msgid ""
+"You have to create a Facebook application before filling the following "
+"details."
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:24
+msgid "to create new Facebook application."
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:26
+msgid "For detailed step by step instructions "
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:29
+msgid "<strong>Set the site url as : </strong>"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:32
+msgid "<strong>Set Valid OAuth redirect URI : </strong>"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:39
+msgid "Authorize your Facebook Account"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:45
+msgid "Facebook Authorization"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:52
+msgid "Authorize"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:54
+msgid "Reauthorize"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:62
+msgid " ( Authorized as: %s )"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:69
+msgid ""
+"Please authorize your facebook account for import facebook events. Please "
+"authorize with account which you have used for create an facebook app."
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:85
+msgid "Facebook App ID"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:92
+#: templates/xt-facebook-events-settings.php:109
+msgid "You can veiw or create your Facebook Apps"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:93
+#: templates/xt-facebook-events-settings.php:110
+msgid "from here"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:102
+msgid "Facebook App secret"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:122
+msgid "Save Settings"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:15
+msgid "Getting Support"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:16
+msgid ""
+"Thanks you for using Import Facebook Events, We are sincerely appreciate "
+"your support and we’re excited to see you using our plugins."
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:17
+msgid "Our support team is always around to help you."
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:19
+msgid "Looking for free support?"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:21
+msgid "Open-source forum on WordPress.org"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:24
+msgid "Looking for more immediate support?"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:25
+msgid ""
+"We offer premium support on our website with the purchase of our premium "
+"plugins."
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:29
+msgid "Contact us directly (Premium Support)"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:32
+msgid "Enjoying Import Facebook Events or have feedback?"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:33
+msgid "Leave us a review"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:34
+msgid "Follow us on Twitter"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:35
+msgid "Like us on Facebook"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:48
+msgid "Plugins you should try"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:67
+msgid "Version:"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:71
+msgid "Requires:"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:71
+msgid "WordPress "
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:75
+msgid "Active Installs:"
+msgstr ""
+
+#: templates/xt-facebook-events-support.php:80
+msgid "Install Now"
+msgstr ""
+
+#: xt-facebook-events.php:82 xt-facebook-events.php:89
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://xylusthemes.com/plugins/xt-facebook-events/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Display Facebook Events into your WordPress site anywhere."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Xylus Themes"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://xylusthemes.com"
+msgstr ""

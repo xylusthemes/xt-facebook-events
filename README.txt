@@ -4,7 +4,7 @@ Donate link: http://xylusthemes.com/
 Tags: facebook, facebook widget, facebook event, facebook events, event, event list, facebook event list, embed facebook, embed facebook events, widget, shortcode, event widget, facebook event widget, event shortcode
 Requires at least: 4.0
 Tested up to: 4.8
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,6 +85,14 @@ Example shortcode: <strong>[wpfb_events page_id="YOUR_PAGE_ID" new_window="1" co
 
 
 == Changelog ==
+
+= 1.1.0 =
+* ADDED: Facebook Authorization for make custom Facebook widget working.
+* ADDED: support for WP 5.0
+* ADDED: Gutenberg Block for Facebook Events.
+* IMPROVEMENTS: Add caching support for events.
+* IMPROVEMENTS: Some Code imporvements.
+* FIXED: Some bug fixes.
 
 = 1.0.2 =
 * ADDED: Support for Facebook events using Page widget (Facebook's Embeddable page widget)
