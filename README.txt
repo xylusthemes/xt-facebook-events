@@ -13,12 +13,13 @@ Easiest way to display Facebook events from your Facebook page to your website u
 == Description ==
 
 <h3>NOTICE:</h3>
-
->**Facebook has restricted access of Events in API from 4th April due to recent Privacy issue. They have new policy & rules to get Event data and restricted events data over API, So You are not able to import events from Facebook for now. Facebook is making changes in their Platform and they will fix these issues soon. We appreciate your continued support and patience as these changes are not directly under our control. So, Custom Facebook events list is not working currently due Facebook API changes**
+>**You need below things to work Custom Facebook Event widget using API.**
 >
->**[Here](https://developers.facebook.com/blog/post/2018/04/04/facebook-api-platform-product-changes/) is post from facebook about same.**
+>* Facebook app ([Here](http://docs.xylusthemes.com/docs/import-facebook-events/creating-facebook-application/) is how to create FB app)
+>* Your site need to HTTPS (SSL certificate)
+>* You need to mark events as interested or going on facebook to get imported
 >
->**GOOD NEWS: We have added support for Facebook's Embeddable page widget. So, for now you can show your page's event on your website using it.**
+>**Also, We have added support for Facebook's Embeddable page widget. So, you can show your page's event on your website using it.**
 >
 
 XT Facebook Events allow you to display Facebook events from your Facebook page to your website using widget or shortcode.
