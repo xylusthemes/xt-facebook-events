@@ -47,6 +47,7 @@ class XT_Facebook_Events_Facebook {
 		$this->fb_graph_url = 'https://graph.facebook.com/v3.2/';
 		add_shortcode( 'wpfb_events', array( $this, 'render_facebook_events' ) );
 		add_shortcode( 'fb_event_widget', array( $this, 'render_facebook_page_widget' ) );
+		add_action( 'admin_post_xtfe_clear_cache', array( $this, 'xtfe_clear_events_cache' ) );
 	}
 
 	/**
@@ -84,9 +85,11 @@ class XT_Facebook_Events_Facebook {
 		ob_start();
 		if( $this->fb_app_id == '' || $this->fb_app_secret == '' ){
 			_e( 'Please insert Facebook app ID and app Secret.', 'xt-facebook-events');
+			return ob_get_clean();
 		}
 		if( !isset( $atts['page_id'] ) || $atts['page_id'] == '' ){
 			_e( 'Please insert Facebook page ID for display events.', 'xt-facebook-events');
+			return ob_get_clean();
 		}
 
 		$xtfe_transient_key = 'xtfe_';
@@ -96,12 +99,14 @@ class XT_Facebook_Events_Facebook {
 			$facebook_events = $this->get_events_for_facebook_page( $atts );
 
 			// Save the Facebook Events.
-			set_transient( $xtfe_transient_key, $facebook_events, HOUR_IN_SECONDS );
+			set_transient( $xtfe_transient_key, $facebook_events, 900 );
 			$this->xtfe_update_transient_keys( $xtfe_transient_key );
 		}
 
 		if( !empty( $facebook_events ) ){
 			$this->render_facebook_event_listing( $facebook_events, $atts );
+		}else{
+			echo apply_filters( 'xtfe_no_events_found_message', __( "No Events are found.", 'xt-facebook-events' ) );
 		}
 		return ob_get_clean();
 	}
@@ -129,6 +134,7 @@ class XT_Facebook_Events_Facebook {
 	 * @return void
 	 */
 	public function xtfe_purge_transient(){
+		global $wpdb;
 		// Get our list of transient keys from the DB.
 		$transient_keys = get_option( 'xtfe_transient_keys', array() );
 
@@ -139,6 +145,9 @@ class XT_Facebook_Events_Facebook {
 
 		// Reset our DB value.
 		update_option( 'xtfe_transient_keys', array() );
+
+		// Manually Delete incase of missing in keys.
+		$wpdb->query("DELETE FROM {$wpdb->options} WHERE `option_name` LIKE '%_transient_xtfe_%'");
 	}
 
 	/**
@@ -487,6 +496,17 @@ class XT_Facebook_Events_Facebook {
 		$events_data = $sliced_array = array_slice( $response_data, 0, $max_events );
 
 		return $events_data;
+	}
+
+	function xtfe_clear_events_cache(){
+		if ( ! empty($_POST) && wp_verify_nonce($_POST['xtfe_clear_cache_nonce'], 'xtfe_clear_cache_action' ) ) {
+			$this->xtfe_purge_transient();
+			$redirect_url = admin_url('admin.php?page=wpfb_events&xtcleared=1');
+			wp_redirect($redirect_url);
+			exit();
+		} else {
+			die( __('You have not access to doing this operations.', 'xt-facebook-events' ) );
+		}
 	}
 
 }

@@ -86,7 +86,7 @@ $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
                         </th>
                         <td>
                             <input class="facebook_app_id" name="xtfe[facebook_app_id]" type="text" value="<?php echo $facebook_app_id; ?>" />
-                            <span class="xtei_small">
+                            <span class="xtfe_small">
                                 <?php
                                 printf( '%s <a href="https://developers.facebook.com/apps" target="_blank">%s</a>', 
                                     __('You can veiw or create your Facebook Apps', 'xt-facebook-events'),
@@ -103,7 +103,7 @@ $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
                         </th>
                         <td>
                             <input class="facebook_app_secret" name="xtfe[facebook_app_secret]" type="text" value="<?php echo $facebook_app_secret; ?>" />
-                            <span class="xtei_small">
+                            <span class="xtfe_small">
                                 <?php
                                 printf( '%s <a href="https://developers.facebook.com/apps" target="_blank">%s</a>', 
                                     __('You can veiw or create your Facebook Apps', 'xt-facebook-events'),
@@ -121,6 +121,30 @@ $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
                 <?php wp_nonce_field( 'xtfe_setting_form_nonce_action', 'xtfe_setting_form_nonce' ); ?>
                 <input type="submit" class="button-primary xtei_submit_button" style=""  value="<?php esc_attr_e( 'Save Settings', 'xt-facebook-events' ); ?>" />
             </div>
-            </form>
+        </form>
+
+        <table class="form-table">
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        <?php _e( 'Clear Facebook events Cache','xt-facebook-events' ); ?>: 
+                    </th>
+                    <td>
+                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                            <input type="hidden" name="action" value="xtfe_clear_cache"/>
+                            <?php wp_nonce_field('xtfe_clear_cache_action', 'xtfe_clear_cache_nonce'); ?>
+                            <?php
+                            $button_value = __('Clear Cache', 'xt-facebook-events');
+                            ?>
+                            <input type="submit" class="button" name="xtfe_clear_cache" value="<?php echo $button_value; ?>" />
+                        </form>
+                        <span class="xtfe_small">
+                            <?php _e('Please clear cache if latest events from facebook are not reflects on website.', 'xt-facebook-events'); ?>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
 </div>

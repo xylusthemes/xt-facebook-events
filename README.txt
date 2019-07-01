@@ -3,7 +3,7 @@ Contributors: xylus,Dharm1025
 Donate link: http://xylusthemes.com/
 Tags: facebook, facebook widget, facebook event, facebook events, event, event list, facebook event list, embed facebook, embed facebook events, widget, shortcode, event widget, facebook event widget, event shortcode
 Requires at least: 4.0
-Tested up to: 4.8
+Tested up to: 5.2
 Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -26,13 +26,13 @@ XT Facebook Events allow you to display Facebook events from your Facebook page 
 
 - Display facebook event in your website 
 - Real time updates of facebook event in your website
-- Use sortcode or widget to display events 
+- Use shortcode or widget to display events 
 - Multiple style & screen for widget design 
 - Responsive design 
+- Gutenberg Block for Facebook Events [(PRO)](https://xylusthemes.com/plugins/xt-facebook-events/)
+- Responsive & Elegent Event Grid using Shortcode <strong>[wpfb_events page_id="YOUR_PAGE_ID" max_events="10"]</strong> [(PRO)](https://xylusthemes.com/plugins/xt-facebook-events/)
 
 You can add Facebook App ID and Facebook Secret in "Facebook Events" Menu.
-
-Example shortcode: <strong>[wpfb_events page_id="YOUR_PAGE_ID" new_window="1" col="3" max_events="10"]</strong>
 
 <strong>2 Ways for display Facebook Events using Facebook's Embeddable page widget</strong><br>
 

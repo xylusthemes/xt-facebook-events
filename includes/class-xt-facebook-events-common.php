@@ -74,6 +74,8 @@ class XT_Facebook_Events_Common {
 			} elseif( trim( $_GET['xtauthorize'] ) == '0' ){
 				$xtfe_errors[] = esc_html__( 'Something went wrong during authorization. Please try again.', 'xt-facebook-events' );
 			}
+		} elseif( isset( $_GET['xtcleared'] ) &&  trim( $_GET['xtcleared'] ) == '1' ){
+			$xtfe_success_msg[] = esc_html__( 'Facebook Events Cache has been cleared successfully.', 'xt-facebook-events' );
 		}
 	}
 

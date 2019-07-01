@@ -3,8 +3,8 @@
  * Facebook Events Block Initializer
  *
  * @since   1.6
- * @package    Import_Facebook_Events
- * @subpackage Import_Facebook_Events/includes
+ * @package    XT_Facebook_Events
+ * @subpackage XT_Facebook_Events/includes
  */
 
 // Exit if accessed directly.
