@@ -112,7 +112,22 @@ $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
                                 ?>
                             </span>
                         </td>
-                    </tr>       
+                    </tr>
+
+                    <tr>
+						<th scope="row">
+							<?php esc_attr_e( 'Accent Color', 'xt-facebook-events' ); ?> :
+						</th>
+						<td>
+						<?php
+						$accent_color = isset( $xtfe_options['accent_color'] ) ? $xtfe_options['accent_color'] : '#039ED7';
+						?>
+						<input class="xtfe_color_field" type="text" name="xtfe[accent_color]" value="<?php echo esc_attr( $accent_color ); ?>"/>
+						<span class="xtfe_small">
+							<?php esc_attr_e( 'Choose accent color for front-end event grid and event widget.', 'xt-facebook-events' ); ?>
+						</span>
+						</td>
+					</tr>
                 </tbody>
             </table>
             <br/>

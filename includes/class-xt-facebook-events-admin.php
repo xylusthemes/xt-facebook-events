@@ -63,9 +63,8 @@ class XT_Facebook_Events_Admin {
 	 * @return void
 	 */
 	function enqueue_admin_scripts( $hook ) {
-		
 		$js_dir  = XTFE_PLUGIN_URL . 'assets/js/';
-		
+		wp_enqueue_script( 'xt-facebook-events', $js_dir . 'xt-facebook-events-admin.js', array( 'jquery', 'wp-color-picker' ), XTFE_VERSION, true );		
 	}
 
 	/**
@@ -83,7 +82,8 @@ class XT_Facebook_Events_Admin {
 		$page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
 		if( 'wpfb_events' == $page || $pagenow == 'widgets.php' ){
 		  	$css_dir = XTFE_PLUGIN_URL . 'assets/css/';
-		 	wp_enqueue_style('xt-facebook-events', $css_dir . 'xt-facebook-events-admin.css', false, "" );
+			wp_enqueue_style('xt-facebook-events', $css_dir . 'xt-facebook-events-admin.css', false, "" );
+			wp_enqueue_style( 'wp-color-picker' );
 		}
 	}
 

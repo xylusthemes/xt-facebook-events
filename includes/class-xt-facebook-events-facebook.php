@@ -215,6 +215,9 @@ class XT_Facebook_Events_Facebook {
 
 		if( empty( $facebook_events ) ){ return false; }
 
+		$xtfe_options = get_option( XTFE_OPTIONS, array() );
+		$accent_color = isset( $xtfe_options['accent_color'] ) ? $xtfe_options['accent_color'] : '#039ED7';
+
 		$new_window = false;
 		if( isset( $event_args['new_window'] ) && $event_args['new_window'] == '1' ){
 			$new_window = true;
@@ -265,7 +268,9 @@ class XT_Facebook_Events_Facebook {
 				$cover_url = "http://placehold.it/420x150?text=".$image_date;
 			}
 			$picture_url = isset( $facebook_event->picture->data->url ) ? $facebook_event->picture->data->url : '';
-			$organiser_name = isset( $facebook_event->picture->data->url ) ? $facebook_event->picture->data->url : '';
+			if( empty($picture_url ) ){
+				$picture_url = $cover_url;
+			}
 			$location = isset( $facebook_event->place->name ) ? $facebook_event->place->name : '';
 
 			$event_date = $start_date->format('F j (h:i a)');
@@ -291,7 +296,17 @@ class XT_Facebook_Events_Facebook {
 		if( 'widget' == $shortcode_type ){
 			echo '</div>';
 		}
-		echo '<div style="clear: both"></div>';
+		?>
+		<div style="clear: both"></div>
+		<style type="text/css">
+			.xtfe_event .event_date{
+			    background-color: <?php echo $accent_color;?>;
+			}
+			.xtfe_event .event_desc .event_title, .xtfe_event .event_desc .event_name a{
+			    color: <?php echo $accent_color;?>;
+			}
+		</style>
+		<?php
 	}
 
 	/**
@@ -493,9 +508,30 @@ class XT_Facebook_Events_Facebook {
 			return false;
 		}
 		$response_data = array_reverse( $response_data );
-		$events_data = $sliced_array = array_slice( $response_data, 0, $max_events );
-
-		return $events_data;
+		$events_data = array_slice( $response_data, 0, $max_events );
+		$events = array();
+		foreach( $events_data as $key => $event ){
+			if(!empty($event->event_times)){
+				$has_upcoming_times = false;
+				foreach ( $event->event_times as $event_time ) {
+					if ( isset( $event_time->start_time ) && isset( $event_time->end_time ) && strtotime( $event_time->end_time) >= current_time('timestamp') ) {
+						$has_upcoming_times  = true;
+						$temp_event = clone $event;
+						$temp_event->id         = $event_time->id;
+						$temp_event->start_time = $event_time->start_time;
+						$temp_event->end_time   = $event_time->end_time;
+						$events[strtotime($temp_event->start_time)] = $temp_event;
+					}
+				}
+				if(!$has_upcoming_times){
+					$events[strtotime($event->start_time)] = $event;
+				}
+			}else{
+				$events[strtotime($event->start_time)] = $event;
+			}
+		}
+		ksort($events);
+		return array_slice( $events, 0, $max_events );
 	}
 
 	function xtfe_clear_events_cache(){

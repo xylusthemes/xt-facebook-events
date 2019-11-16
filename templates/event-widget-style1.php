@@ -5,7 +5,7 @@
  */
 ?>
 <div class="event_wiget_style2 fbevents_widget" >
-	<div class="event_details" style="height: auto;">
+	<div class="event_details xtfe_event" style="height: auto;">
 		
 		<?php if( $picture_url !='' && $is_display_image ){
 			?>
