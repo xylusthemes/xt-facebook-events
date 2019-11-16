@@ -1,20 +1,18 @@
-# Copyright (C) 2018 Facebook Events
-# This file is distributed under the same license as the Facebook Events package.
+# Copyright (C) 2019 XT Event Widget for Social Events
+# This file is distributed under the same license as the XT Event Widget for Social Events package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Facebook Events 1.1.0\n"
+"Project-Id-Version: XT Event Widget for Social Events 1.1.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/xt-facebook-"
 "events\n"
-"POT-Creation-Date: 2018-12-31 15:51:30+00:00\n"
+"POT-Creation-Date: 2019-11-16 08:20:34+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#. #-#-#-#-#  xt-facebook-events.pot (Facebook Events 1.1.0)  #-#-#-#-#
-#. Plugin Name of the plugin/theme
 #: includes/class-xt-facebook-events-admin.php:53
 #: includes/class-xt-facebook-events-admin.php:100
 #: includes/class-xt-facebook-events-page-widget.php:71
@@ -78,30 +76,39 @@ msgstr ""
 msgid "Something went wrong during authorization. Please try again."
 msgstr ""
 
-#: includes/class-xt-facebook-events-common.php:89
+#: includes/class-xt-facebook-events-common.php:78
+msgid "Facebook Events Cache has been cleared successfully."
+msgstr ""
+
+#: includes/class-xt-facebook-events-common.php:91
 msgid "Available in Pro version."
 msgstr ""
 
-#: includes/class-xt-facebook-events-common.php:89
+#: includes/class-xt-facebook-events-common.php:91
 msgid "Upgrade to PRO"
 msgstr ""
 
-#: includes/class-xt-facebook-events-facebook.php:86
+#: includes/class-xt-facebook-events-facebook.php:87
 msgid "Please insert Facebook app ID and app Secret."
 msgstr ""
 
-#: includes/class-xt-facebook-events-facebook.php:89
+#: includes/class-xt-facebook-events-facebook.php:91
 msgid "Please insert Facebook page ID for display events."
 msgstr ""
 
-#: includes/class-xt-facebook-events-facebook.php:168
+#: includes/class-xt-facebook-events-facebook.php:109
+msgid "No Events are found."
+msgstr ""
+
+#: includes/class-xt-facebook-events-facebook.php:177
 msgid "Please insert Facebook app ID."
 msgstr ""
 
-#: includes/class-xt-facebook-events-facebook.php:172
+#: includes/class-xt-facebook-events-facebook.php:181
 msgid "Please insert Facebook page URL for display page widget."
 msgstr ""
 
+#: includes/class-xt-facebook-events-facebook.php:544
 #: includes/class-xt-facebook-events-fb-authorize.php:51
 #: includes/class-xt-facebook-events-fb-authorize.php:130
 msgid "You have not access to doing this operations."
@@ -321,8 +328,30 @@ msgstr ""
 msgid "Facebook App secret"
 msgstr ""
 
-#: templates/xt-facebook-events-settings.php:122
+#: templates/xt-facebook-events-settings.php:119
+msgid "Accent Color"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:127
+msgid "Choose accent color for front-end event grid and event widget."
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:137
 msgid "Save Settings"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:145
+msgid "Clear Facebook events Cache"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:152
+msgid "Clear Cache"
+msgstr ""
+
+#: templates/xt-facebook-events-settings.php:157
+msgid ""
+"Please clear cache if latest events from facebook are not reflects on "
+"website."
 msgstr ""
 
 #: templates/xt-facebook-events-support.php:15
@@ -403,6 +432,10 @@ msgstr ""
 
 #: xt-facebook-events.php:82 xt-facebook-events.php:89
 msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "XT Event Widget for Social Events"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
