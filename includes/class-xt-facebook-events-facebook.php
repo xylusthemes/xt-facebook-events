@@ -273,15 +273,15 @@ class XT_Facebook_Events_Facebook {
 			}
 			$location = isset( $facebook_event->place->name ) ? $facebook_event->place->name : '';
 
-			$event_date = $start_date->format('F j (h:i a)');
+			$event_date = date_i18n( 'F j (h:i a)', strtotime($start_date->format('Y-m-d h:i a')) );
 
 			if( 'widget' == $shortcode_type ){
 				if( $is_display_enddate ){
 					if( $start_date->format('Y-m-d h:i a') != $end_date->format('Y-m-d h:i a') ){
 						if( $start_date->format('Y-m-d') == $end_date->format('Y-m-d') ){
-							$event_date = $start_date->format('F j') .' ('. $start_date->format('h:i a') . ' - '. $end_date->format('h:i a') .')';
+							$event_date = date_i18n( 'F j', strtotime($start_date->format('Y-m-d h:i a')) ).' ('. date_i18n( 'h:i a', strtotime($start_date->format('Y-m-d h:i a'))) . ' - '. date_i18n( 'h:i a', strtotime($end_date->format('Y-m-d h:i a'))) .')';
 						} else {
-							$event_date = $start_date->format('F j (h:i a)') . ' - ' . $end_date->format('F j (h:i a)' );
+							$event_date = date_i18n( 'F j (h:i a)', strtotime($start_date->format('Y-m-d h:i a')) ) . ' - ' . date_i18n( 'F j (h:i a)', strtotime($end_date->format('Y-m-d h:i a')) );
 						}
 					}
 				}
