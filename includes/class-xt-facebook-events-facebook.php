@@ -478,12 +478,16 @@ class XT_Facebook_Events_Facebook {
 
 		$args = array(
 			'limit'       => 999,
-			'time_filter' => 'upcoming',
 			'fields'      => implode(
 				',',
 				$fields
 			)
 		);
+		if ( $facebook_page_id === 'me' ){
+			$args['since'] = current_time('timestamp');
+		}else{
+			$args['time_filter'] = 'upcoming';
+		}
 
 		$page_token = false;
 		$user_fb_pages = get_option('xtfe_fb_user_pages', array() );
