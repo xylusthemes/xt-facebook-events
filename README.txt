@@ -4,7 +4,7 @@ Donate link: http://xylusthemes.com/
 Tags: facebook, facebook widget, facebook event, facebook events, event, event list, facebook event list, embed facebook, embed facebook events, widget, shortcode, event widget, facebook event widget, event shortcode
 Requires at least: 4.0
 Tested up to: 5.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,12 @@ You can add Facebook App ID and Facebook Secret in "Facebook Events" Menu.
 
 
 == Changelog ==
+
+= 1.1.3 =
+* ADDED: Localized Date lables.
+* IMPROVEMENTS: Updated to Facebook API Version 7.0
+* FIXED: few pages were not fetching events issue.
+* FIXED: showing past events for /me page id issue.
 
 = 1.1.2 =
 * ADDED: Recurring Events Support
