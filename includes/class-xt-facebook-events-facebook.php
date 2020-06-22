@@ -44,7 +44,7 @@ class XT_Facebook_Events_Facebook {
 		$options = xtfe_get_options();
 		$this->fb_app_id = isset( $options['facebook_app_id'] ) ? $options['facebook_app_id'] : '';
 		$this->fb_app_secret = isset( $options['facebook_app_secret'] ) ? $options['facebook_app_secret'] : '';
-		$this->fb_graph_url = 'https://graph.facebook.com/v3.2/';
+		$this->fb_graph_url = 'https://graph.facebook.com/v7.0/';
 		add_shortcode( 'wpfb_events', array( $this, 'render_facebook_events' ) );
 		add_shortcode( 'fb_event_widget', array( $this, 'render_facebook_page_widget' ) );
 		add_action( 'admin_post_xtfe_clear_cache', array( $this, 'xtfe_clear_events_cache' ) );
