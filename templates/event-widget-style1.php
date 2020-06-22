@@ -18,8 +18,8 @@
 		} else {
 			?>
 			<div class="event_date">
-				<span class="month"><?php echo $start_date->format('M'); ?></span>
-				<span class="date"> <?php echo $start_date->format('d'); ?> </span>
+				<span class="month"><?php echo date_i18n( 'M', strtotime($start_date->format('Y-m-d h:i a')) ); ?></span>
+				<span class="date"> <?php echo date_i18n( 'd', strtotime($start_date->format('Y-m-d h:i a')) ); ?> </span>
 			</div>
 			<?php
 		} ?>					

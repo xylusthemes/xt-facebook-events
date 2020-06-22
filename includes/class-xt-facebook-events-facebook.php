@@ -188,7 +188,7 @@ class XT_Facebook_Events_Facebook {
 		  var js, fjs = d.getElementsByTagName(s)[0];
 		  if (d.getElementById(id)) return;
 		  js = d.createElement(s); js.id = id;
-		  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0&appId=<?php echo $this->fb_app_id; ?>';
+		  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v7.0&appId=<?php echo $this->fb_app_id; ?>';
 		  fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));</script>
 
