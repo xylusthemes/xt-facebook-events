@@ -238,3 +238,119 @@ table.xtfe_form_table tr td:nth-child(1) {
   margin-top: -10px;
   background: #ddd;
 }
+
+/* Plugin Addon List */
+#xtfe-addons-list *,#xtfe-addons-list *::before,#xtfe-addons-list *::after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+#xtfe-addons-list{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  margin-left: -15px;
+}
+
+#xtfe-addons-list .xtfe-addon-container {
+  margin-bottom: 15px;
+  flex-grow: 1;
+  flex-wrap: nowrap;
+  padding-left: 15px;
+  float: left;
+  flex-basis: 50%;
+  box-sizing: border-box;
+}
+
+@media  (max-width:1100px) {
+  #xtfe-addons-list .xtfe-addon-container {
+		min-width:100%;
+		margin-bottom: 20px;
+	}
+}
+
+
+#xtfe-addons-list .xtfe-addon-item {
+	background-color: #fff;
+	margin: 0;
+}
+
+@media (max-width: 767px) {
+	#xtfe-addons-list .xtfe-addon-item {
+		margin:0 0;
+	}
+}
+
+#xtfe-addons-list .xtfe-addon-item img {
+	border: 1px solid #eee;
+	float: left;
+	max-width: 85px;
+}
+
+#xtfe-addons-list .xtfe-addon-item h5 {
+	margin: 0 0 10px 100px;
+	font-size: 16px;
+}
+
+#xtfe-addons-list .xtfe-addon-item p {
+	margin: 0 0 0 100px;
+}
+
+#xtfe-addons-list .xtfe-addon-item .xtfe-action-button {
+	float: right;
+}
+
+#xtfe-addons-list .xtfe-addon-item .xtfe-action-button button {
+	background: #007cba;
+	border: 0;
+    font-weight: 600;
+    width: 110px;
+    padding: 4px;
+}
+
+
+#xtfe-addons-list .xtfe-addon-item .xtfe-details {
+	padding: 30px;
+}
+
+/* Clear */
+.xtfe-clear:before {
+	content: " ";
+	display: table;
+}
+.xtfe-clear:after {
+	clear: both;
+	content: " ";
+	display: table;
+}
+
+#xtfe-addons-list .xtfe-addon-item .actions {
+	background-color: #f7f7f7;
+	border-top: 1px solid #ddd;
+	padding: 20px;
+	position: relative;
+}
+
+#xtfe-addons-list .xtfe-addon-item .xtfe-status {
+	float: left;
+	padding-top: 8px
+}
+
+#xtfe-addons-list .xtfe-addon-item .xtfe-status .xtfe-status-inactive {
+	color: red
+}
+
+#xtfe-addons-list .xtfe-addon-item .xtfe-status .statxtfe-statusus-download {
+	color: #666
+}
+
+ #xtfe-addons-list .xtfe-addon-item{
+  box-shadow: 0 0 0 1px #ccd0d4, 0 1px 1px 1px rgb(0 0 0 / 4%);
+}
+#xtfe-addons-list .xtfe-addon-item .xtfe-action-button button:hover{
+	background: #0071a1;
+} 
