@@ -219,6 +219,9 @@ class XT_Facebook_Events_Facebook {
 		$accent_color = isset( $xtfe_options['accent_color'] ) ? $xtfe_options['accent_color'] : '#039ED7';
 
 		$new_window = false;
+		if( isset( $event_args['new_window'] ) && $event_args['new_window'] === true ){
+			$event_args['new_window'] == '1';
+		}
 		if( isset( $event_args['new_window'] ) && $event_args['new_window'] == '1' ){
 			$new_window = true;
 		}

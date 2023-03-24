@@ -1,18 +1,13 @@
-const { __ } = wp.i18n; // Import __() from wp.i18n
-const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
+const { __ } = wp.i18n;
+const { registerBlockType } = wp.blocks;
 const {
 	PanelBody,
-	TextControl,
 	RangeControl,
 	ToggleControl,
-	ServerSideRender
+	TextControl,
 } = wp.components;
-const { InspectorControls } = wp.editor;
-const { createElement } = wp.element;
+var InspectorControls = wp.blockEditor.InspectorControls;
 
-/**
- * Register: Facebook Events Gutenberg Block.
- */
 registerBlockType( 'xtfe-block/facebook-events', {
 	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
 	title: __( 'Facebook Events' ),
@@ -28,11 +23,6 @@ registerBlockType( 'xtfe-block/facebook-events', {
 		__( 'facebook events' ),
 	],
 
-	// Enable or disable support for features
-	supports: {
-		html: false,
-	},
-
 	// Set for each piece of dynamic data used in your block
 	attributes: {
 		col: {
@@ -47,58 +37,57 @@ registerBlockType( 'xtfe-block/facebook-events', {
 			type: 'string',
 		},
 		new_window: {
-			type: 'string',
+			type: 'boolean',
+     		default: false
 		}
 	},
+    edit: ( { attributes, setAttributes } ) => {
+        const { col, max_events, page_id, new_window,  } = attributes;
+		const { serverSideRender: ServerSideRender } = wp;
 
-	// Determines what is displayed in the editor
-	edit: function( props ) {
-		const { attributes, isSelected, setAttributes } = props;
-
-		return [
-			isSelected && (
-				<InspectorControls key="inspector">
+        return (
+            <div>
+                <InspectorControls key="inspector">
 					<PanelBody title={ __( 'Facebook Events Setting' ) }>
 						<TextControl
 							label={ __( 'Facebook Page ID' ) }
-							value={ attributes.page_id || '' }
+							value={ page_id || '' }
 							onChange={ ( value ) => setAttributes( { page_id: value } ) }
 						/>
 						<RangeControl
 							label={ __( 'Columns' ) }
-							value={ attributes.col || 3 }
+							value={ col || 3 }
 							onChange={ ( value ) => setAttributes( { col: value } ) }
 							min={ 1 }
 							max={ 4 }
 						/>
 						<RangeControl
 							label={ __( 'Max. Events' ) }
-							value={ attributes.max_events || 12 }
+							value={ max_events || 12 }
 							onChange={ ( value ) => setAttributes( { max_events: value } ) }
 							min={ 1 }
 							max={ 100 }
 						/>
 						<ToggleControl
 							label={ __( 'Open Events in new window' ) }
-							checked={ attributes.new_window }
+							checked={ new_window }
 							onChange={ value => {
-								return setAttributes( { new_window: value ? '1' : '0' } );
+								return setAttributes( { new_window: value } );
 							}
 							}
 						/>
 					</PanelBody>
 				</InspectorControls>
-			),
-
-			createElement( ServerSideRender, {
-				block: 'xtfe-block/facebook-events',
-				attributes: attributes,
-			} ),
-		];
-	},
-
+				<ServerSideRender
+					block="xtfe-block/facebook-events"
+					attributes={attributes}
+					key={JSON.stringify(attributes)}
+				/>
+            </div>
+        );
+    },
 	save: function() {
 		// Rendering in PHP.
 		return null;
 	},
-} );
+});

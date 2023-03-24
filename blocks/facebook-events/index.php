@@ -21,7 +21,7 @@ function xtfe_register_gutenberg_block() {
 	global $xtfe_events;
 	if ( function_exists( 'register_block_type' ) ) {
 		// Register block editor script.
-		$js_dir = XTFE_PLUGIN_URL . 'assets/js/';
+		$js_dir = XTFE_PLUGIN_URL . 'assets/js/blocks/';
 		wp_register_script(
 			'xtfe-facebook-events-block',
 			$js_dir . 'gutenberg.blocks.js',
@@ -53,7 +53,8 @@ function xtfe_register_gutenberg_block() {
 					'type' => 'string'
 				),
 				'new_window' => array(
-					'type' => 'string'
+					'type'    => 'boolean',
+					'default' => false,
 				),
 				'type' => array(
 					'type'    => 'string',
