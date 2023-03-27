@@ -57,7 +57,7 @@ $twitter_url = 'https://twitter.com/XylusThemes/';
 					<div class="xtfe-addon-container">
 						<div class="xtfe-addon-item">
 							<div class="xtfe-details xtfe-clear" style="height: 165px;">
-								<img src="<?php echo $plugin->icons['2x']; ?>">
+								<img src="<?php if( isset( $plugin->icons['2x'] ) ){ echo $plugin->icons['2x']; }else{ echo 'https://secure.gravatar.com/avatar/4363de1418924e303221153dd70484ab?s=96&d=monsterid&r=g'; } ?>">
 								<h5 class="xtfe-addon-name"><?php echo $plugin->name; ?></h5>
 								<p class="xtfe-addon-desc"><?php echo $plugin->short_description; ?></p>
 							</div>
