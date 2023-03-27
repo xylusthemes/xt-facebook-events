@@ -1,10 +1,10 @@
 === XT Event Widget for Social Events ==
-Contributors: xylus,Dharm1025
+Contributors: xylus,Dharm1025,Rajat1192
 Donate link: http://xylusthemes.com/
 Tags: facebook, facebook widget, facebook event, facebook events, event, event list, facebook event list, embed facebook, embed facebook events, widget, shortcode, event widget, facebook event widget, event shortcode
 Requires at least: 4.0
-Tested up to: 6.1
-Stable tag: 1.1.3
+Tested up to: 6.2
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,11 @@ You can add Facebook App ID and Facebook Secret in "Facebook Events" Menu.
 
 
 == Changelog ==
+
+= 1.1.4 =
+* ADDED: Support and Docs link in plugin list page
+* IMPROVEMENTS: Gutenberg Block
+* IMPROVEMENTS: Support for WP 6.2
 
 = 1.1.3 =
 * ADDED: Localized Date lables.
