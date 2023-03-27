@@ -259,7 +259,9 @@ class XT_Facebook_Events_Admin {
 				'is_ssl' => is_ssl(),
 				'fields' => array(
 					'banners' => true,
-					'active_installs' => true,
+					'active_installs'   => true,
+					'short_description' => true,
+					'icons'			    => true,
 				),
 			) );
 
