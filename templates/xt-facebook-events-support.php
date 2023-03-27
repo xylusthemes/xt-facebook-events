@@ -1,5 +1,6 @@
 <?php
 // If this file is called directly, abort.
+// Icon Credit: Icon made by Freepik and Vectors Market from www.flaticon.com
 if ( ! defined( 'ABSPATH' ) ) exit;
 global $xtfe_events;
 $open_source_support_url = 'https://wordpress.org/support/plugin/xt-facebook-events/';
@@ -12,27 +13,59 @@ $twitter_url = 'https://twitter.com/XylusThemes/';
 <div class="xtfe_container">
     <div class="xtfe_row">
         <div class="wpea-column support_well">
-        	<h3><?php esc_attr_e( 'Getting Support', 'xt-facebook-events' ); ?></h3>
-            <p><?php _e( 'Thanks you for using Import Facebook Events, We are sincerely appreciate your support and we’re excited to see you using our plugins.','xt-facebook-events' ); ?> </p>
-            <p><?php _e( 'Our support team is always around to help you.','xt-facebook-events' ); ?></p>
-                
-            <p><strong><?php _e( 'Looking for free support?','xt-facebook-events' ); ?></strong></p>
-            <a class="button button-secondary" href="<?php echo $open_source_support_url; ?>" target="_blank" >
-                <?php _e( 'Open-source forum on WordPress.org','xt-facebook-events' ); ?>
-            </a>
-
-            <p><strong><?php _e( 'Looking for more immediate support?','xt-facebook-events' ); ?></strong></p>
-            <p><?php _e( 'We offer premium support on our website with the purchase of our premium plugins.','xt-facebook-events' ); ?>
-            </p>
-            
-            <a class="button button-primary" href="<?php echo $support_url; ?>" target="_blank" >
-                <?php _e( 'Contact us directly (Premium Support)','xt-facebook-events' ); ?>
-            </a>
-
-            <p><strong><?php _e( 'Enjoying Import Facebook Events or have feedback?','xt-facebook-events' ); ?></strong></p>
-            <a class="button button-secondary" href="<?php echo $review_url; ?>" target="_blank" ><?php _e( 'Leave us a review','xt-facebook-events' ); ?></a> 
-            <a class="button button-secondary" href="<?php echo $twitter_url; ?>" target="_blank" ><?php _e( 'Follow us on Twitter','xt-facebook-events' ); ?></a> 
-            <a class="button button-secondary" href="<?php echo $facebook_url; ?>" target="_blank" ><?php _e( 'Like us on Facebook','xt-facebook-events' ); ?></a>
+            <h3 class="setting_bar"><?php esc_attr_e( 'Getting Support', 'xt-facebook-events' ); ?></h3>
+            <div class="xtfe-support-features">
+				<div class="xtfe-support-features-card">
+					<div class="xtfe-support-features-img">
+						<img class="xtfe-support-features-icon" src="<?php echo XTFE_PLUGIN_URL.'assets/images/document.svg'; ?>" alt="<?php esc_attr_e( 'Looking for Something?', 'xt-facebook-events' ); ?>">
+					</div>
+					<div class="xtfe-support-features-text">
+						<h3 class="xtfe-support-features-title"><?php esc_attr_e( 'Looking for Something?', 'xt-facebook-events' ); ?></h3>
+						<p><?php esc_attr_e( 'We have documentation of how to Display Facebook Events.', 'xt-facebook-events' ); ?></p>
+						<a target="_blank" class="button button-primary" href="https://docs.xylusthemes.com/docs/facebookevents/"><?php esc_attr_e( 'Plugin Documentation', 'xt-facebook-events' ); ?></a>
+					</div>
+				</div>
+				<div class="xtfe-support-features-card">
+					<div class="xtfe-support-features-img">
+						<img class="xtfe-support-features-icon" src="<?php echo XTFE_PLUGIN_URL.'assets/images/call-center.svg'; ?>" alt="<?php esc_attr_e( 'Need Any Assistance?', 'xt-facebook-events' ); ?>">
+					</div>
+					<div class="xtfe-support-features-text">
+						<h3 class="xtfe-support-features-title"><?php esc_attr_e( 'Need Any Assistance?', 'xt-facebook-events' ); ?></h3>
+						<p><?php esc_attr_e( 'Our EXPERT Support Team is always ready to Help you out.', 'xt-facebook-events' ); ?></p>
+						<a target="_blank" class="button button-primary" href="https://xylusthemes.com/support/"><?php esc_attr_e( 'Contact Support', 'xt-facebook-events' ); ?></a>
+					</div>
+				</div>
+				<div class="xtfe-support-features-card">
+					<div class="xtfe-support-features-img">
+						<img class="xtfe-support-features-icon"  src="<?php echo XTFE_PLUGIN_URL.'assets/images/bug.svg'; ?>" alt="<?php esc_attr_e( 'Found Any Bugs?', 'xt-facebook-events' ); ?>" />
+					</div>
+					<div class="xtfe-support-features-text">
+						<h3 class="xtfe-support-features-title"><?php esc_attr_e( 'Found Any Bugs?', 'xt-facebook-events' ); ?></h3>
+						<p><?php esc_attr_e( 'Report any Bug that you Discovered, Get Instant Solutions.', 'xt-facebook-events' ); ?></p>
+						<a target="_blank" class="button button-primary" href="https://github.com/xylusthemes/xt-facebook-events"><?php esc_attr_e( 'Report to GitHub', 'xt-facebook-events' ); ?></a>
+					</div>
+				</div>
+				<div class="xtfe-support-features-card">
+					<div class="xtfe-support-features-img">
+						<img class="xtfe-support-features-icon" src="<?php echo XTFE_PLUGIN_URL.'assets/images/tools.svg'; ?>" alt="<?php esc_attr_e( 'Require Customization?', 'xt-facebook-events' ); ?>" />
+					</div>
+					<div class="xtfe-support-features-text">
+						<h3 class="xtfe-support-features-title"><?php esc_attr_e( 'Require Customization?', 'xt-facebook-events' ); ?></h3>
+						<p><?php esc_attr_e( 'We would Love to hear your Integration and Customization Ideas.', 'xt-facebook-events' ); ?></p>
+						<a target="_blank" class="button button-primary" href="https://xylusthemes.com/what-we-do/"><?php esc_attr_e( 'Connect Our Service', 'xt-facebook-events' ); ?></a>
+					</div>
+				</div>
+				<div class="xtfe-support-features-card">
+					<div class="xtfe-support-features-img">
+						<img class="xtfe-support-features-icon" src="<?php echo XTFE_PLUGIN_URL.'assets/images/like.svg'; ?>" alt="<?php esc_attr_e( 'Like The Plugin?', 'xt-facebook-events' ); ?>" />
+					</div>
+					<div class="xtfe-support-features-text">
+						<h3 class="xtfe-support-features-title"><?php esc_attr_e( 'Like The Plugin?', 'xt-facebook-events' ); ?></h3>
+						<p><?php esc_attr_e( 'Your Review is very important to us as it helps us to grow more.', 'xt-facebook-events' ); ?></p>
+						<a target="_blank" class="button button-primary" href="https://wordpress.org/support/plugin/xt-facebook-events/reviews/?rate=5#new-post"><?php esc_attr_e( 'Review Us on WP.org', 'xt-facebook-events' ); ?></a>
+					</div>
+				</div>
+			</div>
         </div>
 
         <?php 
