@@ -21,6 +21,8 @@ class XT_Facebook_Events_FB_Authorize {
 	public function __construct() {
 		add_action( 'admin_post_xtfe_facebook_authorize_action', array( $this, 'xtfe_facebook_authorize_user' ) );
 		add_action( 'admin_post_xtfe_facebook_authorize_callback', array( $this, 'xtfe_facebook_authorize_user_callback' ) );
+		add_action( 'admin_post_xtfe_deauthorize_action', array( $this, 'xtfe_deauthorize_user' ) );
+		add_action( 'admin_post_xtfe_fb_login_action', array( $this, 'xtfe_fb_login_action' ) );
 	}
 
 	/*
@@ -33,7 +35,7 @@ class XT_Facebook_Events_FB_Authorize {
 			$app_id = isset( $xtfe_options['facebook_app_id'] ) ? $xtfe_options['facebook_app_id'] : '';
 			$app_secret = isset( $xtfe_options['facebook_app_secret'] ) ? $xtfe_options['facebook_app_secret'] : '';
 			$redirect_url = admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' );
-			$api_version = 'v7.0';
+			$api_version = 'v15.0';
 			$param_url = urlencode($redirect_url);
 			$xtfe_session_state = md5(uniqid(rand(), TRUE));
 			setcookie("xtfe_session_state", $xtfe_session_state, "0", "/");
@@ -64,7 +66,7 @@ class XT_Facebook_Events_FB_Authorize {
 			$app_id = isset( $xtfe_options['facebook_app_id'] ) ? $xtfe_options['facebook_app_id'] : '';
 			$app_secret = isset( $xtfe_options['facebook_app_secret'] ) ? $xtfe_options['facebook_app_secret'] : '';
 			$redirect_url = admin_url('admin-post.php?action=xtfe_facebook_authorize_callback');
-			$api_version = 'v7.0';
+			$api_version = 'v15.0';
 			$param_url = urlencode($redirect_url);
 
 			if( $app_id != '' && $app_secret != '' ){
@@ -128,6 +130,89 @@ class XT_Facebook_Events_FB_Authorize {
 			}
 		} else {
 			die( __('You have not access to doing this operations.', 'xt-facebook-events' ) );
+		}
+	}
+
+	/**
+	 * Authorize facebook user using https://connect.xylusthemes.com/.
+	 *
+	 * @return void
+	 */
+	public function xtfe_fb_login_action() {
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( ! empty( $_GET ) && isset( $_GET['xtfe_fb_login_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['xtfe_fb_login_nonce'] ) ), 'xtfe_fb_login_action' ) ) { // input var okay.
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$access_token = isset( $_GET['access_token'] ) ? sanitize_text_field( wp_unslash( $_GET['access_token'] ) ) : '';
+
+			if ( ! empty( $access_token ) ) {
+				$xtfe_user_token_options = array();
+				$xtfe_fb_authorize_user  = array();
+
+				$xtfe_user_token_options['authorize_status'] = 1;
+				$xtfe_user_token_options['direct_auth']      = 1;
+				$xtfe_user_token_options['access_token']     = sanitize_text_field( $access_token );
+				$token_transient_key = 'xtfe_facebook_access_token';
+				delete_transient( $token_transient_key );
+				update_option( 'xtfe_user_token_options', $xtfe_user_token_options );
+
+				$profile_call = wp_remote_get( 'https://graph.facebook.com/' . $this->api_version . "/me?fields=id,name,picture&access_token=$access_token" );
+				$profile      = wp_remote_retrieve_body( $profile_call );
+				$profile      = json_decode( $profile );
+				if ( isset( $profile->id ) && isset( $profile->name ) ) {
+					$xtfe_fb_authorize_user['ID']   = sanitize_text_field( $profile->id );
+					$xtfe_fb_authorize_user['name'] = sanitize_text_field( $profile->name );
+					if ( isset( $profile->picture->data->url ) ) {
+						$xtfe_fb_authorize_user['avtar'] = esc_url_raw( $profile->picture->data->url );
+					}
+				}
+				update_option( 'xtfe_fb_authorize_user', $xtfe_fb_authorize_user );
+
+				$args          = array( 'timeout' => 15 );
+				$accounts_call = wp_remote_get( 'https://graph.facebook.com/' . $this->api_version . "/me/accounts?access_token=$access_token&limit=100&offset=0", $args );
+				$accounts      = wp_remote_retrieve_body( $accounts_call );
+				$accounts      = json_decode( $accounts );
+				$accounts      = isset( $accounts->data ) ? $accounts->data : array();
+				if ( ! empty( $accounts ) ) {
+					$pages = array();
+					foreach ( $accounts as $account ) {
+						$pages[ $account->id ] = array(
+							'id'           => $account->id,
+							'name'         => $account->name,
+							'access_token' => $account->access_token,
+						);
+					}
+					update_option( 'xtfe_fb_user_pages', $pages );
+				}
+
+				$redirect_url = admin_url( 'admin.php?page=wpfb_events&authorize=1' );
+				wp_safe_redirect( $redirect_url );
+				exit();
+			} else {
+				$redirect_url = admin_url( 'admin.php?page=wpfb_events&authorize=0' );
+				wp_safe_redirect( $redirect_url );
+				exit();
+			}
+		} else {
+			die( esc_attr__( 'You have not access to doing this operations.', 'xt-facebook-events' ) );
+		}
+	}
+
+	/**
+	 * Authorize facebook user to get access token.
+	 *
+	 * @return void
+	 */
+	public function xtfe_deauthorize_user() {
+		if ( ! empty( $_GET ) && isset( $_GET['xtfe_deauthorize_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['xtfe_deauthorize_nonce'] ) ), 'xtfe_deauthorize_action' ) ) { // input var okay.
+			delete_transient( 'xtfe_facebook_access_token' );
+			delete_option( 'xtfe_user_token_options' );
+			delete_option( 'xtfe_fb_authorize_user' );
+			delete_option( 'xtfe_fb_user_pages' );
+
+			$redirect_url = admin_url( 'admin.php?page=wpfb_events&deauthorize=1' );
+			wp_safe_redirect( $redirect_url );
+		} else {
+			die( esc_attr__( 'You have not access to doing this operations.', 'xt-facebook-events' ) );
 		}
 	}
 }

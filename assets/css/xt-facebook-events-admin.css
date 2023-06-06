@@ -450,3 +450,22 @@ table.xtfe_form_table tr td:nth-child(1) {
       display: block
   }
 } 
+
+.xtfe_connection_wrapper .image_wrap img {
+  border-radius: 50%;
+  float: left;
+  margin-right: 15px;
+  max-width: 50px;
+}
+
+.xtfe_connection_wrapper .name_wrap {
+padding: 7px;
+}
+
+.xtfe_connection_wrapper .name_wrap a{
+color: #a94442;
+}
+
+.xtfe_connection_wrapper .name_wrap a:hover{
+color: #f00;
+}
