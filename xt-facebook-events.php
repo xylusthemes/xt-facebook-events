@@ -194,6 +194,7 @@ class XT_Facebook_Events{
 		$css_dir = XTFE_PLUGIN_URL . 'assets/css/';
 		wp_enqueue_style('font-awesome', $css_dir . 'font-awesome.min.css', false, "" );
 	 	wp_enqueue_style('xt-facebook-events-front', $css_dir . 'xt-facebook-events.css', false, "" );
+		wp_enqueue_style('xt-facebook-events-front-grid2', $css_dir . 'grid_style2.css', false, "" );
 	}
 
 	/**
