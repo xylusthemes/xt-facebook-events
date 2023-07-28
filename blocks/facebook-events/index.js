@@ -4,6 +4,7 @@ const {
 	PanelBody,
 	RangeControl,
 	ToggleControl,
+	SelectControl,
 	TextControl,
 } = wp.components;
 var InspectorControls = wp.blockEditor.InspectorControls;
@@ -39,10 +40,14 @@ registerBlockType( 'xtfe-block/facebook-events', {
 		new_window: {
 			type: 'boolean',
      		default: false
-		}
+		},
+		layout: {
+			type: 'string',
+			default: '',
+		},
 	},
     edit: ( { attributes, setAttributes } ) => {
-        const { col, max_events, page_id, new_window,  } = attributes;
+        const { col, max_events, page_id, new_window, layout,  } = attributes;
 		const { serverSideRender: ServerSideRender } = wp;
 
         return (
@@ -60,6 +65,15 @@ registerBlockType( 'xtfe-block/facebook-events', {
 							onChange={ ( value ) => setAttributes( { col: value } ) }
 							min={ 1 }
 							max={ 4 }
+						/>
+						<SelectControl
+							label="Event Grid View Layout"
+							value={ layout }
+							options={ [
+								{ label: 'Default', value: '' },
+								{ label: 'Style 2', value: 'style2' },
+							] }
+							onChange={ ( value ) => setAttributes( { layout: value } ) }
 						/>
 						<RangeControl
 							label={ __( 'Max. Events' ) }

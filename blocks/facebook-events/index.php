@@ -37,6 +37,12 @@ function xtfe_register_gutenberg_block() {
 			array(),
 			XTFE_VERSION
 		);
+		wp_register_style(
+			'xtfe-facebook-events-block-style2',
+			$css_dir . 'grid_style2.css',
+			array(),
+			XTFE_VERSION
+		);
 
 		// Register our block.
 		register_block_type( 'xtfe-block/facebook-events', array(
@@ -59,10 +65,15 @@ function xtfe_register_gutenberg_block() {
 				'type' => array(
 					'type'    => 'string',
 					'default' => 'page'
-				)
+				),
+				'layout'        => array(
+					'type'    => 'string',
+					'default' => '',
+				),
 			),
 			'editor_script'   => 'xtfe-facebook-events-block', // The script name we gave in the wp_register_script() call.
 			'editor_style'    => 'xtfe-facebook-events-block-style', // The script name we gave in the wp_register_style() call.
+			'style'           => 'xtfe-facebook-events-block-style2', 
 			'render_callback' => array( $xtfe_events->facebook, 'render_facebook_events' ),
 		) );
 	}
