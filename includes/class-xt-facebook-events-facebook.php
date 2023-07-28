@@ -85,7 +85,7 @@ class XT_Facebook_Events_Facebook {
 		}
 
 		ob_start();
-		if( $this->fb_access_token == '' || $this->fb_app_id == ''){
+		if( $this->fb_access_token == '' ){
 			_e( 'Please insert Facebook app ID and app Secret. Or Connect the Facebook app with a click to "Log in With Facebook".', 'xt-facebook-events');
 			return ob_get_clean();
 		}
