@@ -42,9 +42,11 @@ class XT_Facebook_Events_Facebook {
 		global $xtfe_events;
 		
 		$options = xtfe_get_options();
+		$xtfe_user_token_options = get_option( 'xtfe_user_token_options', array() );
 		$this->fb_app_id = isset( $options['facebook_app_id'] ) ? $options['facebook_app_id'] : '';
 		$this->fb_app_secret = isset( $options['facebook_app_secret'] ) ? $options['facebook_app_secret'] : '';
-		$this->fb_graph_url = 'https://graph.facebook.com/v7.0/';
+		$this->fb_graph_url = 'https://graph.facebook.com/v15.0/';
+		$this->fb_access_token = isset( $xtfe_user_token_options['access_token'] ) ? $xtfe_user_token_options['access_token'] : '';
 		add_shortcode( 'wpfb_events', array( $this, 'render_facebook_events' ) );
 		add_action( 'admin_post_xtfe_clear_cache', array( $this, 'xtfe_clear_events_cache' ) );
 	}
@@ -82,8 +84,8 @@ class XT_Facebook_Events_Facebook {
 		}
 
 		ob_start();
-		if( $this->fb_app_id == '' || $this->fb_app_secret == '' ){
-			_e( 'Please insert Facebook app ID and app Secret.', 'xt-facebook-events');
+		if( $this->fb_access_token == '' ){
+			_e( 'Please insert Facebook app ID and app Secret. Or Connect the Facebook app with a click to "Log in With Facebook".', 'xt-facebook-events');
 			return ob_get_clean();
 		}
 		if( !isset( $atts['page_id'] ) || $atts['page_id'] == '' ){
@@ -264,6 +266,19 @@ class XT_Facebook_Events_Facebook {
 
 		if( $this->fb_access_token != '' ){
 			return $this->fb_access_token;
+		}
+
+		$xtfe_user_token_options = get_option( 'xtfe_user_token_options', array() );
+		$is_direct_auth         = isset( $xtfe_user_token_options['direct_auth'] ) ? ( 1 === $xtfe_user_token_options['direct_auth'] ) : false;
+
+		// Skip debug token check if direct auth is enabled.
+		if ( $is_direct_auth ) {
+			$access_token     = isset( $xtfe_user_token_options['access_token'] ) ? $xtfe_user_token_options['access_token'] : '';
+			$is_authenticated = isset( $xtfe_user_token_options['authorize_status'] ) ? ( 1 === $xtfe_user_token_options['authorize_status'] ) : false;
+			if ( ! empty( $access_token ) && $is_authenticated ) {
+				$this->fb_access_token = apply_filters( 'xtfe_facebook_access_token', $access_token );
+				return $this->fb_access_token;
+			}
 		}
 
 		$args = array(
