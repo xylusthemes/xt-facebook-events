@@ -8,7 +8,7 @@
     "build": "wp-scripts build",
     "lint:js": "wp-scripts lint-js blocks/"
   },
-  "dependencies": {
-    "@wordpress/scripts": "^26.0.0"
+  "devDependencies": {
+    "@wordpress/scripts": "^26.9.0"
   }
 }
