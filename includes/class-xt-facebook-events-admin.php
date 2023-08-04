@@ -117,11 +117,11 @@ class XT_Facebook_Events_Admin {
 		                    <a href="<?php echo esc_url( add_query_arg( 'tab', 'settings', $this->adminpage_url ) ); ?>" class="nav-tab <?php if ( $tab == 'settings' ) { echo 'nav-tab-active'; } ?>">
 		                        <?php esc_html_e( 'Settings', 'xt-facebook-events' ); ?>
 		                    </a>
+							<a href="<?php echo esc_url( add_query_arg( 'tab', 'shortandwid', $this->adminpage_url ) ); ?>" class="nav-tab <?php if ( $tab == 'shortandwid' ) { echo 'nav-tab-active'; } ?>" >
+								<?php esc_html_e( 'Shortcodes & Widgets', 'xt-facebook-events' ); ?>
+							</a>
 		                    <a href="<?php echo esc_url( add_query_arg( 'tab', 'support', $this->adminpage_url ) ); ?>" class="nav-tab <?php if ( $tab == 'support' ) { echo 'nav-tab-active'; } ?>">
 		                        <?php esc_html_e( 'Support & Help', 'xt-facebook-events' ); ?>
-		                    </a>
-							<a href="<?php echo esc_url( add_query_arg( 'tab', 'shortandwid', $this->adminpage_url ) ); ?>" class="nav-tab <?php if ( $tab == 'shortandwid' ) { echo 'nav-tab-active'; } ?>" >
-		                        <?php esc_html_e( 'Shortcodes & Widgets', 'xt-facebook-events' ); ?>
 		                    </a>
 		                </h1>
 
