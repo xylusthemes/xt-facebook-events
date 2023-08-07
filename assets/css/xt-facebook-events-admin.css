@@ -469,3 +469,20 @@ color: #a94442;
 .xtfe_connection_wrapper .name_wrap a:hover{
 color: #f00;
 }
+
+.xtfe_container .xtfe_row .toplevel_page_wpfb_events #id{
+  width : 10%;
+}
+.xtfe_container .xtfe_row .toplevel_page_wpfb_events #shortcode{
+  width : 50%;
+}
+.xtfe_widget_link{
+  text-decoration: none;
+}
+.xtfe_setting_bar{
+  padding: 20px 0 20px 15px;
+  background-color: #e0e0e0;
+}
+.xtfe_mt_30{
+  margin-top: 30px;
+}
