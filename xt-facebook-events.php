@@ -30,6 +30,7 @@ class XT_Facebook_Events{
 	 * XT_Facebook_Events The one true XT_Facebook_Events.
 	 */
 	private static $instance;
+	public $common, $facebook, $admin, $fb_authorize;
 
     /**
      * Main Facebook Events Instance.
