@@ -45,7 +45,7 @@ class XT_Facebook_Events_Facebook {
 		$xtfe_user_token_options = get_option( 'xtfe_user_token_options', array() );
 		$this->fb_app_id = isset( $options['facebook_app_id'] ) ? $options['facebook_app_id'] : '';
 		$this->fb_app_secret = isset( $options['facebook_app_secret'] ) ? $options['facebook_app_secret'] : '';
-		$this->fb_graph_url = 'https://graph.facebook.com/v15.0/';
+		$this->fb_graph_url = 'https://graph.facebook.com/v19.0/';
 		$this->fb_access_token = isset( $xtfe_user_token_options['access_token'] ) ? $xtfe_user_token_options['access_token'] : '';
 		add_shortcode( 'wpfb_events', array( $this, 'render_facebook_events' ) );
 		add_action( 'admin_post_xtfe_clear_cache', array( $this, 'xtfe_clear_events_cache' ) );
@@ -451,12 +451,12 @@ class XT_Facebook_Events_Facebook {
 		}
 
 		$page_token = false;
-		$user_fb_pages = get_option('xtfe_fb_user_pages', array() );
+		$user_fb_pages = get_option('xtfe_user_token_options', array() );
 		if( !empty( $user_fb_pages ) ){
 			$page_data = $this->get_organizer_name_by_id( $facebook_page_id, true );
-			if( isset( $page_data->id ) && isset( $user_fb_pages[$page_data->id] ) ){
-				if( isset( $user_fb_pages[$page_data->id]['access_token'] ) && $user_fb_pages[$page_data->id]['access_token'] !== ''){
-					$page_token = $user_fb_pages[$page_data->id]['access_token'];
+			if( isset( $page_data->id ) && isset( $user_fb_pages['access_token'] ) ){
+				if( isset( $user_fb_pages['access_token'] ) && $user_fb_pages['access_token'] !== ''){
+					$page_token = $user_fb_pages['access_token'];
 				}
 			}
 		}
