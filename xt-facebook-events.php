@@ -3,7 +3,7 @@
  * Plugin Name:       XT Event Widget for Social Events
  * Plugin URI:        http://xylusthemes.com/plugins/xt-facebook-events/
  * Description:       Display Facebook Events into your WordPress site anywhere.
- * Version:           1.1.6
+ * Version:           1.1.7
  * Author:            Xylus Themes
  * Author URI:        http://xylusthemes.com
  * License:           GPL-2.0+
@@ -80,14 +80,14 @@ class XT_Facebook_Events{
 	 *
 	 * @since 1.0.0
 	 */
-	public function __clone() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.6' ); }
+	public function __clone() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
 
 	/**
 	 * A dummy magic method to prevent XT_Facebook_Events from being unserialized.
 	 *
 	 * @since 1.0.0
 	 */
-	public function __wakeup() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.6' ); }
+	public function __wakeup() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
 
 
 	/**
@@ -101,7 +101,7 @@ class XT_Facebook_Events{
 
 		// Plugin version.
 		if( ! defined( 'XTFE_VERSION' ) ){
-			define( 'XTFE_VERSION', '1.1.6' );
+			define( 'XTFE_VERSION', '1.1.7' );
 		}
 
 		// Plugin folder Path.
