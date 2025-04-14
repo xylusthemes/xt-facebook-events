@@ -43,10 +43,10 @@ class XT_Facebook_Shortcode_List_Table extends WP_List_Table {
      */
     public function get_columns() {
         $columns = array(
-            'id'            => __( 'ID', 'xt-facebook-events' ),
-            'how_to_use'    => __( 'Title', 'xt-facebook-events' ),
-            'shortcode'     => __( 'Shortcode', 'xt-facebook-events' ),
-			'action'    	=> __( 'Action', 'xt-facebook-events' ),
+            'id'            => esc_attr__( 'ID', 'xt-facebook-events' ),
+            'how_to_use'    => esc_attr__( 'Title', 'xt-facebook-events' ),
+            'shortcode'     => esc_attr__( 'Shortcode', 'xt-facebook-events' ),
+			'action'    	=> esc_attr__( 'Action', 'xt-facebook-events' ),
         );
 
         return $columns;
@@ -106,7 +106,7 @@ class XT_Facebook_Shortcode_List_Table extends WP_List_Table {
                 return $item[ $column_name ];
 
             default:
-                return print_r( $item, true ) ;
+                return 'No data available for this column';
         }
     }
 }

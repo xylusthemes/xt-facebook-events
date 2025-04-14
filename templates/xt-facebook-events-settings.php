@@ -19,7 +19,7 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
         if( !isset( $_SERVER['HTTPS'] ) && false === stripos( $site_url, 'https' ) ) {
             ?>
             <div class="widefat xtfe_settings_error">
-                <?php printf( '%1$s <b><a href="https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/" target="_blank">%2$s</a></b> %3$s', __( "It looks like you don't have HTTPS enabled on your website. Please enable it. HTTPS is required for authorize your facebook account.",'xt-facebook-events' ), __( 'Click here','xt-facebook-events' ), __( 'for more information.','xt-facebook-events' ) ); ?>
+                <?php printf( '%1$s <b><a href="https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/" target="_blank">%2$s</a></b> %3$s', esc_attr__( "It looks like you don't have HTTPS enabled on your website. Please enable it. HTTPS is required for authorize your facebook account.",'xt-facebook-events' ), esc_attr__( 'Click here','xt-facebook-events' ), esc_attr__( 'for more information.','xt-facebook-events' ) ); ?>
             </div>
         <?php
         } ?>
@@ -40,10 +40,11 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
 								?>
 								<div class="xtfe_connection_wrapper">
 									<div class="image_wrap">
+                                        <?php // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage  ?>
 										<img src="<?php echo esc_url( $avtar ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
 									</div>
 									<div class="name_wrap">
-										<?php printf( __( 'Connected as: %s', 'xt-facebook-events' ), '<strong>' . esc_attr( $name ) . '</strong>' ); ?>
+										<?php printf( esc_attr__( 'Connected as: %s', 'xt-facebook-events' ), '<strong>' . esc_attr( $name ) . '</strong>' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>
 										<br/>
 										<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'action', 'xtfe_deauthorize_action', admin_url( 'admin-post.php' ) ), 'xtfe_deauthorize_action', 'xtfe_deauthorize_nonce' ) ); ?>">
 											<?php esc_html_e( 'Remove Connection', 'xt-facebook-events' ); ?>
@@ -84,16 +85,16 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
 		<?php } ?>
         <?php if ( ! $is_direct_auth ) { ?>
             <div class="widefat xtfe_settings_notice">
-                <?php printf( '<b>%1$s</b> %2$s <b><a href="https://developers.facebook.com/apps" target="_blank">%3$s</a></b> %4$s',  __( 'Note : ','xt-facebook-events' ), __( 'You have to create a Facebook application before filling the following details.','xt-facebook-events' ), __( 'Click here','xt-facebook-events' ),  __( 'to create new Facebook application.','xt-facebook-events' ) ); ?>
+                <?php printf( '<b>%1$s</b> %2$s <b><a href="https://developers.facebook.com/apps" target="_blank">%3$s</a></b> %4$s',  esc_attr__( 'Note : ','xt-facebook-events' ), esc_attr__( 'You have to create a Facebook application before filling the following details.','xt-facebook-events' ), esc_attr__( 'Click here','xt-facebook-events' ),  esc_attr__( 'to create new Facebook application.','xt-facebook-events' ) ); ?>
                 <br/>
-                <?php _e( 'For detailed step by step instructions ', 'xt-facebook-events' ); ?>
-                <strong><a href="http://docs.xylusthemes.com/docs/xt-facebook-events/creating-facebook-application/" target="_blank"><?php _e( 'Click here', 'xt-facebook-events' ); ?></a></strong>.
+                <?php esc_attr_e( 'For detailed step by step instructions ', 'xt-facebook-events' ); ?>
+                <strong><a href="http://docs.xylusthemes.com/docs/xt-facebook-events/creating-facebook-application/" target="_blank"><?php esc_attr_e( 'Click here', 'xt-facebook-events' ); ?></a></strong>.
                 <br/>
-                <?php _e( '<strong>Set the site url as : </strong>', 'xt-facebook-events' ); ?>
-                <span style="color: green;"><?php echo get_site_url(); ?></span>
+                <strong><?php echo esc_attr( 'Set the site url as : ', 'xt-facebook-events' ); ?></strong>
+                <span style="color: green;"><?php echo esc_url( get_site_url() ); ?></span>
                 <br/>
-                <?php _e( '<strong>Set Valid OAuth redirect URI : </strong>', 'xt-facebook-events' ); ?>
-                <span style="color: green;"><?php echo admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' ); ?></span>
+                <strong><?php echo esc_attr( 'Set Valid OAuth redirect URI : ', 'xt-facebook-events' ); ?></strong>
+                <span style="color: green;"><?php echo esc_url( admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' ) ); ?></span>
             </div>
         <?php } ?>
 		<?php
@@ -105,31 +106,31 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
                     <tbody>
                         <tr>
                             <th scope="row">
-                                <?php _e( 'Facebook Authorization','xt-facebook-events' ); ?> :
+                                <?php esc_attr_e( 'Facebook Authorization','xt-facebook-events' ); ?> :
                             </th>
                             <td>
-                                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
                                     <input type="hidden" name="action" value="xtfe_facebook_authorize_action"/>
                                     <?php wp_nonce_field('xtfe_facebook_authorize_action', 'xtfe_facebook_authorize_nonce'); ?>
                                     <?php
-                                    $button_value = __('Authorize', 'xt-facebook-events');
+                                    $button_value = esc_attr__('Authorize', 'xt-facebook-events');
                                     if( isset( $xtfe_user_token_options['authorize_status'] ) && $xtfe_user_token_options['authorize_status'] == 1 && isset(  $xtfe_user_token_options['access_token'] ) &&  $xtfe_user_token_options['access_token'] != '' ){
-                                        $button_value = __('Reauthorize', 'xt-facebook-events');
+                                        $button_value = esc_attr__('Reauthorize', 'xt-facebook-events');
                                     }
                                     ?>
-                                    <input type="submit" class="button" name="xtfe_facebook_authorize" value="<?php echo $button_value; ?>" />
+                                    <input type="submit" class="button" name="xtfe_facebook_authorize" value="<?php echo esc_attr( $button_value ); ?>" />
                                     <?php
                                     if( !empty( $xtfe_fb_authorize_user ) && isset( $xtfe_fb_authorize_user['name'] ) && $xtfe_events->common->has_authorized_user_token() ){
                                         $fbauthname = sanitize_text_field( $xtfe_fb_authorize_user['name'] );
                                         if( $fbauthname != '' ){
-                                           printf( __(' ( Authorized as: %s )', 'xt-facebook-events'), '<b>'.$fbauthname.'</b>' );
+                                           printf( esc_attr__(' ( Authorized as: %s )', 'xt-facebook-events'), '<b>'.esc_attr( $fbauthname  ).'</b>' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
                                         }
                                     }
                                     ?>
                                 </form>
 
                                 <span class="xtfe_small">
-                                    <?php _e( 'Please authorize your facebook account for import facebook events. Please authorize with account which you have used for create an facebook app.','xt-facebook-events' ); ?>
+                                    <?php esc_attr_e( 'Please authorize your facebook account for import facebook events. Please authorize with account which you have used for create an facebook app.','xt-facebook-events' ); ?>
                                 </span>
                             </td>
                         </tr>
@@ -146,15 +147,15 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
                     <?php if ( ! $is_direct_auth ) { ?>
                     <tr>
                         <th scope="row">
-                            <?php _e( 'Facebook App ID','xt-facebook-events' ); ?> : 
+                            <?php esc_attr_e( 'Facebook App ID','xt-facebook-events' ); ?> : 
                         </th>
                         <td>
-                            <input class="facebook_app_id" name="xtfe[facebook_app_id]" type="text" value="<?php echo $facebook_app_id; ?>" />
+                            <input class="facebook_app_id" name="xtfe[facebook_app_id]" type="text" value="<?php echo esc_attr( $facebook_app_id ); ?>" />
                             <span class="xtfe_small">
                                 <?php
                                 printf( '%s <a href="https://developers.facebook.com/apps" target="_blank">%s</a>', 
-                                    __('You can veiw or create your Facebook Apps', 'xt-facebook-events'),
-                                    __('from here', 'xt-facebook-events')
+                                    esc_attr__('You can veiw or create your Facebook Apps', 'xt-facebook-events'),
+                                    esc_attr__('from here', 'xt-facebook-events')
                                  );
                                 ?>
                             </span>
@@ -163,15 +164,15 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
 
                     <tr>
                         <th scope="row">
-                            <?php _e( 'Facebook App secret','xt-facebook-events' ); ?> : 
+                            <?php esc_attr_e( 'Facebook App secret','xt-facebook-events' ); ?> : 
                         </th>
                         <td>
-                            <input class="facebook_app_secret" name="xtfe[facebook_app_secret]" type="text" value="<?php echo $facebook_app_secret; ?>" />
+                            <input class="facebook_app_secret" name="xtfe[facebook_app_secret]" type="text" value="<?php echo esc_attr( $facebook_app_secret ); ?>" />
                             <span class="xtfe_small">
                                 <?php
                                 printf( '%s <a href="https://developers.facebook.com/apps" target="_blank">%s</a>', 
-                                    __('You can veiw or create your Facebook Apps', 'xt-facebook-events'),
-                                    __('from here', 'xt-facebook-events')
+                                    esc_attr__('You can veiw or create your Facebook Apps', 'xt-facebook-events'),
+                                    esc_attr__('from here', 'xt-facebook-events')
                                  );
                                 ?>
                             </span>
@@ -207,19 +208,19 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
             <tbody>
                 <tr>
                     <th scope="row">
-                        <?php _e( 'Clear Facebook events Cache','xt-facebook-events' ); ?>: 
+                        <?php esc_attr_e( 'Clear Facebook events Cache','xt-facebook-events' ); ?>: 
                     </th>
                     <td>
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                        <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
                             <input type="hidden" name="action" value="xtfe_clear_cache"/>
                             <?php wp_nonce_field('xtfe_clear_cache_action', 'xtfe_clear_cache_nonce'); ?>
                             <?php
-                            $button_value = __('Clear Cache', 'xt-facebook-events');
+                            $button_value = esc_attr__('Clear Cache', 'xt-facebook-events');
                             ?>
-                            <input type="submit" class="button" name="xtfe_clear_cache" value="<?php echo $button_value; ?>" />
+                            <input type="submit" class="button" name="xtfe_clear_cache" value="<?php echo esc_attr( $button_value ); ?>" />
                         </form>
                         <span class="xtfe_small">
-                            <?php _e('Please clear cache if latest events from facebook are not reflects on website.', 'xt-facebook-events'); ?>
+                            <?php esc_attr_e('Please clear cache if latest events from facebook are not reflects on website.', 'xt-facebook-events'); ?>
                         </span>
                     </td>
                 </tr>

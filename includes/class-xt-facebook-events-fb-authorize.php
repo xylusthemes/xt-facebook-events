@@ -29,15 +29,14 @@ class XT_Facebook_Events_FB_Authorize {
 	* Authorize facebook user to get access token
 	*/
 	function xtfe_facebook_authorize_user() {
-		if ( ! empty($_POST) && wp_verify_nonce($_POST['xtfe_facebook_authorize_nonce'], 'xtfe_facebook_authorize_action' ) ) {
-
+		if ( ! empty( $_POST ) && isset( $_POST['xtfe_facebook_authorize_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['xtfe_facebook_authorize_nonce'] ) ), 'xtfe_facebook_authorize_action' ) ) { // input var okay.
 			$xtfe_options = get_option( XTFE_OPTIONS , array() );
 			$app_id = isset( $xtfe_options['facebook_app_id'] ) ? $xtfe_options['facebook_app_id'] : '';
 			$app_secret = isset( $xtfe_options['facebook_app_secret'] ) ? $xtfe_options['facebook_app_secret'] : '';
 			$redirect_url = admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' );
 			$api_version = 'v19.0';
 			$param_url = urlencode($redirect_url);
-			$xtfe_session_state = md5(uniqid(rand(), TRUE));
+			$xtfe_session_state = md5( uniqid( wp_rand(), true ) );
 			setcookie("xtfe_session_state", $xtfe_session_state, "0", "/");
 
 			if( $app_id != '' && $app_secret != '' ){
@@ -46,11 +45,11 @@ class XT_Facebook_Events_FB_Authorize {
 				header("Location: " . $dialog_url);
 
 			}else{
-				die( __( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' ) );
+				die( esc_attr__( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' ) );
 			}
 
 		} else {
-			die( __('You have not access to doing this operations.', 'xt-facebook-events' ) );
+			die( esc_attr__('You have not access to doing this operations.', 'xt-facebook-events' ) );
 		}
 	}
 
@@ -59,9 +58,11 @@ class XT_Facebook_Events_FB_Authorize {
 	*/
 	function xtfe_facebook_authorize_user_callback() {
 		global $xtfe_success_msg;
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_COOKIE['xtfe_session_state'] ) && isset($_REQUEST['state']) && ( $_COOKIE['xtfe_session_state'] === $_REQUEST['state'] ) ) {
 
-			$code = sanitize_text_field($_GET['code']);
+			
+			$code = isset( $_GET['code'] ) ? esc_url_raw( wp_unslash( $_GET['code'] ) ) : '';// phpcs:ignore WordPress.Security.NonceVerification
 			$xtfe_options = get_option( XTFE_OPTIONS , array() );
 			$app_id = isset( $xtfe_options['facebook_app_id'] ) ? $xtfe_options['facebook_app_id'] : '';
 			$app_secret = isset( $xtfe_options['facebook_app_secret'] ) ? $xtfe_options['facebook_app_secret'] : '';
@@ -126,10 +127,10 @@ class XT_Facebook_Events_FB_Authorize {
 				$redirect_url = admin_url('admin.php?page=wpfb_events&xtauthorize=2');
 				wp_redirect($redirect_url);
 				exit();
-				die( __( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' ) );
+				die( esc_attr__( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' ) );
 			}
 		} else {
-			die( __('You have not access to doing this operations.', 'xt-facebook-events' ) );
+			die( esc_attr__('You have not access to doing this operations.', 'xt-facebook-events' ) );
 		}
 	}
 

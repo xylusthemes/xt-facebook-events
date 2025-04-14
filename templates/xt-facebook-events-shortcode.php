@@ -26,7 +26,7 @@ $shortcode_table->prepare_items();
                     esc_url( 'https://docs.xylusthemes.com/docs/facebookevents/display-using-widget/' ),
                     esc_html__( 'Here', 'xt-facebook-events' )
                 );
-                echo $xtfe_widget_section;
+                echo wp_kses_post( $xtfe_widget_section );
             ?>
         </div>
     </div>

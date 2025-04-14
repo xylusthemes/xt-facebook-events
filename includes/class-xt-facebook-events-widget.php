@@ -45,10 +45,10 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_XT_Facebook_Events_Widget',
-			'description' => __( 'Display Facebook Events.' ),
+			'description' => esc_attr__( 'Display Facebook Events.', 'xt-facebook-events' ),
 		);
 		$control_ops = array( 'width' => '', 'height' => '' );
-		parent::__construct( 'xtfacebook_widget', __( 'Facebook Events', 'xt-facebook-events' ), $widget_ops, $control_ops );
+		parent::__construct( 'xtfacebook_widget', esc_attr__( 'Facebook Events', 'xt-facebook-events' ), $widget_ops, $control_ops );
 
 		$this->default_options = array(
 				'title' 	 	=> '',
@@ -63,8 +63,8 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 			);
 
 		$this->display_styles = array(
-			'style1' => __( 'Style 1', 'xt-facebook-events' ),
-			'style2' => __( 'Style 2 (coming soon)','xt-facebook-events' ),
+			'style1' => esc_attr__( 'Style 1', 'xt-facebook-events' ),
+			'style2' => esc_attr__( 'Style 2 (coming soon)','xt-facebook-events' ),
 			);
 	}
 
@@ -80,17 +80,17 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
-		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __('Facebook Events', 'xt-facebook-events') : $instance['title'], $instance, $this->id_base );
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? esc_attr__('Facebook Events', 'xt-facebook-events') : $instance['title'], $instance, $this->id_base );
 		
-		echo $args['before_widget'];
+		echo wp_kses_post( $args['before_widget'] );
 		if ( ! empty( $title ) ) {
-			echo $args['before_title'] . $title . $args['after_title'];
+			echo wp_kses_post( $args['before_title'] ) . esc_html( $title ) . wp_kses_post( $args['after_title'] );
 		} ?>
 			<div class="facebookevents_widget">
 				<?php $this->xt_render_facebook_events( $args, $instance ); ?>
 			</div>
 		<?php
-		echo $args['after_widget'];
+		echo wp_kses_post( $args['after_widget'] );
 	}
 
 	/**
@@ -133,15 +133,15 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 		$instance = wp_parse_args( (array) $instance, $this->default_options );
 		extract( $instance );
 		$title = sanitize_text_field( $instance['title'] );
-		$this->render_input_field( 'title', $title, __( 'Title:', 'xt-facebook-events' ), 'text');
-		$this->render_input_field( 'page_id', $page_id, __( 'Facebook Page ID:', 'xt-facebook-events' ), 'text' );
-		$this->render_input_field( 'max_events', $max_events, __( 'Max. Events:', 'xt-facebook-events' ), 'number' );
-		$this->render_input_field( 'display_style', $display_style, __( 'Select Event listing style', 'xt-facebook-events' ), 'select', '', $this->display_styles );
-		$this->render_input_field( 'new_window', $new_window, __( 'Open Events in new window', 'xt-facebook-events' ), 'checkbox' );
-		$this->render_input_field( 'display_event_image', $display_event_image, __( 'Display Event Image', 'xt-facebook-events' ), 'checkbox' );
-		$this->render_input_field( 'display_event_location', $display_event_location, __( 'Display Event Location', 'xt-facebook-events' ), 'checkbox' );
-		$this->render_input_field( 'display_event_enddate', $display_event_enddate, __( 'Display Event Enddate', 'xt-facebook-events' ), 'checkbox' );
-		$this->render_input_field( 'display_event_desc', $display_event_desc, __( 'Display Event Description', 'xt-facebook-events' ), 'checkbox' );
+		$this->render_input_field( 'title', $title, esc_attr__( 'Title:', 'xt-facebook-events' ), 'text');
+		$this->render_input_field( 'page_id', $page_id, esc_attr__( 'Facebook Page ID:', 'xt-facebook-events' ), 'text' );
+		$this->render_input_field( 'max_events', $max_events, esc_attr__( 'Max. Events:', 'xt-facebook-events' ), 'number' );
+		$this->render_input_field( 'display_style', $display_style, esc_attr__( 'Select Event listing style', 'xt-facebook-events' ), 'select', '', $this->display_styles );
+		$this->render_input_field( 'new_window', $new_window, esc_attr__( 'Open Events in new window', 'xt-facebook-events' ), 'checkbox' );
+		$this->render_input_field( 'display_event_image', $display_event_image, esc_attr__( 'Display Event Image', 'xt-facebook-events' ), 'checkbox' );
+		$this->render_input_field( 'display_event_location', $display_event_location, esc_attr__( 'Display Event Location', 'xt-facebook-events' ), 'checkbox' );
+		$this->render_input_field( 'display_event_enddate', $display_event_enddate, esc_attr__( 'Display Event Enddate', 'xt-facebook-events' ), 'checkbox' );
+		$this->render_input_field( 'display_event_desc', $display_event_desc, esc_attr__( 'Display Event Description', 'xt-facebook-events' ), 'checkbox' );
 		
 	}
 
@@ -160,8 +160,8 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 			case 'text':
 				?>
 				<p>
-					<label for="<?php echo $id; ?>"><?php echo $title; ?></label>
-					<input class="widefat" id="<?php echo $id; ?>" name="<?php echo $name; ?>" type="text" value="<?php echo esc_attr($value); ?>" />
+					<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_attr( $title ); ?></label>
+					<input class="widefat" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" type="text" value="<?php echo esc_attr( $value ); ?>" />
 				</p>
 				<?php
 				break;
@@ -169,8 +169,8 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 			case 'number':
 				?>
 				<p>
-					<label for="<?php echo $id; ?>"><?php echo $title; ?></label>
-					<input class="widefat" id="<?php echo $id; ?>" name="<?php echo $name; ?>" type="number" min="0" value="<?php echo esc_attr($value); ?>" />
+					<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_attr( $title ); ?></label>
+					<input class="widefat" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" type="number" min="0" value="<?php echo esc_attr( $value ); ?>" />
 				</p>
 				<?php
 				break;
@@ -179,7 +179,7 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 			case 'checkbox':
 				?>
 				<p>
-					<input id="<?php echo $id; ?>" name="<?php echo $name; ?>" type="checkbox"<?php checked( $value ); ?> />&nbsp;<label for="<?php echo $id; ?>"><?php echo $title; ?></label>
+					<input id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" type="checkbox"<?php checked( $value ); ?> />&nbsp;<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_attr( $title ); ?></label>
 				</p>
 				<?php
 				break;
@@ -187,12 +187,12 @@ class XT_Facebook_Events_Widget extends WP_Widget {
 			case 'select':
 				?>
 				<p>
-					<label for="<?php echo $id; ?>"><?php echo $title; ?></label>
-					<select class="widefat" id="<?php echo $id; ?>" name="<?php echo $name; ?>">
+					<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_attr( $title ); ?></label>
+					<select class="widefat" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>">
 					<?php 
 					if( !empty( $options) ){
 						foreach ($options as $key => $option) {
-							echo '<option value="' . $key . '" ' . selected( $value, $key ) . '>' . $option . '</option>';
+							echo '<option value="' . esc_attr( $key ) . '" ' . selected( $value, $key ) . '>' . esc_attr( $option ). '</option>';
 						}
 					}
 					?>

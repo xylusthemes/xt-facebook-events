@@ -34,10 +34,10 @@ class XT_Facebook_Events_Common {
 		if ( isset( $_POST['xtfe_action'] ) && $_POST['xtfe_action'] == 'xtfe_save_settings' &&  check_admin_referer( 'xtfe_setting_form_nonce_action', 'xtfe_setting_form_nonce' ) ) {
 				
 			$xtfe_options = array();
-			$xtfe_options = isset( $_POST['xtfe'] ) ? $_POST['xtfe'] : array();
+			$xtfe_options = isset( $_POST['xtfe'] ) ? $_POST['xtfe'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			
 			update_option( XTFE_OPTIONS, $xtfe_options );
-			$xtfe_success_msg[] = __( 'Import settings has been saved successfully.', 'xt-facebook-events' );
+			$xtfe_success_msg[] = esc_attr__( 'Import settings has been saved successfully.', 'xt-facebook-events' );
 		}
 	}
 
@@ -66,15 +66,18 @@ class XT_Facebook_Events_Common {
 	 */
 	public function setup_success_messages() {
 		global $xtfe_success_msg, $xtfe_errors;
-		if ( isset( $_GET['xtauthorize'] ) && trim( $_GET['xtauthorize'] ) != '' ) {
-			if( trim( $_GET['xtauthorize'] ) == '1' ){
+		$xtcleared_status   = isset( $_GET['xtcleared'] ) ? trim( sanitize_text_field( wp_unslash( $_GET['xtcleared'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['xtauthorize'] ) && trim( sanitize_text_field( wp_unslash( $_GET['xtauthorize'] ) ) ) != '' ) {
+			$xtauthorize_status = trim( sanitize_text_field( wp_unslash( $_GET['xtauthorize'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if( $xtauthorize_status == '1' ){
 				$xtfe_success_msg[] = esc_html__( 'Authorized Successfully.', 'xt-facebook-events' );
-			} elseif( trim( $_GET['xtauthorize'] ) == '2' ){
+			} elseif( $xtauthorize_status == '2' ){
 				$xtfe_errors[] = esc_html__( 'Please insert Facebook App ID and Secret.', 'xt-facebook-events' );
-			} elseif( trim( $_GET['xtauthorize'] ) == '0' ){
+			} elseif( $xtauthorize_status == '0' ){
 				$xtfe_errors[] = esc_html__( 'Something went wrong during authorization. Please try again.', 'xt-facebook-events' );
 			}
-		} elseif( isset( $_GET['xtcleared'] ) &&  trim( $_GET['xtcleared'] ) == '1' ){
+		} elseif( $xtcleared_status == '1' ){
 			$xtfe_success_msg[] = esc_html__( 'Facebook Events Cache has been cleared successfully.', 'xt-facebook-events' );
 		}
 	}
@@ -88,7 +91,7 @@ class XT_Facebook_Events_Common {
 		if( !xtfe_is_pro() ){
 			?>
 			<span class="xtfe_small">
-				<?php printf( '<span style="color: red">%s</span> <a href="' . XTFE_PLUGIN_BUY_NOW_URL . '" target="_blank" >%s</a>', __( 'Available in Pro version.', 'xt-facebook-events' ), __( 'Upgrade to PRO', 'xt-facebook-events' ) ); ?>
+				<?php printf( '<span style="color: red">%s</span> <a href="%s" target="_blank">%s</a>', esc_html__( 'Available in Pro version.', 'xt-facebook-events' ), esc_url( XTFE_PLUGIN_BUY_NOW_URL ), esc_html__( 'Upgrade to PRO', 'xt-facebook-events' ) ); ?>
 			</span>
 			<?php
 		}
