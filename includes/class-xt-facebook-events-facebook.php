@@ -85,11 +85,11 @@ class XT_Facebook_Events_Facebook {
 
 		ob_start();
 		if( $this->fb_access_token == '' ){
-			_e( 'Please insert Facebook app ID and app Secret. Or Connect the Facebook app with a click to "Log in With Facebook".', 'xt-facebook-events');
+			esc_attr_e( 'Please insert Facebook app ID and app Secret. Or Connect the Facebook app with a click to "Log in With Facebook".', 'xt-facebook-events');
 			return ob_get_clean();
 		}
 		if( !isset( $atts['page_id'] ) || $atts['page_id'] == '' ){
-			_e( 'Please insert Facebook page ID for display events.', 'xt-facebook-events');
+			esc_attr_e( 'Please insert Facebook page ID for display events.', 'xt-facebook-events');
 			return ob_get_clean();
 		}
 
@@ -107,7 +107,7 @@ class XT_Facebook_Events_Facebook {
 		if( !empty( $facebook_events ) ){
 			$this->render_facebook_event_listing( $facebook_events, $atts );
 		}else{
-			echo apply_filters( 'xtfe_no_events_found_message', __( "No Events are found.", 'xt-facebook-events' ) );
+			echo esc_attr( apply_filters( 'xtfe_no_events_found_message', 'No Events are found.' ) );
 		}
 		return ob_get_clean();
 	}
@@ -148,6 +148,7 @@ class XT_Facebook_Events_Facebook {
 		update_option( 'xtfe_transient_keys', array() );
 
 		// Manually Delete incase of missing in keys.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query("DELETE FROM {$wpdb->options} WHERE `option_name` LIKE '%_transient_xtfe_%'");
 	}
 
@@ -198,7 +199,7 @@ class XT_Facebook_Events_Facebook {
 			$name = isset( $facebook_event->name ) ? $facebook_event->name : '';
 			$description = isset( $facebook_event->description ) ? $facebook_event->description : '';
 			$short_description = substr( $description, 0, 100 ) . '...';
-			$start_time  = isset( $facebook_event->start_time ) ? $facebook_event->start_time : date('Y-m-d');
+			$start_time  = isset( $facebook_event->start_time ) ? $facebook_event->start_time : gmdate('Y-m-d');
 			$end_time    = isset( $facebook_event->end_time ) ? $facebook_event->end_time : $start_time;
 
 			$timezone = isset( $facebook_event->timezone ) ? $facebook_event->timezone : '';
@@ -248,10 +249,10 @@ class XT_Facebook_Events_Facebook {
 		<div style="clear: both"></div>
 		<style type="text/css">
 			.xtfe_event .event_date{
-			    background-color: <?php echo $accent_color;?>;
+			    background-color: <?php echo esc_attr( $accent_color ); ?>;
 			}
 			.xtfe_event .event_desc .event_title, .xtfe_event .event_desc .event_name a{
-			    color: <?php echo $accent_color;?>;
+			    color: <?php echo esc_attr( $accent_color ); ?>;
 			}
 		</style>
 		<?php
@@ -500,13 +501,14 @@ class XT_Facebook_Events_Facebook {
 	}
 
 	function xtfe_clear_events_cache(){
-		if ( ! empty($_POST) && wp_verify_nonce($_POST['xtfe_clear_cache_nonce'], 'xtfe_clear_cache_action' ) ) {
+
+		if ( ! empty( $_POST ) && isset( $_POST['xtfe_clear_cache_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['xtfe_clear_cache_nonce'] ) ), 'xtfe_clear_cache_action' ) ) {
 			$this->xtfe_purge_transient();
 			$redirect_url = admin_url('admin.php?page=wpfb_events&xtcleared=1');
 			wp_redirect($redirect_url);
 			exit();
 		} else {
-			die( __('You have not access to doing this operations.', 'xt-facebook-events' ) );
+			die( esc_attr__('You have not access to doing this operations.', 'xt-facebook-events' ) );
 		}
 	}
 

@@ -25,7 +25,6 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
 
         private $prefix = 'xt_';
         private $slug = 'xt-facebook-events';
-        private $plugin_name;
         private $plugin_version = '1.0.0';
         private $api_url = 'https://api.xylusthemes.com/api/v1/';
 
@@ -35,7 +34,6 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
          * @since    1.0.0
          */
         public function __construct() {
-			$this->plugin_name =  __('XT Event Widget for Social Events', 'xt-facebook-events' );
 			if ( defined( 'XTFE_VERSION' ) ) {
 				$this->plugin_version = XTFE_VERSION;
 			}
@@ -46,14 +44,14 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
 
 		public function get_deactivation_reasons() {
 			return array(
-				'confusing' => __('I couldn\'t understand how to make it work', 'xt-facebook-events' ),
-				'better_plugin' => __('I found a better plugin', 'xt-facebook-events' ),
-				'feature_request' => __('The plugin is great, but I need specific feature that you don\'t support', 'xt-facebook-events' ),
-				'buggy' => __('Plugin has bugs and it\'s not working', 'xt-facebook-events' ),
-				'wrong_plugin' => __('It\'s not what I was looking for', 'xt-facebook-events' ),
-				'not_working' => __('Plugin didn\'t work as expected', 'xt-facebook-events' ),
-				'temporary' => __('It\'s temporary deactivatation, for debug an issue', 'xt-facebook-events' ),
-				'other' => __('Other reasons', 'xt-facebook-events' ),
+				'confusing' => esc_attr__('I couldn\'t understand how to make it work', 'xt-facebook-events' ),
+				'better_plugin' => esc_attr__('I found a better plugin', 'xt-facebook-events' ),
+				'feature_request' => esc_attr__('The plugin is great, but I need specific feature that you don\'t support', 'xt-facebook-events' ),
+				'buggy' => esc_attr__('Plugin has bugs and it\'s not working', 'xt-facebook-events' ),
+				'wrong_plugin' => esc_attr__('It\'s not what I was looking for', 'xt-facebook-events' ),
+				'not_working' => esc_attr__('Plugin didn\'t work as expected', 'xt-facebook-events' ),
+				'temporary' => esc_attr__('It\'s temporary deactivatation, for debug an issue', 'xt-facebook-events' ),
+				'other' => esc_attr__('Other reasons', 'xt-facebook-events' ),
 			);
         }
 
@@ -77,8 +75,8 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
         }
 
         function submit_plugin_deactivation_feedback(){
-            if ( !wp_verify_nonce( $_REQUEST['nonce'], $this->prefix.'plugin_deactivation_feedback')) {
-                exit("nonce verification failed");
+            if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['nonce'] ) ), $this->prefix . 'plugin_deactivation_feedback' ) ) {
+                exit( 'nonce verification failed' );
             }
 
             $url = $this->api_url.'feedback';
@@ -95,9 +93,9 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
             $customer_email = $user->user_email;
             $customer_name = $user->display_name;
             $customer_name = $user->user_firstname. ' '.$user->user_lastname;
-            $deactivation_reason = sanitize_text_field( $_REQUEST['reason'] );
+            $deactivation_reason = isset( $_REQUEST['reason'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['reason'] ) ) : '';
             $deactivation_reason_message = $this->get_deactivation_reasons()[$deactivation_reason];
-            $customer_query = sanitize_text_field( $_REQUEST['customerQuery'] );
+            $customer_query = isset( $_REQUEST['customerQuery'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['customerQuery'] ) ) : '';
 
             $data = array(
                 "type" => "plugin_deactivation",
@@ -105,8 +103,7 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
                 "customer_name" => $customer_name,
                 "customer_email" => $customer_email,
                 "plugin" => $this->slug,
-                "plugin_name" => $this->plugin_name,
-                "plugin_version" => $this->plugin_version,
+                "plugin_name" => 'XT Event Widget for Social Events',
                 "plugin_version" => $this->plugin_version,
                 "deactivation_reason" => $deactivation_reason,
                 "deactivation_reason_message" => $deactivation_reason_message,
@@ -130,7 +127,8 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
 			$response = wp_remote_post( $url, $args );
             if ( is_wp_error( $response ) ) {
                 $error_message = $response->get_error_message();
-                echo "Something went wrong: $error_message";
+                // translators: %s: The error message to display.
+                printf( esc_html__( 'Something went wrong: %s', 'xt-facebook-events' ), esc_html( $error_message ) );
                 exit();
             }
 
@@ -153,35 +151,37 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
 
             <script>
                 jQuery(document).ready(function() {
-					var dataReason = jQuery('input:radio[name="<?php echo $this->prefix; ?>deactivatation_reason_radio"]').val();
+					var dataReason = jQuery('input:radio[name="<?php echo esc_attr( $this->prefix ); ?>deactivatation_reason_radio"]').val();
                     jQuery('a[aria-label="Deactivate XT Event Widget for Social Events"]').on('click', function (e) {
                         e.preventDefault();
                         var pluginDeactivateURL = jQuery(this).attr('href');
-                        jQuery('#<?php echo $this->slug; ?>-deactivate-dialog' ).dialog({
-                            'dialogClass'   : '<?php echo $this->slug . "-deactivate-dialog"; ?>',
+                        jQuery('#<?php echo esc_attr( $this->slug ); ?>-deactivate-dialog' ).dialog({
+                            'dialogClass'   : '<?php echo esc_attr( $this->slug ). "-deactivate-dialog"; ?>',
                             'modal'         : true,
                             'closeOnEscape' : true,
                             width: 600,
                             'buttons'       : [
                                 {
-                                    text: "<?php _e('Submit & Deactivate', 'xt-facebook-events' ); ?>",
-                                    class: 'button button-primary <?php echo $this->prefix . "deactivate_button"; ?>',
+                                    text: "Submit & Deactivate",
+                                    class: 'button button-primary <?php echo esc_attr( $this->prefix ). "deactivate_button"; ?>',
                                     click: function() {
 										var that = this;
-										var dataQuery = jQuery('#<?php echo $this->prefix; ?>customer_query').val();
+										var dataQuery = jQuery('#<?php echo esc_attr( $this->prefix ); ?>customer_query').val();
 										if(dataReason == 'other' && !dataQuery){
-											jQuery('#<?php echo $this->prefix; ?>customer_query').focus();
+											jQuery('#<?php echo esc_attr( $this->prefix ); ?>customer_query').focus();
 											return false;
 										}
-										jQuery('#<?php echo $this->prefix; ?>deactivatation_form').hide();
-										jQuery('.<?php echo $this->prefix; ?>deactivatation_loading').show();
-                                        jQuery('button.<?php echo $this->prefix; ?>deactivate_button').prop('disabled', true);
+										jQuery('#<?php echo esc_attr( $this->prefix ); ?>deactivatation_form').hide();
+										jQuery('.<?php echo esc_attr( $this->prefix ); ?>deactivatation_loading').show();
+                                        jQuery('button.<?php echo esc_attr( $this->prefix ) ; ?>deactivate_button').prop('disabled', true);
+                                        
                                         jQuery.ajax({
                                             type : "post",
                                             dataType : "json",
-                                            url : "<?php echo admin_url('admin-ajax.php?action='.$this->prefix.'plugin_deactivation_feedback&nonce='.wp_create_nonce($this->prefix.'plugin_deactivation_feedback')); ?>",
+                                            <?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- URL is safe and controlled. ?>
+                                            url : "<?php echo admin_url( 'admin-ajax.php?action='.$this->prefix.'plugin_deactivation_feedback&nonce='.wp_create_nonce( $this->prefix.'plugin_deactivation_feedback' ) ); ?>",
                                             data : {
-                                                action: "<?php echo $this->prefix; ?>plugin_deactivation_feedback",
+                                                action: "<?php echo esc_attr( $this->prefix ); ?>plugin_deactivation_feedback",
                                                 reason: dataReason,
                                                 customerQuery: dataQuery
                                             },
@@ -192,7 +192,7 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
                                     }
                                 },
                                 {
-                                    text: "<?php _e('Skip & Deactivate', 'xt-facebook-events' ); ?>",
+                                    text: "Skip & Deactivate",
                                     class: 'button',
                                     click: function() {
                                         jQuery( this ).dialog( "close" );
@@ -203,56 +203,56 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
                         });
                     });
 
-                    jQuery('input:radio[name="<?php echo $this->prefix; ?>deactivatation_reason_radio"]').click(function () {
+                    jQuery('input:radio[name="<?php echo esc_attr( $this->prefix ); ?>deactivatation_reason_radio"]').click(function () {
                         var reason = jQuery(this).val();
 						dataReason = jQuery(this).val();
-                        var customerQuery = jQuery('#<?php echo $this->prefix; ?>customer_query');
+                        var customerQuery = jQuery('#<?php echo esc_attr( $this->prefix ); ?>customer_query');
                         customerQuery.removeAttr('required');
                         if (reason === "confusing") {
-                            customerQuery.attr("placeholder", "<?php _e('Finding it confusing? let us know so that we can improve the interface', 'xt-facebook-events' ); ?>");
+                            customerQuery.attr("placeholder", "<?php esc_attr_e('Finding it confusing? let us know so that we can improve the interface', 'xt-facebook-events' ); ?>");
 
                         } else if (reason === "other") {
-                            customerQuery.attr("placeholder", "<?php _e('Can you let us know the reason for deactivation (Required)', 'xt-facebook-events' ); ?>");
+                            customerQuery.attr("placeholder", "<?php esc_attr_e('Can you let us know the reason for deactivation (Required)', 'xt-facebook-events' ); ?>");
                             customerQuery.prop('required', true);
 
                         } else if (reason === "buggy" || reason === 'not_working') {
-                            customerQuery.attr("placeholder", "<?php _e('Can you please let us know about the bug/issue in detail?', 'xt-facebook-events' ); ?>");
+                            customerQuery.attr("placeholder", "<?php esc_attr_e('Can you please let us know about the bug/issue in detail?', 'xt-facebook-events' ); ?>");
 
                         } else if (reason === "better_plugin") {
-                            customerQuery.attr("placeholder", "<?php _e('Can you please let us know which plugin you found helpful', 'xt-facebook-events' ); ?>");
+                            customerQuery.attr("placeholder", "<?php esc_attr_e('Can you please let us know which plugin you found helpful', 'xt-facebook-events' ); ?>");
 
                         } else if (reason === "feature_request") {
-                            customerQuery.attr("placeholder", "<?php _e('Can you please let us know more about the feature you want', 'xt-facebook-events' ); ?>");
+                            customerQuery.attr("placeholder", "<?php esc_attr_e('Can you please let us know more about the feature you want', 'xt-facebook-events' ); ?>");
 
                         }  else if (reason === "wrong_plugins") {
-                            customerQuery.attr("placeholder", "<?php _e('Can you please let us know more about your requirement', 'xt-facebook-events' ); ?>");
+                            customerQuery.attr("placeholder", "<?php esc_attr_e('Can you please let us know more about your requirement', 'xt-facebook-events' ); ?>");
 
                         } else if (reason === "temporary") {
-                            customerQuery.attr("placeholder", "<?php _e('Write your query here', 'xt-facebook-events'); ?>");
+                            customerQuery.attr("placeholder", "<?php esc_attr_e('Write your query here', 'xt-facebook-events'); ?>");
                         }
                     });
                 });
             </script>
 			<style>
-			<?php echo '.'.$this->slug; ?>-deactivate-dialog .ui-dialog-titlebar{
+			<?php echo '.'. esc_attr( $this->slug ); ?>-deactivate-dialog .ui-dialog-titlebar{
 				display: none;
 			}
-            .ui-widget.<?php echo $this->slug; ?>-deactivate-dialog{
+            .ui-widget.<?php echo esc_attr( $this->slug ); ?>-deactivate-dialog{
                 font-family: inherit;
                 font-size: 14px;
                 font-weight: inherit;
                 line-height: inherit;
             }
-            .ui-widget.<?php echo $this->slug; ?>-deactivate-dialog textarea{
+            .ui-widget.<?php echo esc_attr( $this->slug ); ?>-deactivate-dialog textarea{
                 font-family: inherit;
                 font-size: 14px;
                 width: 100%;
             }
-            <?php echo '#'.$this->slug; ?>-deactivate-dialog {
+            <?php echo '#'. esc_attr( $this->slug ); ?>-deactivate-dialog {
                 display : none;
             }
 			</style>
-            <div id="<?php echo $this->slug; ?>-deactivate-dialog">
+            <div id="<?php echo esc_attr( $this->slug ); ?>-deactivate-dialog">
                 <div class="ui-dialog-headerbar" >
                     <div>
                         <h2 style="margin: 0 0 15px 0;"><?php esc_html_e('Quick Feedback', 'xt-facebook-events' ); ?></h2>
@@ -260,19 +260,19 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
                 </div>               
                 <div style="border-top: 1px solid #dcdcde;"></div>
                 <h3 style="font-size: 15px;" ><?php esc_html_e('Could you please share why you are deactivating XT Facebook Event plugin ?', 'xt-facebook-events' ); ?></h3>
-                <form method="post" action="" id="<?php echo $this->prefix; ?>deactivatation_form">
+                <form method="post" action="" id="<?php echo esc_attr( $this->prefix ); ?>deactivatation_form">
                     <div>
                     <?php
                         foreach ( $deactivate_reasons as $key => $deactivate_reason ) {
                             ?>
                             <div class="radio" style="padding:1px;margin-left:2%">
-                                <label for="<?php echo $key; ?>">
-                                    <input type="radio" name="<?php echo $this->prefix; ?>deactivatation_reason_radio" id="<?php echo $key; ?>" value="<?php echo $key; ?>" required <?php if($key === 'confusing') { echo "checked"; } ?>> <?php echo $deactivate_reason; ?>
+                                <label for="<?php echo esc_attr( $key ); ?>">
+                                    <input type="radio" name="<?php echo esc_attr( $this->prefix ); ?>deactivatation_reason_radio" id="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $key ); ?>" required <?php if($key === 'confusing') { echo "checked"; } ?>> <?php echo esc_attr( $deactivate_reason ); ?>
                                 </label>
                             </div>
                         <?php } ?>
                         <br>
-                        <textarea id="<?php echo $this->prefix; ?>customer_query" name="<?php echo $this->prefix; ?>customer_query" rows="4" placeholder="<?php _e('Write your query here', 'xt-facebook-events'); ?>"></textarea>
+                        <textarea id="<?php echo esc_attr( $this->prefix ); ?>customer_query" name="<?php echo esc_attr( $this->prefix ); ?>customer_query" rows="4" placeholder="<?php esc_attr_e('Write your query here', 'xt-facebook-events'); ?>"></textarea>
                     </div>
                     <div style="text-align: center;">
                         <p style="font-size: 12px;margin: 2px 0 -10px 0;">
@@ -280,8 +280,9 @@ if ( ! class_exists( 'XT_Plugin_Deactivation' ) ) {
                         </p>
                     </div>
                 </form>
-				<div class="<?php echo $this->prefix; ?>deactivatation_loading" style="width: 100%;text-align: center; display:none;">
-					<img src="<?php echo admin_url('images/spinner.gif'); ?>" />
+				<div class="<?php echo esc_attr( $this->prefix ); ?>deactivatation_loading" style="width: 100%;text-align: center; display:none;">
+                    <?php // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage  ?>
+					<img src="<?php echo esc_url( admin_url( 'images/spinner.gif' ) ); ?>" />
 				</div>
             </div>
             <?php

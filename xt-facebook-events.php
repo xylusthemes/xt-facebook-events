@@ -80,14 +80,14 @@ class XT_Facebook_Events{
 	 *
 	 * @since 1.0.0
 	 */
-	public function __clone() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
+	public function __clone() { _doing_it_wrong( __FUNCTION__, esc_attr__( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
 
 	/**
 	 * A dummy magic method to prevent XT_Facebook_Events from being unserialized.
 	 *
 	 * @since 1.0.0
 	 */
-	public function __wakeup() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
+	public function __wakeup() { _doing_it_wrong( __FUNCTION__, esc_attr__( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
 
 
 	/**
@@ -193,9 +193,9 @@ class XT_Facebook_Events{
 	public function xtfe_enqueue_style() {
 
 		$css_dir = XTFE_PLUGIN_URL . 'assets/css/';
-		wp_enqueue_style('font-awesome', $css_dir . 'font-awesome.min.css', false, "" );
-	 	wp_enqueue_style('xt-facebook-events-front', $css_dir . 'xt-facebook-events.css', false, "" );
-		wp_enqueue_style('xt-facebook-events-front-grid2', $css_dir . 'grid_style2.css', false, "" );
+		wp_enqueue_style('font-awesome', $css_dir . 'font-awesome.min.css', array(), XTFE_VERSION );
+	 	wp_enqueue_style('xt-facebook-events-front', $css_dir . 'xt-facebook-events.css', array(), XTFE_VERSION );
+		wp_enqueue_style('xt-facebook-events-front-grid2', $css_dir . 'grid_style2.css', array(), XTFE_VERSION );
 	}
 
 	/**
