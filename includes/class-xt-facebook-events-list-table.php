@@ -71,12 +71,18 @@ class XT_Facebook_Shortcode_List_Table extends WP_List_Table {
 
         $data[] = array(
                     'id'            => 1,
+                    'how_to_use'    => 'Widget View Shortcode',
+                    'shortcode'     => '<p class="xtfe_short_code">[wpfb_events type="widget" page_id="YOUR_OWN_FACEBOOK_PAGE_ID" max_events="10"]</p>',
+                    'action'        => "<button class='xtfe-btn-copy-shortcode button-primary' data-value='[wpfb_events type=\"widget\" page_id=\"YOUR_OWN_FACEBOOK_PAGE_ID\" max_events=\"10\"]'>Copy</button>",
+                    );
+        $data[] = array(
+                    'id'            => 2,
                     'how_to_use'    => 'Grid View Shortcode<span style="color:green;font-weight: 900;"> ( PRO )</span>',
                     'shortcode'     => '<p class="xtfe_short_code">[wpfb_events page_id="YOUR_OWN_FACEBOOK_PAGE_ID" col="3" max_events="10"]</p>',
                     'action'        => "<button class='xtfe-btn-copy-shortcode button-primary' data-value='[wpfb_events page_id=\"YOUR_OWN_FACEBOOK_PAGE_ID\" col=\"3\" max_events=\"10\"]'>Copy</button>",
                     );
         $data[] = array(
-                    'id'            => 2,
+                    'id'            => 3,
                     'how_to_use'    => 'New Grid Layouts<span style="color:green;font-weight: 900;"> ( PRO )</span>',
                     'shortcode'     => '<p class="xtfe_short_code">[wpfb_events page_id="YOUR_OWN_FACEBOOK_PAGE_ID" col="3" max_events="10" layout="style2"]</p>',
                     'action'        => "<button class='xtfe-btn-copy-shortcode button-primary' data-value='[wpfb_events page_id=\"YOUR_OWN_FACEBOOK_PAGE_ID\" col=\"3\" max_events=\"10\" layout=\"style2\"]'>Copy</button>",

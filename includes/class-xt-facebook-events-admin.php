@@ -39,6 +39,7 @@ class XT_Facebook_Events_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles') );
 		add_action( 'admin_notices', array( $this, 'display_notices') );
 		add_filter( 'admin_footer_text', array( $this, 'add_xt_facebook_events_credit' ) );
+		add_filter( 'submenu_file', array( $this, 'get_selected_tab_submenu_xtfe' ) );
 	}
 
 	/**
@@ -50,6 +51,13 @@ class XT_Facebook_Events_Admin {
 	public function add_menu_pages() {
 
 		add_menu_page( esc_attr__( 'Facebook Events', 'xt-facebook-events' ), esc_attr__( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', 'wpfb_events', array( $this, 'admin_page' ), 'dashicons-facebook', '70' );
+		global $submenu;	
+		$submenu['wpfb_events'][] = array( __( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=settings' ) );
+		$submenu['wpfb_events'][] = array( __( 'Shortcodes & Widgets', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=shortandwid' ));
+		$submenu['wpfb_events'][] = array( __( 'Support & help', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=support' ));
+		if( !xtfe_is_pro() ){
+        	$submenu['wpfb_events'][] = array( '<li style="background-color: #1da867;" class="current">' . __( 'Upgrade to Pro', 'xt-facebook-events' ) . '</li>', 'manage_options', esc_url( "https://xylusthemes.com/plugins/xt-facebook-events/") );
+		}
 	}
 
 	/**
@@ -64,6 +72,23 @@ class XT_Facebook_Events_Admin {
 	function enqueue_admin_scripts( $hook ) {
 		$js_dir  = XTFE_PLUGIN_URL . 'assets/js/';
 		wp_enqueue_script( 'xt-facebook-events', $js_dir . 'xt-facebook-events-admin.js', array( 'jquery', 'wp-color-picker' ), XTFE_VERSION, true );		
+	}
+
+	/**
+	 * Tab Submenu got selected.
+	 *
+	 * @since 1.6.7
+	 * @return void
+	 */
+	public function get_selected_tab_submenu_xtfe( $submenu_file ){
+		if( !empty( $_GET['page'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) == 'wpfb_events' ){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$allowed_tabs = array( 'settings', 'shortandwid', 'support' );
+			$tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'settings'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if( in_array( $tab, $allowed_tabs ) ){
+				$submenu_file = esc_url( admin_url( 'admin.php?page=wpfb_events&tab='.$tab ) );
+			}
+		}
+		return $submenu_file;
 	}
 
 	/**
