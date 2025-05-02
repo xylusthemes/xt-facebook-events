@@ -173,7 +173,13 @@ class XT_Facebook_Events_Facebook {
 		}
 		$shortcode_type = isset( $event_args['type'] ) ? esc_attr( $event_args['type'] ) : 'page';
 		if( 'widget' == $shortcode_type ){
+			$allowed_styles = array( 'style1' );
 			$style = isset( $event_args['style'] ) ? esc_attr( $event_args['style'] ) : 'style1';
+
+			if( ! in_array( $style, $allowed_styles, true ) ){
+				$style = 'style1';
+			}
+
 			$is_display_image    = $event_args['display_event_image'];
 			$is_display_location = $event_args['display_event_location'];
 			$is_display_enddate  = $event_args['display_event_enddate'];
