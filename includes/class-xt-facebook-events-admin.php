@@ -85,7 +85,7 @@ class XT_Facebook_Events_Admin {
 			$allowed_tabs = array( 'settings', 'shortandwid', 'support' );
 			$tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'settings'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if( in_array( $tab, $allowed_tabs ) ){
-				$submenu_file = esc_url( admin_url( 'admin.php?page=wpfb_events&tab='.$tab ) );
+				$submenu_file = admin_url( 'admin.php?page=wpfb_events&tab='.$tab );
 			}
 		}
 		return $submenu_file;
