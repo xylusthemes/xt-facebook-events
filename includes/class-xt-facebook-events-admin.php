@@ -39,6 +39,7 @@ class XT_Facebook_Events_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles') );
 		add_action( 'admin_notices', array( $this, 'display_notices') );
 		add_filter( 'admin_footer_text', array( $this, 'add_xt_facebook_events_credit' ) );
+		add_filter( 'submenu_file', array( $this, 'get_selected_tab_submenu_xtfe' ) );
 	}
 
 	/**
@@ -49,7 +50,14 @@ class XT_Facebook_Events_Admin {
 	 */
 	public function add_menu_pages() {
 
-		add_menu_page( __( 'Facebook Events', 'xt-facebook-events' ), __( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', 'wpfb_events', array( $this, 'admin_page' ), 'dashicons-facebook', '70' );
+		add_menu_page( esc_attr__( 'Facebook Events', 'xt-facebook-events' ), esc_attr__( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', 'wpfb_events', array( $this, 'admin_page' ), 'dashicons-facebook', '70' );
+		global $submenu;	
+		$submenu['wpfb_events'][] = array( __( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=settings' ) );
+		$submenu['wpfb_events'][] = array( __( 'Shortcodes & Widgets', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=shortandwid' ));
+		$submenu['wpfb_events'][] = array( __( 'Support & help', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=support' ));
+		if( !xtfe_is_pro() ){
+        	$submenu['wpfb_events'][] = array( '<li style="background-color: #1da867;" class="current">' . __( 'Upgrade to Pro', 'xt-facebook-events' ) . '</li>', 'manage_options', esc_url( "https://xylusthemes.com/plugins/xt-facebook-events/") );
+		}
 	}
 
 	/**
@@ -67,6 +75,23 @@ class XT_Facebook_Events_Admin {
 	}
 
 	/**
+	 * Tab Submenu got selected.
+	 *
+	 * @since 1.6.7
+	 * @return void
+	 */
+	public function get_selected_tab_submenu_xtfe( $submenu_file ){
+		if( !empty( $_GET['page'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) == 'wpfb_events' ){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$allowed_tabs = array( 'settings', 'shortandwid', 'support' );
+			$tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'settings'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if( in_array( $tab, $allowed_tabs ) ){
+				$submenu_file = admin_url( 'admin.php?page=wpfb_events&tab='.$tab );
+			}
+		}
+		return $submenu_file;
+	}
+
+	/**
 	 * Load Admin Styles.
 	 *
 	 * Enqueues the required admin styles.
@@ -78,10 +103,10 @@ class XT_Facebook_Events_Admin {
 	function enqueue_admin_styles( $hook ) {
 
 		global $pagenow;
-		$page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if( 'wpfb_events' == $page || $pagenow == 'widgets.php' ){
 		  	$css_dir = XTFE_PLUGIN_URL . 'assets/css/';
-			wp_enqueue_style('xt-facebook-events', $css_dir . 'xt-facebook-events-admin.css', false, "" );
+			wp_enqueue_style('xt-facebook-events', $css_dir . 'xt-facebook-events-admin.css', array(), XTFE_VERSION );
 			wp_enqueue_style( 'wp-color-picker' );
 		}
 	}
@@ -99,7 +124,7 @@ class XT_Facebook_Events_Admin {
 		    <h2><?php esc_html_e( 'Facebook Events', 'xt-facebook-events' ); ?></h2>
 		    <?php
 		    // Set Default Tab to Import.
-		    $tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'settings';
+			$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'settings'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		    ?>
 		    <div id="poststuff">
 		        <div id="post-body" class="metabox-holder columns-2">
@@ -165,7 +190,7 @@ class XT_Facebook_Events_Admin {
 			foreach ( $xtfe_errors as $error ) :
 			    ?>
 			    <div class="notice notice-error is-dismissible">
-			        <p><?php echo $error; ?></p>
+			        <p><?php echo esc_attr( $error ); ?></p>
 			    </div>
 			    <?php
 			endforeach;
@@ -175,7 +200,7 @@ class XT_Facebook_Events_Admin {
 			foreach ( $xtfe_success_msg as $success ) :
 			    ?>
 			    <div class="notice notice-success is-dismissible">
-			        <p><?php echo $success; ?></p>
+			        <p><?php echo esc_attr( $success ); ?></p>
 			    </div>
 			    <?php
 			endforeach;
@@ -185,7 +210,7 @@ class XT_Facebook_Events_Admin {
 			foreach ( $xtfe_warnings as $warning ) :
 			    ?>
 			    <div class="notice notice-warning is-dismissible">
-			        <p><?php echo $warning; ?></p>
+			        <p><?php echo esc_attr( $warning ); ?></p>
 			    </div>
 			    <?php
 			endforeach;
@@ -195,7 +220,7 @@ class XT_Facebook_Events_Admin {
 			foreach ( $xtfe_info_msg as $info ) :
 			    ?>
 			    <div class="notice notice-info is-dismissible">
-			        <p><?php echo $info; ?></p>
+			        <p><?php echo esc_attr( $info ); ?></p>
 			    </div>
 			    <?php
 			endforeach;
@@ -210,12 +235,12 @@ class XT_Facebook_Events_Admin {
 	 * @return void
 	 */
 	public function add_xt_facebook_events_credit( $footer_text ){
-		$page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $page != '' && $page == 'wpfb_events' ) {
 			$rate_url = 'https://wordpress.org/support/plugin/xt-facebook-events/reviews/?rate=5#new-post';
 
 			$footer_text .= sprintf(
-				esc_html__( ' Rate %1$sXT Facebook Events%2$s %3$s', 'xt-facebook-events' ),
+				esc_html__( ' Rate %1$sXT Facebook Events%2$s %3$s', 'xt-facebook-events' ),  // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 				'<strong>',
 				'</strong>',
 				'<a href="' . $rate_url . '" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
@@ -225,59 +250,19 @@ class XT_Facebook_Events_Admin {
 	}
 
 	/**
-	 * Get Plugin array
-	 *
-	 * @since 1.0.0
-	 * @return array
-	 */
-	public function get_xyuls_themes_plugins(){
-		return array(
-			'wp-event-aggregator' => esc_html__( 'WP Event Aggregator', 'xt-facebook-events' ),
-			'import-facebook-events' => esc_html__( 'Import Facebook Events', 'xt-facebook-events' ),
-			'import-eventbrite-events' => esc_html__( 'Import Eventbrite Events', 'xt-facebook-events' ),
-			'import-meetup-events' => esc_html__( 'Import Meetup Events', 'xt-facebook-events' ),
-			'wp-bulk-delete' => esc_html__( 'WP Bulk Delete', 'xt-facebook-events' ),
-			'event-schema' => esc_html__( 'Event Schema / Structured Data', 'xt-facebook-events' ),
-		);
-	}
-
-	/**
-	 * Get Plugin Details.
-	 *
-	 * @since 1.0.0
-	 * @return array
-	 */
-	public function get_wporg_plugin( $slug ){
-
-		if( $slug == '' ){
-			return false;
-		}
-
-		$transient_name = 'support_plugin_box'.$slug;
-		$plugin_data = get_transient( $transient_name );
-		if( false === $plugin_data ){
-			if ( ! function_exists( 'plugins_api' ) ) {
-				include_once ABSPATH . '/wp-admin/includes/plugin-install.php';
-			}
-
-			$plugin_data = plugins_api( 'plugin_information', array(
-				'slug' => $slug,
-				'is_ssl' => is_ssl(),
-				'fields' => array(
-					'banners' => true,
-					'active_installs'   => true,
-					'short_description' => true,
-					'icons'			    => true,
-				),
-			) );
-
-			if ( ! is_wp_error( $plugin_data ) ) {
-				set_transient( $transient_name, $plugin_data, 24 * HOUR_IN_SECONDS );
-			} else {
-				// If there was a bug on the Current Request just leave
-				return false;
-			}			
-		}
-		return $plugin_data;
-	}
+     * Get Plugin array
+     *
+     * @since 1.1.0
+     * @return array
+     */
+    public function xtfe_get_xyuls_themes_plugins(){
+        return array(
+            'wp-bulk-delete' => array( 'plugin_name' => esc_html__( 'WP Bulk Delete', 'xt-facebook-events' ), 'description' => 'Delete posts, pages, comments, users, taxonomy terms and meta fields in bulk with different powerful filters and conditions.' ),
+            'wp-event-aggregator' => array( 'plugin_name' => esc_html__( 'WP Event Aggregator', 'xt-facebook-events' ), 'description' => 'WP Event Aggregator: Easy way to import Facebook Events, Eventbrite events, MeetUp events into your WordPress Event Calendar.' ),
+            'import-facebook-events' => array( 'plugin_name' => esc_html__( 'Import Social Events', 'xt-facebook-events' ), 'description' => 'Import Facebook events into your WordPress website and/or Event Calendar. Nice Display with shortcode & Event widget.' ),
+            'import-eventbrite-events' => array( 'plugin_name' => esc_html__( 'Import Eventbrite Events', 'xt-facebook-events' ), 'description' => 'Import Eventbrite Events into WordPress website and/or Event Calendar. Nice Display with shortcode & Event widget.' ),
+            'import-meetup-events' => array( 'plugin_name' => esc_html__( 'Import Meetup Events', 'xt-facebook-events' ), 'description' => 'Import Meetup Events allows you to import Meetup (meetup.com) events into your WordPress site effortlessly.' ),
+			'event-schema' => array( 'plugin_name' => esc_html__( 'Event Schema / Structured Data', 'xt-facebook-events' ), 'description' => 'Automatically Google Event Rich Snippet Schema Generator. This plug-in generates complete JSON-LD based schema (structured data for Rich Snippet) for events.' ),
+        );
+    }
 }

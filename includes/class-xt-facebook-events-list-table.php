@@ -43,10 +43,10 @@ class XT_Facebook_Shortcode_List_Table extends WP_List_Table {
      */
     public function get_columns() {
         $columns = array(
-            'id'            => __( 'ID', 'xt-facebook-events' ),
-            'how_to_use'    => __( 'Title', 'xt-facebook-events' ),
-            'shortcode'     => __( 'Shortcode', 'xt-facebook-events' ),
-			'action'    	=> __( 'Action', 'xt-facebook-events' ),
+            'id'            => esc_attr__( 'ID', 'xt-facebook-events' ),
+            'how_to_use'    => esc_attr__( 'Title', 'xt-facebook-events' ),
+            'shortcode'     => esc_attr__( 'Shortcode', 'xt-facebook-events' ),
+			'action'    	=> esc_attr__( 'Action', 'xt-facebook-events' ),
         );
 
         return $columns;
@@ -71,12 +71,18 @@ class XT_Facebook_Shortcode_List_Table extends WP_List_Table {
 
         $data[] = array(
                     'id'            => 1,
+                    'how_to_use'    => 'Widget View Shortcode',
+                    'shortcode'     => '<p class="xtfe_short_code">[wpfb_events type="widget" page_id="YOUR_OWN_FACEBOOK_PAGE_ID" max_events="10"]</p>',
+                    'action'        => "<button class='xtfe-btn-copy-shortcode button-primary' data-value='[wpfb_events type=\"widget\" page_id=\"YOUR_OWN_FACEBOOK_PAGE_ID\" max_events=\"10\"]'>Copy</button>",
+                    );
+        $data[] = array(
+                    'id'            => 2,
                     'how_to_use'    => 'Grid View Shortcode<span style="color:green;font-weight: 900;"> ( PRO )</span>',
                     'shortcode'     => '<p class="xtfe_short_code">[wpfb_events page_id="YOUR_OWN_FACEBOOK_PAGE_ID" col="3" max_events="10"]</p>',
                     'action'        => "<button class='xtfe-btn-copy-shortcode button-primary' data-value='[wpfb_events page_id=\"YOUR_OWN_FACEBOOK_PAGE_ID\" col=\"3\" max_events=\"10\"]'>Copy</button>",
                     );
         $data[] = array(
-                    'id'            => 2,
+                    'id'            => 3,
                     'how_to_use'    => 'New Grid Layouts<span style="color:green;font-weight: 900;"> ( PRO )</span>',
                     'shortcode'     => '<p class="xtfe_short_code">[wpfb_events page_id="YOUR_OWN_FACEBOOK_PAGE_ID" col="3" max_events="10" layout="style2"]</p>',
                     'action'        => "<button class='xtfe-btn-copy-shortcode button-primary' data-value='[wpfb_events page_id=\"YOUR_OWN_FACEBOOK_PAGE_ID\" col=\"3\" max_events=\"10\" layout=\"style2\"]'>Copy</button>",
@@ -106,7 +112,7 @@ class XT_Facebook_Shortcode_List_Table extends WP_List_Table {
                 return $item[ $column_name ];
 
             default:
-                return print_r( $item, true ) ;
+                return 'No data available for this column';
         }
     }
 }

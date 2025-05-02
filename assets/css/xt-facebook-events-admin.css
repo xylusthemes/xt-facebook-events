@@ -486,3 +486,198 @@ color: #f00;
 .xtfe_mt_30{
   margin-top: 30px;
 }
+
+/*support page start*/
+.xtfe-about-us-plugins {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.xtfe-row {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  margin-left: -.5rem;
+  margin-right: -.5rem;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin {
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 24px;
+  width: 50%;
+}
+
+.xtfe-col.xtfe-text-xs-left {
+  text-align: left !important;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-main {
+  display: flex;
+  flex-direction: row;
+  padding: 22px;
+  flex-grow: 1;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin-footer {
+  background-color: #fff;
+  box-shadow: 0 2px 5px #0000000d;
+  border: 1px solid #E8E8EB;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-main img {
+  margin: 0 30px 0 0;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-main img {
+  width: 50px;
+  max-width: 50px;
+  max-height: 50px;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-main .xtfe-main-name {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #141b38;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-main,  .xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-footer {
+  background-color: #fff;
+  box-shadow: 0 2px 5px #0000000d;
+  border: 1px solid #E8E8EB;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-footer .xtfe-footer-status {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 700;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-footer .xtfe-footer-status div {
+  margin-right: 12px;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-footer .xtfe-footer-status .xtfe-footer-status-label {
+  color: #8c8f9a;
+}
+
+.xtfe-about-us-plugins .xtfe-plugin .xtfe-plugin-footer .xtfe-footer-status div {
+  display: inline-block;
+}
+
+.xtfe-support-featurxtfe-card,  .xtfe-support-featurxtfe-card2 {
+  display: flex;
+  flex-basis: 32%;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  box-sizing: border-box;
+  margin: .5rem;
+  background-color: #fff;
+}
+
+.xtfe-support-featurxtfe-card2 {
+  flex-basis: 48%;
+}
+
+.xtfe-support-featurxtfe-card:last-child, .xtfe-support-featurxtfe-card2:last-child {
+  max-width: 100%
+}
+
+@media (min-width: 661px) {
+  .xtfe-support-featurxtfe-card, .xtfe-support-featurxtfe-card2 {
+      margin-bottom: 1%
+  }
+}
+
+@media (max-width: 660px) {
+  .xtfe-support-featurxtfe-card, .xtfe-support-featurxtfe-card2 {
+      max-width: 100%;
+      margin-bottom: .5rem
+  }
+}
+
+@media (min-width: 481px) {
+  .xtfe-support-featurxtfe-card {
+      padding: 2rem
+  }
+}
+
+@media (max-width: 480px) {
+  .xtfe-support-featurxtfe-card {
+      padding: 1rem;
+  }
+  .xtfe-support-featurxtfe-card2{
+      padding: 0;
+  }
+  .xtfe-about-us-plugins .xtfe-plugin{
+      width: 100%;
+  }
+}
+
+.xtfe-support-featurxtfe-list {
+  list-style: initial;
+  margin-left: 1rem
+}
+
+.xtfe-support-featurxtfe-img {
+  width: 5.625rem;
+  margin-right: .5rem;
+  line-height: 1
+}
+
+@media (min-width: 961px) {
+  .xtfe-support-featurxtfe-img {
+      width: 6.5rem;
+      margin-right: 1.125rem
+  }
+}
+
+.xtfe-support-featurxtfe-icon {
+  display: block;
+  max-width: 80%;
+  margin-left: 0px;
+}
+
+@media (min-width: 481px) {
+  .xtfe-support-featurxtfe-icon {
+      max-width: 80%;
+      margin-left: 0px;
+  }
+}
+
+.xtfe-support-featurxtfe-text {
+  flex: 1
+}
+
+.xtfe-support-featurxtfe-title {
+  margin: 0
+}
+
+.xtfe-support-features, .xtfe-support-features2 {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  margin-left: -.5rem;
+  margin-right: -.5rem
+}
+
+@media (max-width: 660px) {
+  .xtfe-support-features, .xtfe-support-features2  {
+      display: block
+  }
+}
+/*end support page*/

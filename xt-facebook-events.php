@@ -55,6 +55,7 @@ class XT_Facebook_Events{
 			add_action( 'plugins_loaded', array( self::$instance, 'load_authorize_class' ), 20 );
 			add_action( 'wp_enqueue_scripts', array( self::$instance, 'xtfe_enqueue_style' ) );
 			add_action( 'wp_enqueue_scripts', array( self::$instance, 'xtfe_enqueue_script' ) );
+			add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( self::$instance, 'xtfe_setting_doc_links' ) );
 
 			self::$instance->includes();
 			self::$instance->common = new XT_Facebook_Events_Common();
@@ -80,14 +81,14 @@ class XT_Facebook_Events{
 	 *
 	 * @since 1.0.0
 	 */
-	public function __clone() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
+	public function __clone() { _doing_it_wrong( __FUNCTION__, esc_attr__( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
 
 	/**
 	 * A dummy magic method to prevent XT_Facebook_Events from being unserialized.
 	 *
 	 * @since 1.0.0
 	 */
-	public function __wakeup() { _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
+	public function __wakeup() { _doing_it_wrong( __FUNCTION__, esc_attr__( 'Cheatin&#8217; huh?', 'xt-facebook-events' ), '1.1.7' ); }
 
 
 	/**
@@ -193,9 +194,9 @@ class XT_Facebook_Events{
 	public function xtfe_enqueue_style() {
 
 		$css_dir = XTFE_PLUGIN_URL . 'assets/css/';
-		wp_enqueue_style('font-awesome', $css_dir . 'font-awesome.min.css', false, "" );
-	 	wp_enqueue_style('xt-facebook-events-front', $css_dir . 'xt-facebook-events.css', false, "" );
-		wp_enqueue_style('xt-facebook-events-front-grid2', $css_dir . 'grid_style2.css', false, "" );
+		wp_enqueue_style('font-awesome', $css_dir . 'font-awesome.min.css', array(), XTFE_VERSION );
+	 	wp_enqueue_style('xt-facebook-events-front', $css_dir . 'xt-facebook-events.css', array(), XTFE_VERSION );
+		wp_enqueue_style('xt-facebook-events-front-grid2', $css_dir . 'grid_style2.css', array(), XTFE_VERSION );
 	}
 
 	/**
@@ -208,6 +209,38 @@ class XT_Facebook_Events{
 	public function xtfe_enqueue_script() {
 		
 		// enqueue script here.
+	}
+
+	/**
+	 * XTFE setting And docs link add in plugin page.
+	 *
+	 * @since 1.0
+	 * @return void
+	 */
+	public function xtfe_setting_doc_links( $links ) {
+		$xtfe_setting_doc_link = array(
+			'xtfe-event-setting' => sprintf(
+				'<a href="%s">%s</a>',
+				esc_url( admin_url( 'admin.php?page=wpfb_events&tab=settings' ) ),
+				esc_html__( 'Setting', 'xt-facebook-events' )
+			),
+			'xtfe-event-docs' => sprintf(
+				'<a target="_blank" href="%s">%s</a>',
+				esc_url( 'https://docs.xylusthemes.com/docs/facebookevents/' ),
+				esc_html__( 'Docs', 'xt-facebook-events' )
+			),
+		);
+		
+		$upgrate_to_pro = array();
+		if( !xtfe_is_pro() ){
+			$upgrate_to_pro = array( 'xtfe-event-pro-link' => sprintf(
+				'<a href="%s" target="_blank" style="color:#1da867;font-weight: 900;">%s</a>',
+				esc_url( 'https://xylusthemes.com/plugins/xt-facebook-events/' ),
+				esc_html__( 'Upgrade to Pro', 'xt-facebook-events' )
+			) ) ;
+		}
+
+		return array_merge( $links, $xtfe_setting_doc_link, $upgrate_to_pro );
 	}
 
 }
