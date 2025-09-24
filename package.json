@@ -9,6 +9,6 @@
     "lint:js": "wp-scripts lint-js blocks/"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^26.9.0"
+    "@wordpress/scripts": "^30.24.0"
   }
 }
