@@ -34,7 +34,7 @@ class XT_Facebook_Events_FB_Authorize {
 			$app_id = isset( $xtfe_options['facebook_app_id'] ) ? $xtfe_options['facebook_app_id'] : '';
 			$app_secret = isset( $xtfe_options['facebook_app_secret'] ) ? $xtfe_options['facebook_app_secret'] : '';
 			$redirect_url = admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' );
-			$api_version = 'v19.0';
+			$api_version = 'v24.0';
 			$param_url = urlencode($redirect_url);
 			$xtfe_session_state = md5( uniqid( wp_rand(), true ) );
 			setcookie("xtfe_session_state", $xtfe_session_state, "0", "/");
@@ -67,7 +67,7 @@ class XT_Facebook_Events_FB_Authorize {
 			$app_id = isset( $xtfe_options['facebook_app_id'] ) ? $xtfe_options['facebook_app_id'] : '';
 			$app_secret = isset( $xtfe_options['facebook_app_secret'] ) ? $xtfe_options['facebook_app_secret'] : '';
 			$redirect_url = admin_url('admin-post.php?action=xtfe_facebook_authorize_callback');
-			$api_version = 'v19.0';
+			$api_version = 'v24.0';
 			$param_url = urlencode($redirect_url);
 
 			if( $app_id != '' && $app_secret != '' ){
