@@ -3,8 +3,8 @@ Contributors: xylus,Dharm1025,Rajat1192
 Donate link: http://xylusthemes.com/
 Tags: facebook, facebook widget, facebook event, facebook events, event, event list, facebook event list, embed facebook, embed facebook events, widget, shortcode, event widget, facebook event widget, event shortcode
 Requires at least: 4.0
-Tested up to: 6.9
-Stable tag: 1.1.8
+Tested up to: 7.0
+Stable tag: 1.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,10 @@ You can add Facebook App ID and Facebook Secret in "Facebook Events" Menu.
 
 
 == Changelog ==
+
+= 1.1.9 =
+* IMPROVEMENTS: Updated Facebook API version to v24.0
+* IMPROVEMENTS: Added compatibility support for WordPress 7.0
 
 = 1.1.8 =
 * ADDED: Widget View Shortcode
