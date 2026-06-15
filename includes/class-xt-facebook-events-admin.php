@@ -53,6 +53,16 @@ class XT_Facebook_Events_Admin {
 		add_menu_page( esc_attr__( 'Facebook Events', 'xt-facebook-events' ), esc_attr__( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', 'wpfb_events', array( $this, 'admin_page' ), 'dashicons-facebook', '70' );
 		global $submenu;	
 		$submenu['wpfb_events'][] = array( __( 'Facebook Events', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=settings' ) );
+		if ( post_type_exists( 'xtfepro_live_feed' ) ) {
+			$submenu['wpfb_events'][] = array(
+				'<span style="display:flex; justify-content:space-between; align-items:center; width:100%;">' 
+					. __( 'Facebook Widget', 'xt-facebook-events' ) 
+					. '<span style="background:#4CAF50; margin-left:6px; flex-shrink:0;height: 22px;border-radius: 3px;color: #FFF;font-size: 12px;line-height: 18px;font-weight: 600;display: inline-flex;padding: 0 4px;align-items: center;">NEW</span>'
+				. '</span>',
+				'manage_options',
+				'edit.php?post_type=xtfepro_live_feed'
+			);
+		}
 		$submenu['wpfb_events'][] = array( __( 'Shortcodes & Widgets', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=shortandwid' ));
 		$submenu['wpfb_events'][] = array( __( 'Support & help', 'xt-facebook-events' ), 'manage_options', admin_url( 'admin.php?page=wpfb_events&tab=support' ));
 		if( !xtfe_is_pro() ){
@@ -88,6 +98,12 @@ class XT_Facebook_Events_Admin {
 				$submenu_file = admin_url( 'admin.php?page=wpfb_events&tab='.$tab );
 			}
 		}
+
+		global $post_type;
+		if ( 'xtfepro_live_feed' === $post_type ) {
+			$submenu_file = 'edit.php?post_type=xtfepro_live_feed';
+		}
+
 		return $submenu_file;
 	}
 

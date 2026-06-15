@@ -148,6 +148,11 @@ class XT_Facebook_Events{
 
 		// Gutenberg Block
 		require_once XTFE_PLUGIN_DIR . 'blocks/facebook-events/index.php';
+
+		// Feed Widget Builder
+		if ( file_exists( XTFE_PLUGIN_DIR . 'xtfepro-feed/feed-init.php' ) ) {
+			require_once XTFE_PLUGIN_DIR . 'xtfepro-feed/feed-init.php';
+		}
 	}
 
 	/**
