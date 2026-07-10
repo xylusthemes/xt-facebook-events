@@ -69,6 +69,7 @@ class XTFEPRO_Feed_Builder_UI {
 				'copied'          => __( 'Copied!', 'xt-facebook-events-pro' ),
 				'reqTitle'        => __( 'Widget name is required.', 'xt-facebook-events-pro' ),
 				'reqPageId'       => __( 'Facebook Page ID or Slug is required.', 'xt-facebook-events-pro' ),
+				'reqGroupId'      => __( 'Facebook Group URL or ID is required.', 'xt-facebook-events-pro' ),
 				'reqEventIds'     => __( 'At least one Event ID is required.', 'xt-facebook-events-pro' ),
 				'reqIcalUrl'      => __( 'iCal URL is required.', 'xt-facebook-events-pro' ),
 			),
@@ -93,6 +94,14 @@ class XTFEPRO_Feed_Builder_UI {
 		?>
 
 		<div id="xtfepro-builder" class="xtfepro-builder">
+
+			<!-- Global Warning Notice for Restricted Pages -->
+			<div id="xtfepro-builder-global-warning" style="display: none; background: #fff8e5; border-left: 4px solid #f0b849; padding: 12px 15px; margin-bottom: 15px; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
+				<p style="margin: 0; font-size: 13px; color: #3c434a;">
+					<strong><?php esc_html_e( 'Warning:', 'xt-facebook-events-pro' ); ?></strong>
+					<span class="xtfepro-warning-text"></span>
+				</p>
+			</div>
 
 			<!-- Top Bar -->
 			<div class="xtfepro-builder__topbar">

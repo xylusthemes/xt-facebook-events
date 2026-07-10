@@ -197,10 +197,10 @@
   font-size: 11px;
   color: #1877F2;
   font-weight: 600;
-  animation: xtfeprofeed-pulse 1s infinite alternate;
+  animation: xtfepro-loading-fade 1s infinite alternate;
 }
 
-@keyframes xtfeprofeed-pulse {
+@keyframes xtfepro-loading-fade {
   from { opacity: 0.5; }
   to { opacity: 1; }
 }

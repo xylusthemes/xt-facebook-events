@@ -103,6 +103,9 @@ jQuery(function ($) {
     if (sourceType === 'page_id') {
       var $pageId = $('input[name="_xtfeprofeed_page_id"]');
       if (!$pageId.val().trim()) showError($pageId, i18n.reqPageId || 'Facebook Page ID or Slug is required.');
+    } else if (sourceType === 'group_id') {
+      var $groupId = $('input[name="_xtfeprofeed_group_id"]');
+      if (!$groupId.val().trim()) showError($groupId, i18n.reqGroupId || 'Facebook Group URL or ID is required.');
     } else if (sourceType === 'event_ids') {
       var $eventIds = $('input[name="_xtfeprofeed_event_ids"]');
       if (!$eventIds.val().trim()) showError($eventIds, i18n.reqEventIds || 'At least one Event ID is required.');

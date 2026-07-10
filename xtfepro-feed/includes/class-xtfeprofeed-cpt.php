@@ -98,6 +98,7 @@ class XTFEPRO_Feed_CPT {
 				$source_type = get_post_meta( $post_id, '_xtfeprofeed_source_type', true );
 				$map = array(
 					'page_id'   => __( 'Page ID/Slug', 'xt-facebook-events-pro' ),
+					'group_id'  => __( 'Group URL/ID', 'xt-facebook-events-pro' ),
 					'event_ids' => __( 'Event IDs', 'xt-facebook-events-pro' ),
 					'ical_url'  => __( 'iCal URL', 'xt-facebook-events-pro' ),
 				);

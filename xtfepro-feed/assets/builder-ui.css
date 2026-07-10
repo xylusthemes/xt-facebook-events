@@ -34,7 +34,7 @@ body.xtfepro-builder-active {
 
 body.xtfepro-builder-active #titlediv,
 body.xtfepro-builder-active #postbox-container-1,
-body.xtfepro-builder-active #post-body-content > *:not(#xtfepro-builder):not(.xtfepro-builder),
+body.xtfepro-builder-active #post-body-content>*:not(#xtfepro-builder):not(.xtfepro-builder),
 body.xtfepro-builder-active #submitdiv,
 body.xtfepro-builder-active .postbox-header,
 body.xtfepro-builder-active #minor-publishing,
@@ -45,7 +45,7 @@ body.xtfepro-builder-active #post-status-info {
 }
 
 body.xtfepro-builder-active .wrap {
-    margin: 0 !important;
+  margin: 0 !important;
 }
 
 body.xtfepro-builder-active #normal-sortables,
@@ -70,8 +70,8 @@ body.xtfepro-builder-active html {
   margin-top: 0 !important;
 }
 
-body.xtfepro-builder-active .wrap > h1,
-body.xtfepro-builder-active .wrap > .page-title-action {
+body.xtfepro-builder-active .wrap>h1,
+body.xtfepro-builder-active .wrap>.page-title-action {
   display: none !important;
 }
 
@@ -102,7 +102,7 @@ body.xtfepro-builder-active #post-body {
    2. BUILDER WRAPPER — centered
    ============================================================ */
 .xtfepro-builder {
-  max-width: 1240px;
+  max-width: 1500px;
   margin: 0 auto;
   /* padding: 0 20px 72px; */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -138,7 +138,7 @@ body.xtfepro-builder-active #post-body {
 
 .xtfepro-builder__back:hover {
   color: #2271b1;
-  background: rgba(34,113,177,.06);
+  background: rgba(34, 113, 177, .06);
 }
 
 .xtfepro-builder__back .dashicons {
@@ -200,7 +200,7 @@ body.xtfepro-builder-active #post-body {
 
 .xtfepro-builder__shortcode-copy:hover {
   color: #2271b1;
-  background: rgba(34,113,177,.08);
+  background: rgba(34, 113, 177, .08);
 }
 
 .xtfepro-builder__shortcode-copy .dashicons {
@@ -256,7 +256,7 @@ body.xtfepro-builder-active #post-body {
   padding: 6px 8px;
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
   border: 1px solid #e8e8e8;
 }
 
@@ -320,7 +320,7 @@ body.xtfepro-builder-active #post-body {
 
 /* Active state */
 .xtfepro-builder__step-indicator.is-active {
-  background: rgba(34,113,177,.07);
+  background: rgba(34, 113, 177, .07);
 }
 
 .xtfepro-builder__step-indicator.is-active .xtfepro-builder__step-circle {
@@ -366,7 +366,7 @@ body.xtfepro-builder-active #post-body {
   display: none;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
   border: 1px solid #e8e8e8;
   padding: 22px 28px 28px;
   animation: xtfepro-fadeIn .25s ease;
@@ -377,8 +377,15 @@ body.xtfepro-builder-active #post-body {
 }
 
 @keyframes xtfepro-fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Panel header — compact */
@@ -434,6 +441,7 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__title-slot {
   margin-bottom: 20px;
 }
+
 .xtfepro-builder__panel-body .form-table {
   margin-top: 0;
 }
@@ -497,9 +505,19 @@ body.xtfepro-builder-active #post-body {
 }
 
 @keyframes xtfepro-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
 }
 
 .xtfepro-builder__panel-body .description {
@@ -526,13 +544,13 @@ body.xtfepro-builder-active #post-body {
 
 .xtfepro-builder__panel-body .xtfeprofeed-layout-option:hover {
   border-color: #2271b1;
-  background: rgba(34,113,177,.03);
+  background: rgba(34, 113, 177, .03);
 }
 
 .xtfepro-builder__panel-body .xtfeprofeed-layout-option.active,
 .xtfepro-builder__panel-body .xtfeprofeed-layout-option:has(input:checked) {
   border-color: #2271b1;
-  background: rgba(34,113,177,.05);
+  background: rgba(34, 113, 177, .05);
 }
 
 /* Textarea (custom CSS) */
@@ -559,11 +577,11 @@ body.xtfepro-builder-active #post-body {
   border-top: 1px solid #e0e0e0;
   padding: 10px 20px;
   z-index: 9999;
-  box-shadow: 0 -1px 6px rgba(0,0,0,.05);
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, .05);
 }
 
 .xtfepro-builder__footer-inner {
-  max-width: 780px;
+  max-width: 1500px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -617,7 +635,7 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__btn--prev:hover {
   border-color: #2271b1;
   color: #2271b1;
-  background: rgba(34,113,177,.04);
+  background: rgba(34, 113, 177, .04);
 }
 
 /* Next */
@@ -649,8 +667,13 @@ body.xtfepro-builder-active #post-body {
    9. SPIN ANIMATION
    ============================================================ */
 @keyframes xtfepro-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .xtfepro-spin {
@@ -725,7 +748,8 @@ body.xtfepro-builder-active #post-body {
   gap: 24px;
   align-items: flex-start;
   flex: 1;
-  margin-bottom: 80px; /* footer offset */
+  margin-bottom: 80px;
+  /* footer offset */
   transition: all 0.3s ease;
 }
 
@@ -761,7 +785,7 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__preview-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
   border: 1px solid #e8e8e8;
   overflow: hidden;
   display: flex;
@@ -787,7 +811,12 @@ body.xtfepro-builder-active #post-body {
   font-size: 11px;
   color: #1877F2;
   font-weight: 600;
-  animation: xtfeprofeed-pulse 1s infinite alternate;
+  animation: xtfepro-loading-fade 1s infinite alternate;
+}
+
+@keyframes xtfepro-loading-fade {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
 }
 
 .xtfepro-builder__preview-card-body {
@@ -845,10 +874,12 @@ body.xtfepro-builder-active #post-body {
     flex-direction: column;
     align-items: stretch;
   }
+
   .xtfepro-builder__panels {
     width: 100%;
     min-width: 0;
   }
+
   .xtfepro-builder__preview-sidebar {
     width: 100%;
     position: static;
@@ -861,5 +892,3 @@ body.xtfepro-builder-active #post-body {
   pointer-events: none !important;
   cursor: default !important;
 }
-
-

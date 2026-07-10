@@ -115,6 +115,7 @@ class XTFEPRO_Feed_Admin {
 							<?php
 							$sources = array(
 								'page_id'   => __( 'Facebook Page ID/Slug', 'xt-facebook-events-pro' ),
+								'group_id'  => __( 'Facebook Group URL/ID', 'xt-facebook-events-pro' ),
 								'event_ids' => __( 'Specific Event IDs', 'xt-facebook-events-pro' ),
 								'ical_url'  => __( 'iCal URL', 'xt-facebook-events-pro' ),
 							);
@@ -150,6 +151,21 @@ class XTFEPRO_Feed_Admin {
 							<p class="description">
 								<?php esc_html_e( 'Enter the username slug or ID of the Facebook page.', 'xt-facebook-events-pro' ); ?>
 								<?php if ( ! in_array( 'page_id', apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) ), true ) ) : ?>
+									<br><span style="color:red;font-weight:bold;"><?php printf( __( 'Available in %s version.', 'xt-facebook-events' ), '<a href="https://xylusthemes.com/plugins/xt-facebook-events/" target="_blank">Pro</a>' ); ?></span>
+								<?php endif; ?>
+							</p>
+						</td>
+					</tr>
+
+					<tr class="xtfeprofeed-source-row xtfeprofeed-source-group_id" <?php echo 'group_id' !== $meta['source_type'] ? 'style="display:none"' : ''; ?>>
+						<th><label for="xtfeprofeed_group_id"><?php esc_html_e( 'Facebook Group URL / ID', 'xt-facebook-events-pro' ); ?></label></th>
+						<td>
+							<input type="text" id="xtfeprofeed_group_id" name="_xtfeprofeed_group_id"
+								value="<?php echo esc_attr( $meta['group_id'] ?? '' ); ?>"
+								class="large-text" placeholder="e.g. https://www.facebook.com/groups/629555443733186 or 629555443733186" <?php disabled( ! in_array( 'group_id', apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) ), true ) ); ?> />
+							<p class="description">
+								<?php esc_html_e( 'Enter the URL or numeric ID of a public Facebook Group.', 'xt-facebook-events-pro' ); ?>
+								<?php if ( ! in_array( 'group_id', apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) ), true ) ) : ?>
 									<br><span style="color:red;font-weight:bold;"><?php printf( __( 'Available in %s version.', 'xt-facebook-events' ), '<a href="https://xylusthemes.com/plugins/xt-facebook-events/" target="_blank">Pro</a>' ); ?></span>
 								<?php endif; ?>
 							</p>
@@ -505,7 +521,7 @@ class XTFEPRO_Feed_Admin {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
 		$text_fields = array(
-			'_xtfeprofeed_source_type', '_xtfeprofeed_page_id', '_xtfeprofeed_event_ids', '_xtfeprofeed_ical_url',
+			'_xtfeprofeed_source_type', '_xtfeprofeed_page_id', '_xtfeprofeed_group_id', '_xtfeprofeed_event_ids', '_xtfeprofeed_ical_url',
 			'_xtfeprofeed_time_filter', '_xtfeprofeed_start_date', '_xtfeprofeed_end_date',
 			'_xtfeprofeed_layout', '_xtfeprofeed_pagination_type',
 			'_xtfeprofeed_register_label',

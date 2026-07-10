@@ -209,8 +209,11 @@ jQuery(function ($) {
 
     $.post(xtfeproFeedAdmin.ajax_url, formData)
       .done(function (res) {
+        var $globalWarning = $('#xtfepro-builder-global-warning');
+        
         if (res.success && res.data.html) {
           $containers.html(res.data.html);
+          $globalWarning.hide();
 
           $containers.find('img').each(function () {
             if (this.complete) {
@@ -222,8 +225,21 @@ jQuery(function ($) {
             }
           });
         } else {
-          var errHtml = '<div class="xtfeprofeed-preview-error"><p>' + (res.data.message || 'Error loading preview') + '</p></div>';
+          var errorMsg = res.data.message || 'Error loading preview';
+          var errHtml = '<div class="xtfeprofeed-preview-error"><p>' + errorMsg + '</p></div>';
           $containers.html(errHtml);
+          
+          if (errorMsg.indexOf("This content isn't available") !== -1 || errorMsg.indexOf("private") !== -1 || errorMsg.indexOf("restricted") !== -1) {
+            var sourceType = $('input[name="_xtfeprofeed_source_type"]:checked').val();
+            var warningText = 'We cannot fetch data because the Facebook Page/Event might be private or country-restricted. Please change the Page ID or check settings.';
+            if (sourceType === 'group_id') {
+              warningText = 'We cannot fetch data because the Facebook Group might be private or country-restricted. Please change the Group ID or check settings.';
+            }
+            $globalWarning.find('.xtfepro-warning-text').text(warningText);
+            $globalWarning.show();
+          } else {
+            $globalWarning.hide();
+          }
         }
       })
       .fail(function () {

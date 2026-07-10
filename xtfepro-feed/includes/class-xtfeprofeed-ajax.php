@@ -2,6 +2,9 @@
 /**
  * XT Facebook Events Pro Live Feed - AJAX Handlers
  *
+ * OPTIMIZED: Added background full-fetch handler (xtfeprofeed_bg_full_fetch)
+ * triggered immediately after feed save — replaces slow Action Scheduler init.
+ *
  * @package XT_Facebook_Events_Pro\Feed
  */
 
@@ -23,16 +26,23 @@ class XTFEPRO_Feed_AJAX {
 	private function __construct() {}
 
 	public function init() {
-		add_action( 'wp_ajax_xtfeprofeed_clear_cache',   array( $this, 'clear_cache' ) );
+		// Admin-only handlers
+		add_action( 'wp_ajax_xtfeprofeed_clear_cache',      array( $this, 'clear_cache' ) );
 		add_action( 'wp_ajax_xtfeprofeed_clear_hard_cache', array( $this, 'clear_hard_cache' ) );
-		add_action( 'wp_ajax_xtfeprofeed_preview_feed',  array( $this, 'preview_feed' ) );
-		add_action( 'wp_ajax_xtfeprofeed_live_preview',  array( $this, 'live_preview' ) );
+		add_action( 'wp_ajax_xtfeprofeed_preview_feed',     array( $this, 'preview_feed' ) );
+		add_action( 'wp_ajax_xtfeprofeed_live_preview',     array( $this, 'live_preview' ) );
+
+		// Public paginated page load
 		add_action( 'wp_ajax_nopriv_xtfeprofeed_load_page', array( $this, 'load_paginated_page' ) );
 		add_action( 'wp_ajax_xtfeprofeed_load_page',        array( $this, 'load_paginated_page' ) );
+
+		// Background: full fetch after save (fired from pro-common trigger_full_fetch_after_save)
+		add_action( 'wp_ajax_xtfeprofeed_bg_full_fetch',        array( $this, 'bg_full_fetch' ) );
+		add_action( 'wp_ajax_nopriv_xtfeprofeed_bg_full_fetch', array( $this, 'bg_full_fetch' ) );
 	}
 
 	// -------------------------------------------------------
-	// Clear cache
+	// Clear cache (transient only)
 	// -------------------------------------------------------
 
 	public function clear_cache() {
@@ -41,18 +51,20 @@ class XTFEPRO_Feed_AJAX {
 		}
 		$nonce   = sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) );
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
+
 		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_clear_cache_' . $feed_id ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events-pro' ) ) );
 		}
 		if ( ! $feed_id ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events-pro' ) ) );
 		}
+
 		XTFEPRO_Feed_API::instance()->clear_cache( $feed_id );
 		wp_send_json_success( array( 'message' => __( 'Cache cleared! Next page load will fetch fresh data from Facebook.', 'xt-facebook-events-pro' ) ) );
 	}
 
 	// -------------------------------------------------------
-	// Clear hard cache (HQ Images)
+	// Clear hard cache (transient + HQ image DB)
 	// -------------------------------------------------------
 
 	public function clear_hard_cache() {
@@ -61,6 +73,7 @@ class XTFEPRO_Feed_AJAX {
 		}
 		$nonce   = sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) );
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
+
 		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_clear_hard_cache' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events-pro' ) ) );
 		}
@@ -68,17 +81,190 @@ class XTFEPRO_Feed_AJAX {
 			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events-pro' ) ) );
 		}
 
-		// Delete all cached images from DB
 		XTFEPRO_Feed_DB::instance()->delete_all_images();
-
-		// Clear feed cache
 		XTFEPRO_Feed_API::instance()->clear_cache( $feed_id );
 
-		wp_send_json_success( array( 'message' => __( 'Hard cache cleared! Re-fetching HQ images will start on next page load.', 'xt-facebook-events-pro' ) ) );
+		// Immediately trigger a fresh full background fetch
+		wp_remote_post(
+			admin_url( 'admin-ajax.php' ),
+			array(
+				'timeout'   => 0.01,
+				'blocking'  => false,
+				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+				'body'      => array(
+					'action'  => 'xtfeprofeed_bg_full_fetch',
+					'feed_id' => $feed_id,
+					'nonce'   => wp_create_nonce( 'xtfeprofeed_full_fetch_' . $feed_id ),
+				),
+			)
+		);
+
+		wp_send_json_success( array( 'message' => __( 'Hard cache cleared! Fetching fresh HQ images in background — they will appear automatically.', 'xt-facebook-events-pro' ) ) );
 	}
 
 	// -------------------------------------------------------
-	// Preview feed (admin)
+	// Background: Full fetch after feed save
+	// Triggered non-blocking from pro-common after save_post.
+	// Fetches ALL pages + ALL HQ images without blocking admin.
+	// -------------------------------------------------------
+
+	public function bg_full_fetch() {
+		$feed_id = absint( $_POST['feed_id'] ?? 0 );
+		$nonce   = sanitize_text_field( $_POST['nonce'] ?? '' );
+
+		if ( ! $feed_id || ! wp_verify_nonce( $nonce, 'xtfeprofeed_full_fetch_' . $feed_id ) ) {
+			wp_die();
+		}
+
+		ignore_user_abort( true );
+		set_time_limit( 300 );
+
+		$api  = XTFEPRO_Feed_API::instance();
+		$meta = $api->get_feed_meta( $feed_id );
+
+		// Only page_id and group_id sources need multi-page fetching
+		if ( ! in_array( $meta['source_type'] ?? '', array( 'page_id', 'group_id' ), true ) ) {
+			// For event_ids / ical: just do a fresh get_events to populate cache
+			$api->get_events( $feed_id, true );
+			wp_die();
+		}
+
+		$fetch_filter = 'group_id' === $meta['source_type'] ? 'xtfeprofeed_fetch_group_events' : 'xtfeprofeed_fetch_page_events';
+		$duration = absint( $meta['cache_duration'] ) * MINUTE_IN_SECONDS;
+
+		// --- Page 1: live scrape ---
+		$response = apply_filters(
+			$fetch_filter,
+			new WP_Error( 'xtfeprofeed_pro_only', '' ),
+			$meta,
+			'',
+			$api
+		);
+
+		if ( is_wp_error( $response ) ) {
+			wp_die();
+		}
+
+		$page1_events = $api->dedup( $response['events'] ?? array() );
+
+		// Save page 1
+		$api->clear_cache( $feed_id ); // Ensure clean slate
+		set_transient( 'xtfeprofeed_p_' . $feed_id . '_1', $page1_events, $duration );
+		update_post_meta( $feed_id, '_xtfeprofeed_last_fetched', time() );
+
+		// HQ images for page 1 — batch of 5, in same process (we have time here)
+		$this->fetch_hq_batch_sync( $feed_id, $page1_events );
+
+		// --- Pages 2-N: loop synchronously (we're already background) ---
+		$cursor     = $response['cursor'] ?? '';
+		$has_more   = ! empty( $response['has_more'] ) && $cursor;
+		$scrape_page = 2;
+		$max_pages   = 20;
+
+		while ( $has_more && $scrape_page <= $max_pages ) {
+			$response = apply_filters(
+				$fetch_filter,
+				new WP_Error( 'xtfeprofeed_pro_only', '' ),
+				$meta,
+				$cursor,
+				$api
+			);
+
+			if ( is_wp_error( $response ) ) break;
+
+			$page_events = $api->dedup( $response['events'] ?? array() );
+
+			set_transient(
+				'xtfeprofeed_p_' . $feed_id . '_' . $scrape_page,
+				$page_events,
+				$duration
+			);
+
+			// HQ images per page — batch sync
+			$this->fetch_hq_batch_sync( $feed_id, $page_events );
+
+			$cursor   = $response['cursor'] ?? '';
+			$has_more = ! empty( $response['has_more'] ) && $cursor;
+			$scrape_page++;
+		}
+
+		// Release lock
+		delete_transient( 'xtfeprofeed_lock_running_' . $feed_id );
+
+		wp_die();
+	}
+
+	/**
+	 * Fetch HQ images synchronously in batches of 5 within bg_full_fetch.
+	 * Since we are already in a background process, no need to fire more async requests.
+	 */
+	private function fetch_hq_batch_sync( $feed_id, $events ) {
+		$db  = XTFEPRO_Feed_DB::instance();
+		$api = XTFEPRO_Feed_API::instance();
+
+		$pending = array();
+		foreach ( $events as $event ) {
+			$event_id = (string) ( $event['id'] ?? '' );
+			if ( ! $event_id ) continue;
+			if ( $db->get_image( $event_id ) ) continue; // Already in DB
+			$pending[] = $event_id;
+		}
+
+		if ( empty( $pending ) ) return;
+
+		$batches = array_chunk( array_unique( $pending ), 5 );
+
+		foreach ( $batches as $batch ) {
+			foreach ( $batch as $event_id ) {
+				try {
+					$data = $api->getEventById( $event_id );
+					if ( ! empty( $data['cover_image'] ) ) {
+						$db->save_image( $event_id, $data['cover_image'] );
+						// Update the transient cache for this feed inline
+						$this->update_event_image_in_transients( $feed_id, $event_id, $data['cover_image'] );
+					}
+				} catch ( \Exception $e ) {
+					// Skip — will retry on next cache clear
+				}
+			}
+			// Small pause between batches to be gentle on FB
+			usleep( 500000 ); // 0.5 sec between batches
+		}
+	}
+
+	/**
+	 * Update image_url in all paginated transients for a feed after HQ fetch.
+	 */
+	private function update_event_image_in_transients( $feed_id, $event_id, $image_url ) {
+		$page  = 1;
+		$limit = 20;
+
+		while ( $page <= $limit ) {
+			$key    = 'xtfeprofeed_p_' . $feed_id . '_' . $page;
+			$events = get_transient( $key );
+			if ( false === $events ) break;
+
+			$updated = false;
+			foreach ( $events as &$ev ) {
+				if ( (string) ( $ev['id'] ?? '' ) === (string) $event_id ) {
+					$ev['image_url'] = $image_url;
+					$updated = true;
+				}
+			}
+			unset( $ev );
+
+			if ( $updated ) {
+				$timeout   = get_option( '_transient_timeout_' . $key );
+				$remaining = $timeout ? max( 60, $timeout - time() ) : HOUR_IN_SECONDS;
+				set_transient( $key, $events, $remaining );
+			}
+
+			$page++;
+		}
+	}
+
+	// -------------------------------------------------------
+	// Preview feed (admin — count check only)
 	// -------------------------------------------------------
 
 	public function preview_feed() {
@@ -87,26 +273,32 @@ class XTFEPRO_Feed_AJAX {
 		}
 		$nonce   = sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) );
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
+
 		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_admin_nonce' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events-pro' ) ) );
 		}
+
 		$events = XTFEPRO_Feed_API::instance()->get_events( $feed_id, true );
 		if ( is_wp_error( $events ) ) {
 			wp_send_json_error( array( 'message' => $events->get_error_message() ) );
 		}
+
 		wp_send_json_success( array(
 			'total'   => count( $events ),
-			'message' => sprintf( __( '%d events fetched successfully.', 'xt-facebook-events-pro' ), count( $events ) ),
+			'message' => sprintf(
+				__( '%d events fetched successfully.', 'xt-facebook-events-pro' ),
+				count( $events )
+			),
 		) );
 	}
 
 	// -------------------------------------------------------
-	// Public: paginated page load
+	// Public paginated load
 	// -------------------------------------------------------
 
 	public function load_paginated_page() {
 		$feed_id  = absint( $_POST['feed_id'] ?? 0 );
-		$page     = absint( $_POST['page'] ?? 1 );
+		$page     = absint( $_POST['page']     ?? 1 );
 		$per_page = absint( $_POST['per_page'] ?? 12 );
 
 		if ( ! $feed_id ) {
@@ -128,7 +320,7 @@ class XTFEPRO_Feed_AJAX {
 
 		$meta         = XTFEPRO_Feed_API::instance()->get_feed_meta( $feed_id );
 		$total_events = count( $events );
-		$total_pages  = ceil( $total_events / $per_page );
+		$total_pages  = (int) ceil( $total_events / $per_page );
 		$page         = max( 1, min( $page, $total_pages ) );
 		$page_events  = array_slice( $events, ( $page - 1 ) * $per_page, $per_page );
 
@@ -169,20 +361,22 @@ class XTFEPRO_Feed_AJAX {
 
 		$register_label = sanitize_text_field( $_POST['_xtfeprofeed_register_label'] ?? __( 'View Event', 'xt-facebook-events-pro' ) );
 
+		$cache_val = $_POST['_xtfeprofeed_cache_duration'] ?? '1440';
+		if ( 'custom' === $cache_val ) {
+			$custom_hours  = max( 1, absint( $_POST['_xtfeprofeed_cache_duration_custom'] ?? 5 ) );
+			$cache_minutes = $custom_hours * 60;
+		} else {
+			$cache_minutes = absint( $cache_val ) ?: 1440;
+		}
+
 		$posted_meta = array(
 			'source_type'     => sanitize_text_field( $_POST['_xtfeprofeed_source_type'] ?? 'page_id' ),
-			'page_id'         => sanitize_text_field( $_POST['_xtfeprofeed_page_id'] ?? '' ),
-			'event_ids'       => sanitize_text_field( $_POST['_xtfeprofeed_event_ids'] ?? '' ),
-			'ical_url'        => sanitize_text_field( $_POST['_xtfeprofeed_ical_url'] ?? '' ),
+			'page_id'         => sanitize_text_field( $_POST['_xtfeprofeed_page_id']     ?? '' ),
+			'group_id'        => sanitize_text_field( $_POST['_xtfeprofeed_group_id']    ?? '' ),
+			'event_ids'       => sanitize_text_field( $_POST['_xtfeprofeed_event_ids']   ?? '' ),
+			'ical_url'        => sanitize_text_field( $_POST['_xtfeprofeed_ical_url']    ?? '' ),
 			'time_filter'     => $time_filter,
-			'cache_duration'  => (function() {
-				$cache_val = $_POST['_xtfeprofeed_cache_duration'] ?? '1440';
-				if ( 'custom' === $cache_val ) {
-					$custom_hours = max( 1, absint( $_POST['_xtfeprofeed_cache_duration_custom'] ?? 5 ) );
-					return $custom_hours * 60;
-				}
-				return absint( $cache_val ) ?: 1440;
-			})(),
+			'cache_duration'  => $cache_minutes,
 			'pagination_type' => sanitize_text_field( $_POST['_xtfeprofeed_pagination_type'] ?? 'ajax' ),
 			'per_page'        => absint( $_POST['_xtfeprofeed_per_page'] ?? 12 ),
 			'layout'          => sanitize_text_field( $_POST['_xtfeprofeed_layout'] ?? 'card-grid' ),
@@ -201,7 +395,7 @@ class XTFEPRO_Feed_AJAX {
 			'register_label'  => $register_label,
 			'hide_online'     => ! empty( $_POST['_xtfeprofeed_hide_online'] ),
 			'start_date'      => sanitize_text_field( $_POST['_xtfeprofeed_start_date'] ?? '' ),
-			'end_date'        => sanitize_text_field( $_POST['_xtfeprofeed_end_date'] ?? '' ),
+			'end_date'        => sanitize_text_field( $_POST['_xtfeprofeed_end_date']   ?? '' ),
 			'category_id'     => '',
 			'tag_query'       => '',
 			'tags_filter'     => '',
@@ -209,16 +403,13 @@ class XTFEPRO_Feed_AJAX {
 			'feed_id'         => $feed_id,
 		);
 
-		// Fallback to saved meta if source field empty
-		if ( 'page_id' === $posted_meta['source_type'] && empty( $posted_meta['page_id'] ) && $feed_id ) {
+		// Fallback: if source fields empty, pull from saved meta
+		if ( $feed_id ) {
 			$saved = XTFEPRO_Feed_API::instance()->get_feed_meta( $feed_id );
-			$posted_meta['page_id'] = $saved['page_id'] ?? '';
-		} elseif ( 'event_ids' === $posted_meta['source_type'] && empty( $posted_meta['event_ids'] ) && $feed_id ) {
-			$saved = XTFEPRO_Feed_API::instance()->get_feed_meta( $feed_id );
-			$posted_meta['event_ids'] = $saved['event_ids'] ?? '';
-		} elseif ( 'ical_url' === $posted_meta['source_type'] && empty( $posted_meta['ical_url'] ) && $feed_id ) {
-			$saved = XTFEPRO_Feed_API::instance()->get_feed_meta( $feed_id );
-			$posted_meta['ical_url'] = $saved['ical_url'] ?? '';
+			if ( 'page_id'    === $posted_meta['source_type'] && empty( $posted_meta['page_id'] ) )    $posted_meta['page_id']    = $saved['page_id']    ?? '';
+			if ( 'group_id'   === $posted_meta['source_type'] && empty( $posted_meta['group_id'] ) )   $posted_meta['group_id']   = $saved['group_id']   ?? '';
+			if ( 'event_ids'  === $posted_meta['source_type'] && empty( $posted_meta['event_ids'] ) )  $posted_meta['event_ids']  = $saved['event_ids']  ?? '';
+			if ( 'ical_url'   === $posted_meta['source_type'] && empty( $posted_meta['ical_url'] ) )   $posted_meta['ical_url']   = $saved['ical_url']   ?? '';
 		}
 
 		$is_full_preview = ! empty( $_POST['is_full_preview'] ) && 'true' === $_POST['is_full_preview'];
@@ -226,7 +417,10 @@ class XTFEPRO_Feed_AJAX {
 		$events = XTFEPRO_Feed_API::instance()->fetch_preview_events( $posted_meta );
 
 		if ( is_wp_error( $events ) ) {
-			wp_send_json_error( array( 'message' => sprintf( __( 'Could not load preview: %s. Please check your Source settings.', 'xt-facebook-events-pro' ), $events->get_error_message() ) ) );
+			wp_send_json_error( array( 'message' => sprintf(
+				__( 'Could not load preview: %s. Please check your Source settings.', 'xt-facebook-events-pro' ),
+				$events->get_error_message()
+			) ) );
 		}
 
 		if ( empty( $events ) ) {
@@ -245,13 +439,12 @@ class XTFEPRO_Feed_AJAX {
 					<?php XTFEPRO_Feed_Shortcode::instance()->render_event_card( $event, $posted_meta ); ?>
 				<?php endforeach; ?>
 			</div>
-			<div style="margin-top: 15px; font-size: 11px; color: #777; text-align: center; font-style: italic;">
-				<?php esc_html_e( 'Note: Low-quality/blurry images may display here in Live Preview for new events to keep the editor fast. High-quality HD images will load automatically on the front-end.', 'xt-facebook-events-pro' ); ?>
+			<div style="margin-top:15px;font-size:11px;color:#777;text-align:center;font-style:italic;">
+				<?php esc_html_e( 'Note: Blurry/low-quality images may appear in Live Preview for new events to keep the editor fast. High-quality HD images load automatically on the front-end after saving.', 'xt-facebook-events-pro' ); ?>
 			</div>
 		</div>
 		<?php
 		$html = ob_get_clean();
-
 		wp_send_json_success( array( 'html' => $html ) );
 	}
 }
