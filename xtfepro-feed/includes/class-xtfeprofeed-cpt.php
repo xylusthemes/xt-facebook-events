@@ -68,6 +68,85 @@ class XTFEPRO_Feed_CPT {
 		add_action( 'before_delete_post', array( $this, 'clear_cache_on_delete' ), 10, 2 );
 		add_action( 'wp_trash_post', array( $this, 'clear_cache_on_trash' ) );
 		add_action( 'untrash_post', array( $this, 'clear_cache_on_untrash' ) );
+
+		add_action( 'in_admin_header', array( $this, 'render_admin_header' ) );
+		add_action( 'in_admin_footer', array( $this, 'render_admin_footer' ) );
+	}
+
+	public function render_admin_header() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'edit-' . XTFEPRO_FEED_CPT !== $screen->id ) return;
+
+		$admin_instance = XT_Facebook_Events::instance()->admin;
+		if ( $admin_instance ) {
+			$admin_instance->xtfe_render_common_header( __( 'Facebook Widget', 'xt-facebook-events-pro' ) );
+		}
+
+		echo '<style>
+			.xtfe-container { max-width: 1600px !important; margin: 0 auto; }
+			#wpbody-content > .wrap {
+				max-width: 1600px !important;
+				margin: 24px auto !important;
+				padding: 24px !important;
+				border-radius: 12px !important;
+				border: 1px solid #e2e8f0 !important;
+				background: #fff !important;
+				box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+				box-sizing: border-box;
+			}
+			#wpbody-content .wrap > h1, .wp-heading-inline { display: none !important; }
+			#wpbody-content .wrap > .page-title-action {
+				display: inline-block !important;
+				background: #005ae0;
+				color: #fff;
+				border-radius: 6px;
+				padding: 0px 15px;
+				line-height: 32px;
+				text-decoration: none;
+				font-weight: 600;
+				font-size: 13px;
+				border: none;
+				margin-bottom: 20px;
+				box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+				transition: background 0.2s ease;
+			}
+			#wpbody-content .wrap > .page-title-action:hover {
+				background: #0046b5;
+				color: #fff;
+			}
+			.wp-list-table { border: 1px solid #e2e8f0 !important; box-shadow: none !important; border-radius: 8px; overflow: hidden; margin-top: 16px !important; }
+			.wp-list-table thead, .wp-list-table tfoot { background-color: #f8fafc; }
+			.wp-list-table th { color: #475569 !important; font-weight: 600 !important; border-bottom: 1px solid #e2e8f0 !important; }
+			.wp-list-table td { color: #334155 !important; border-bottom: 1px solid #e2e8f0 !important; vertical-align: middle; }
+			.wp-list-table tbody tr:hover { background-color: #f8fafc !important; }
+			.tablenav .actions select { border: 1px solid #cbd5e1; border-radius: 6px; padding: 0 8px; min-height: 32px; color: #475569; width: 10rem; }
+			.tablenav .button, .search-box .button { border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #334155; font-weight: 600; padding: 0 12px; min-height: 32px; transition: all 0.2s; }
+			.tablenav .button:hover, .search-box .button:hover { background: #f8fafc; border-color: #94a3b8; }
+			.search-box input[type="search"] { border: 1px solid #cbd5e1; border-radius: 6px; padding: 0 12px; min-height: 32px; }
+			.subsubsub a { color: #64748b; font-weight: 500; }
+			.subsubsub a.current { color: #005ae0; font-weight: 700; }
+
+			/* Hide Screen Options */
+			#screen-meta, #screen-meta-links { display: none !important; }
+
+			/* Hide all default WordPress notices outside our container */
+			#wpbody-content > .notice,
+			#wpbody-content > .updated,
+			#wpbody-content > .error,
+			#wpbody-content > .update-nag {
+				display: none !important;
+			}
+		</style>';
+	}
+
+	public function render_admin_footer() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'edit-' . XTFEPRO_FEED_CPT !== $screen->id ) return;
+
+		$admin_instance = XT_Facebook_Events::instance()->admin;
+		if ( $admin_instance ) {
+			$admin_instance->xtfe_render_common_footer();
+		}
 	}
 
 	public function add_columns( $columns ) {
@@ -162,6 +241,10 @@ class XTFEPRO_Feed_CPT {
 		if ( ! $screen || XTFEPRO_FEED_CPT !== $screen->post_type ) return;
 		wp_enqueue_style( 'xtfeprofeed-admin', XTFEPRO_FEED_URL . 'assets/feed-admin.css', array(), XTFEPRO_FEED_VERSION );
 		wp_enqueue_style( 'xtfeprofeed-public', XTFEPRO_FEED_URL . 'assets/feed-public.css', array(), XTFEPRO_FEED_VERSION );
+		
+		// Enqueue the global plugin CSS for header/footer layout
+		wp_enqueue_style( 'xt-facebook-events-admin', plugin_dir_url( __FILE__ ) . '../../assets/css/xt-facebook-events-admin.css', array(), XTFEPRO_FEED_VERSION, 'all' );
+
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-ui-css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css' );
 		wp_enqueue_script( 'xtfeprofeed-admin', XTFEPRO_FEED_URL . 'assets/feed-admin.js', array( 'jquery', 'jquery-ui-datepicker' ), XTFEPRO_FEED_VERSION, true );
