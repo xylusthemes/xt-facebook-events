@@ -29,7 +29,7 @@ body.xtfepro-builder-active #wpbody-content {
 }
 
 body.xtfepro-builder-active {
-  background: #f0f0f1;
+  background: #f8fafc;
 }
 
 body.xtfepro-builder-active #titlediv,
@@ -151,38 +151,38 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__shortcode-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 5px 8px 5px 10px;
-  font-size: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 6px 10px 6px 14px;
+  font-size: 13px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .xtfepro-builder__shortcode-label {
   display: flex;
   align-items: center;
-  gap: 3px;
-  color: #757575;
+  gap: 4px;
+  color: #475569;
   font-weight: 500;
   white-space: nowrap;
 }
 
-.xtfepro-builder__shortcode-label .dashicons {
-  font-size: 14px;
-  width: 14px;
-  height: 14px;
-  color: #2271b1;
+.xtfepro-builder__shortcode-label .dashicons,
+.xtfepro-builder__shortcode-label svg {
+  color: #3b82f6;
 }
 
 .xtfepro-builder__shortcode-code {
   font-family: "SF Mono", Monaco, Consolas, monospace;
-  font-size: 11px;
-  color: #1d2327;
-  background: #f6f7f7;
-  padding: 2px 7px;
-  border-radius: 4px;
+  font-size: 12px;
+  color: #1e293b;
+  background: #f8fafc;
+  padding: 3px 8px;
+  border-radius: 6px;
   user-select: all;
+  border: 1px solid #e2e8f0;
 }
 
 .xtfepro-builder__shortcode-copy {
@@ -192,25 +192,25 @@ body.xtfepro-builder-active #post-body {
   border: none;
   background: none;
   cursor: pointer;
-  color: #50575e;
-  padding: 3px;
-  border-radius: 4px;
-  transition: all .15s ease;
+  color: #64748b;
+  padding: 5px;
+  border-radius: 6px;
+  transition: all .2s ease;
 }
 
 .xtfepro-builder__shortcode-copy:hover {
-  color: #2271b1;
-  background: rgba(34, 113, 177, .08);
+  color: #3b82f6;
+  background: #eff6ff;
 }
 
-.xtfepro-builder__shortcode-copy .dashicons {
-  font-size: 15px;
+.xtfepro-builder__shortcode-copy svg {
   width: 15px;
   height: 15px;
 }
 
 .xtfepro-builder__shortcode-copy.is-copied {
-  color: #00a32a;
+  color: #10b981;
+  background: #ecfdf5;
 }
 
 /* ============================================================
@@ -222,14 +222,14 @@ body.xtfepro-builder-active #post-body {
   width: 100%;
   font-size: 20px !important;
   font-weight: 600 !important;
-  padding: 11px 16px !important;
-  border: 2px solid #e0e0e0 !important;
-  border-radius: 10px !important;
+  padding: 14px 20px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
   background: #fff !important;
-  color: #1d2327 !important;
+  color: #1e293b !important;
   outline: none !important;
-  box-shadow: none !important;
-  transition: border-color .2s ease, box-shadow .2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  transition: all .3s ease;
   height: auto !important;
   line-height: 1.4 !important;
 }
@@ -252,12 +252,12 @@ body.xtfepro-builder-active #post-body {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   padding: 6px 8px;
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
-  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .xtfepro-builder__step-indicator {
@@ -365,11 +365,11 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__panel {
   display: none;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
-  border: 1px solid #e8e8e8;
-  padding: 22px 28px 28px;
-  animation: xtfepro-fadeIn .25s ease;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.04);
+  padding: 24px 32px 32px;
+  animation: xtfepro-fadeIn .3s ease;
 }
 
 .xtfepro-builder__panel.is-active {
@@ -392,7 +392,6 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__panel-header {
   display: flex;
   align-items: center;
-  gap: 12px;
   margin-bottom: 16px;
   padding-bottom: 14px;
   border-bottom: 1px solid #f0f0f1;
@@ -472,20 +471,25 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__panel-body input[type="text"],
 .xtfepro-builder__panel-body input[type="number"],
 .xtfepro-builder__panel-body textarea {
-  border: 1.5px solid #dcdcde !important;
-  border-radius: 6px !important;
-  padding: 7px 11px !important;
-  font-size: 13px !important;
-  transition: border-color .2s ease, box-shadow .2s ease;
-  background: #fff !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 8px 14px !important;
+  font-size: 14px !important;
+  color: #334155 !important;
+  transition: all .2s ease;
+  background: #f8fafc !important;
 }
 
 .xtfepro-builder__panel-body select:focus,
 .xtfepro-builder__panel-body input[type="text"]:focus,
 .xtfepro-builder__panel-body input[type="number"]:focus,
 .xtfepro-builder__panel-body textarea:focus {
-  border-color: #2271b1 !important;
-  box-shadow: 0 0 0 1px #2271b1 !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+  background: #fff !important;
   outline: none !important;
 }
 
@@ -537,20 +541,23 @@ body.xtfepro-builder-active #post-body {
 
 /* Layout picker override */
 .xtfepro-builder__panel-body .xtfeprofeed-layout-option {
-  border-color: #dcdcde;
-  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
   transition: all .2s ease;
 }
 
 .xtfepro-builder__panel-body .xtfeprofeed-layout-option:hover {
-  border-color: #2271b1;
-  background: rgba(34, 113, 177, .03);
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
 }
 
 .xtfepro-builder__panel-body .xtfeprofeed-layout-option.active,
 .xtfepro-builder__panel-body .xtfeprofeed-layout-option:has(input:checked) {
-  border-color: #2271b1;
-  background: rgba(34, 113, 177, .05);
+  border-color: #3b82f6;
+  background: #eff6ff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
 }
 
 /* Textarea (custom CSS) */
@@ -607,14 +614,14 @@ body.xtfepro-builder-active #post-body {
 .xtfepro-builder__btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 8px 18px;
-  font-size: 13px;
+  gap: 6px;
+  padding: 10px 22px;
+  font-size: 14px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  transition: all .2s ease;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
   line-height: 1.4;
   text-decoration: none;
 }
@@ -628,39 +635,45 @@ body.xtfepro-builder-active #post-body {
 /* Previous */
 .xtfepro-builder__btn--prev {
   background: transparent;
-  color: #50575e;
-  border: 1.5px solid #dcdcde;
+  color: #475569;
+  border: 1px solid #cbd5e1;
 }
 
 .xtfepro-builder__btn--prev:hover {
-  border-color: #2271b1;
-  color: #2271b1;
-  background: rgba(34, 113, 177, .04);
+  border-color: #94a3b8;
+  background: #f1f5f9;
 }
 
 /* Next */
 .xtfepro-builder__btn--next {
-  background: #2271b1;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .xtfepro-builder__btn--next:hover {
-  background: #135e96;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
 }
 
 /* Save */
 .xtfepro-builder__btn--save {
-  background: #00a32a;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 
-.xtfepro-builder__btn--save:hover {
-  background: #008a20;
+.xtfepro-builder__btn--save:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
 }
 
 .xtfepro-builder__btn--save:disabled {
-  opacity: .6;
+  opacity: .5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ============================================================
@@ -784,9 +797,9 @@ body.xtfepro-builder-active #post-body {
 
 .xtfepro-builder__preview-card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
-  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.04);
   overflow: hidden;
   display: flex;
   flex-direction: column;

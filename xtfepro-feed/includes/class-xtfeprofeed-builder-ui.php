@@ -113,12 +113,12 @@ class XTFEPRO_Feed_Builder_UI {
 				<?php if ( $shortcode ) : ?>
 				<div class="xtfepro-builder__shortcode-bar">
 					<span class="xtfepro-builder__shortcode-label">
-						<span class="dashicons dashicons-shortcode"></span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
 						<?php esc_html_e( 'Shortcode:', 'xt-facebook-events-pro' ); ?>
 					</span>
 					<code class="xtfepro-builder__shortcode-code" id="xtfepro-builder-shortcode"><?php echo esc_html( $shortcode ); ?></code>
 					<button type="button" class="xtfepro-builder__shortcode-copy" id="xtfepro-builder-copy-sc" title="<?php esc_attr_e( 'Copy shortcode', 'xt-facebook-events-pro' ); ?>">
-						<span class="dashicons dashicons-clipboard"></span>
+						<span class="xtfepro-copy-icon-wrap" style="display:flex;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
 					</button>
 				</div>
 				<?php endif; ?>
@@ -172,8 +172,8 @@ class XTFEPRO_Feed_Builder_UI {
 								<h3><?php esc_html_e( 'Live Preview', 'xt-facebook-events-pro' ); ?></h3>
 								<span class="xtfeprofeed-preview-loading" style="display:none;"><?php esc_html_e( 'Updating...', 'xt-facebook-events-pro' ); ?></span>
 							</div>
-							<button type="button" class="xtfepro-builder__full-preview-btn" id="xtfepro-builder-toggle-full-preview" style="display:inline-flex;align-items:center;gap:4px;background:#f0f0f1;border:1px solid #dcdcde;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:600;color:#50575e;cursor:pointer;">
-								<span class="dashicons dashicons-editor-expand" style="font-size:16px;width:16px;height:16px;"></span>
+							<button type="button" class="xtfepro-builder__full-preview-btn" id="xtfepro-builder-toggle-full-preview" style="display:inline-flex;align-items:center;gap:6px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:#334155;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.02);transition:all 0.2s ease;">
+								<span class="xtfepro-preview-icon-wrap" style="display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></span>
 								<span class="btn-text"><?php esc_html_e( 'Full Preview', 'xt-facebook-events-pro' ); ?></span>
 							</button>
 						</div>

@@ -1189,28 +1189,24 @@ class XTFEPRO_Feed_API {
 	 * Extract cover image URL from cover_media_renderer — tries photo, video thumbnail.
 	 */
 	private function extract_cover_image( array $cover_media ): ?string {
-		// Way 1: Standard photo
-		$cover_photo = $cover_media['cover_photo']['photo']['full_image'] ?? null;
-		if ( ! empty( $cover_photo['uri'] ) ) return $cover_photo['uri'];
+		$event_iurl = '';
 
-		// Way 2: Video preferred_thumbnail
-		$preferred_thumbnail = $this->findKey( $cover_media, 'preferred_thumbnail' );
-		if ( ! empty( $preferred_thumbnail ) ) {
-			$img = $this->findKey( $preferred_thumbnail, 'image' );
-			if ( ! empty( $img['uri'] ) ) return $img['uri'];
+		// 1. Check for standard image cover
+		$cover_photo = $this->findKey( $cover_media, 'full_image' );
+		if ( ! empty( $cover_photo['uri'] ) ) {
+			$event_iurl = $cover_photo['uri'];
 		}
 
-		// Way 3: cover_video > preferred_thumbnail
-		$cover_video = $this->findKey( $cover_media, 'cover_video' );
-		if ( ! empty( $cover_video ) ) {
-			$thumb = $this->findKey( $cover_video, 'preferred_thumbnail' );
-			if ( ! empty( $thumb ) ) {
-				$img = $this->findKey( $thumb, 'image' );
-				if ( ! empty( $img['uri'] ) ) return $img['uri'];
+		// 2. Check for video cover (preferred_thumbnail)
+		if ( empty( $event_iurl ) ) {
+			$preferred_thumbnail = $this->findKey( $cover_media, 'preferred_thumbnail' );
+			$thumbnail_image     = $this->findKey( $preferred_thumbnail ?? array(), 'image' );
+			if ( ! empty( $thumbnail_image['uri'] ) ) {
+				$event_iurl = $thumbnail_image['uri'];
 			}
 		}
 
-		return null;
+		return ! empty( $event_iurl ) ? $event_iurl : null;
 	}
 
 	// -------------------------------------------------------

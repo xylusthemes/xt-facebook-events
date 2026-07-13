@@ -5,7 +5,7 @@
  * Stores high-quality images fetched via the event detail API separately
  * from the transient event cache, so images persist across cache clears.
  *
- * Auto-cleanup: Images older than 7 days are purged weekly via WP-Cron.
+ * Auto-cleanup: Images older than 3 days are purged weekly via WP-Cron.
  *
  * @package XT_Facebook_Events_Pro\Feed
  */
@@ -175,11 +175,11 @@ class XTFEPRO_Feed_DB {
 	}
 
 	/**
-	 * Run the weekly cleanup — delete images older than 7 days.
+	 * Run the weekly cleanup — delete images older than 3 days.
 	 */
 	public function run_weekly_cleanup() {
 		global $wpdb;
-		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( 7 * DAY_IN_SECONDS ) );
+		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( 3 * DAY_IN_SECONDS ) );
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$this->table_images} WHERE created_at < %s",
