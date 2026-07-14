@@ -862,8 +862,8 @@ body.xtfepro-builder-active #post-body {
   grid-template-columns: 1fr !important;
 }
 
-.xtfepro-builder__workspace:not(.is-full-preview) #xtfepro-builder-preview-container .xtfeprofeed-layout-masonry .xtfeprofeed-events-grid {
-  column-count: 1 !important;
+.xtfepro-builder__workspace:not(.is-full-preview) #xtfepro-builder-preview-container .xtfeprofeed-layout-masonry .xtfeprofeed-event-card {
+  width: 100% !important;
 }
 
 /* Zoom out lists/timeline/tickets in narrow sidebar mode to fit content better */

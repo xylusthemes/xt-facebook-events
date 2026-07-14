@@ -96,7 +96,7 @@ class XT_Facebook_Events_Admin {
 	 */
 	public function get_selected_tab_submenu_xtfe( $submenu_file ){
 		if( !empty( $_GET['page'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) == 'wpfb_events' ){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$allowed_tabs = array( 'settings', 'shortandwid', 'support' );
+			$allowed_tabs = array( 'settings', 'shortandwid', 'support', 'logs' );
 			if ( xtfe_is_pro() ) {
 				$allowed_tabs[] = 'license';
 			}
@@ -149,6 +149,8 @@ class XT_Facebook_Events_Admin {
 			$page_title = __( 'Shortcodes & Widgets', 'xt-facebook-events' );
 		} elseif ( $tab == 'license' ) {
 			$page_title = __( 'License', 'xt-facebook-events' );
+		} elseif ( $tab == 'logs' ) {
+			$page_title = __( 'API Logs', 'xt-facebook-events' );
 		} else {
 			$page_title = __( 'Settings', 'xt-facebook-events' );
 		}
@@ -197,6 +199,8 @@ class XT_Facebook_Events_Admin {
 								require_once XTFE_PLUGIN_DIR . '/templates/xt-facebook-events-shortcode.php';
 							} elseif ( $tab == 'license' ) {
 								do_action( 'xtfe_pro_render_license_tab' );
+							} elseif ( $tab == 'logs' ) {
+								do_action( 'xtfe_pro_render_logs_tab' );
 							}
 							?>
 						</div>

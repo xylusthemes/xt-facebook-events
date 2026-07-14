@@ -17,60 +17,117 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
         <div class="content" style="padding: 28px;">
 
-            <div class="xtfe-settings-wrapper">
-                <div class="xtfe-shortcode-grid">
+            <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                <div class="xtfe-settings-wrapper" style="flex: 1;min-width: 300px;gap: 45px;">
                     
                     <!-- Widget View Shortcode -->
-                    <div class="xtfe-sc-card">
-                        <div class="xtfe-sc-mockup">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                    <div class="xtfe-setting-row" onmouseover="changePrimaryPreview('widget');">
+                        <div class="xtfe-inner-section-1">
+                            <label><?php esc_html_e( 'Widget View', 'xt-facebook-events' ); ?></label>
                         </div>
-                        <div class="xtfe-sc-title"><?php esc_html_e( 'Widget View', 'xt-facebook-events' ); ?></div>
-                        <div class="xtfe-sc-subtitle"><?php esc_html_e( 'Hover to view shortcode', 'xt-facebook-events' ); ?></div>
-                        
-                        <div class="xtfe-sc-overlay">
-                            <label style="font-weight: 700; color: #0f172a; margin-bottom: 12px; font-size: 14px;"><?php esc_html_e( 'Widget Shortcode', 'xt-facebook-events' ); ?></label>
-                            <div style="display: flex; gap: 8px; width: 100%;">
-                                <input type="text" readonly value='[wpfb_events type="widget" page_id="YOUR_PAGE_ID" max_events="10"]' style="background: #f1f5f9; border: 1px solid #cbd5e1; font-family: monospace; font-size: 12px; font-weight: 600; color: #334155; padding: 10px; border-radius: 6px; flex-grow: 1;" />
+                        <div class="xtfe-inner-section-2">
+                            <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                                <input type="text" readonly value='[wpfb_events type="widget" page_id="YOUR_PAGE_ID" max_events="10"]' class="xtfe-shortcode-input" style="background: #f1f5f9; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; font-weight: 600; color: #334155; padding: 10px 14px; border-radius: 6px; flex-grow: 1;" />
                                 <button class="xtfe-btn-copy-shortcode xtfe_button" data-value='[wpfb_events type="widget" page_id="YOUR_PAGE_ID" max_events="10"]' style="border: none; margin: 0; padding: 0 16px; font-weight: 600; cursor: pointer; height: 38px;">Copy</button>
                             </div>
+                            <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Display events in a compact widget layout.', 'xt-facebook-events' ); ?></div>
                         </div>
                     </div>
 
                     <!-- Grid View Shortcode -->
-                    <div class="xtfe-sc-card">
-                        <div class="xtfe-sc-pro-badge">PRO</div>
-                        <div class="xtfe-sc-mockup">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <div class="xtfe-setting-row" onmouseover="changePrimaryPreview('grid');">
+                        <div class="xtfe-inner-section-1">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <?php esc_html_e( 'Grid View', 'xt-facebook-events' );
+                                    if( !xtfe_is_pro() ){
+                                        ?>
+                                            <span style="background: #005ae0; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">PRO</span>
+                                        <?php
+                                    }
+                                ?>
+                            </label>
                         </div>
-                        <div class="xtfe-sc-title"><?php esc_html_e( 'Grid View', 'xt-facebook-events' ); ?></div>
-                        <div class="xtfe-sc-subtitle"><?php esc_html_e( 'Hover to view shortcode', 'xt-facebook-events' ); ?></div>
-                        
-                        <div class="xtfe-sc-overlay">
-                            <label style="font-weight: 700; color: #0f172a; margin-bottom: 12px; font-size: 14px;"><?php esc_html_e( 'Grid Shortcode', 'xt-facebook-events' ); ?></label>
-                            <div style="display: flex; gap: 8px; width: 100%;">
-                                <input type="text" readonly value='[wpfb_events page_id="YOUR_PAGE_ID" col="3" max_events="10"]' style="background: #f1f5f9; border: 1px solid #cbd5e1; font-family: monospace; font-size: 12px; font-weight: 600; color: #334155; padding: 10px; border-radius: 6px; flex-grow: 1;" />
+                        <div class="xtfe-inner-section-2">
+                            <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                                <input type="text" readonly value='[wpfb_events page_id="YOUR_PAGE_ID" col="3" max_events="10"]' class="xtfe-shortcode-input" style="background: #f1f5f9; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; font-weight: 600; color: #334155; padding: 10px 14px; border-radius: 6px; flex-grow: 1;" />
                                 <button class="xtfe-btn-copy-shortcode xtfe_button" data-value='[wpfb_events page_id="YOUR_PAGE_ID" col="3" max_events="10"]' style="border: none; margin: 0; padding: 0 16px; font-weight: 600; cursor: pointer; height: 38px;">Copy</button>
                             </div>
+                            <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Display events in a clean grid layout.', 'xt-facebook-events' ); ?></div>
                         </div>
                     </div>
 
-                    <!-- New Grid Layouts -->
-                    <div class="xtfe-sc-card">
-                        <div class="xtfe-sc-pro-badge">PRO</div>
-                        <div class="xtfe-sc-mockup">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                    <!-- Style 2 Layouts -->
+                    <div class="xtfe-setting-row" onmouseover="changePrimaryPreview('style2');">
+                        <div class="xtfe-inner-section-1">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <?php esc_html_e( 'New Grid Layouts (Style 2)', 'xt-facebook-events' ); 
+                                    if( !xtfe_is_pro() ){
+                                        ?>
+                                            <span style="background: #005ae0; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">PRO</span>
+                                        <?php
+                                    }
+                                ?>
+                            </label>
                         </div>
-                        <div class="xtfe-sc-title"><?php esc_html_e( 'New Grid Layouts', 'xt-facebook-events' ); ?></div>
-                        <div class="xtfe-sc-subtitle"><?php esc_html_e( 'Hover to view shortcode', 'xt-facebook-events' ); ?></div>
-                        
-                        <div class="xtfe-sc-overlay">
-                            <label style="font-weight: 700; color: #0f172a; margin-bottom: 12px; font-size: 14px;"><?php esc_html_e( 'Style 2 Shortcode', 'xt-facebook-events' ); ?></label>
-                            <div style="display: flex; gap: 8px; width: 100%;">
-                                <input type="text" readonly value='[wpfb_events page_id="YOUR_PAGE_ID" col="3" max_events="10" layout="style2"]' style="background: #f1f5f9; border: 1px solid #cbd5e1; font-family: monospace; font-size: 12px; font-weight: 600; color: #334155; padding: 10px; border-radius: 6px; flex-grow: 1;" />
+                        <div class="xtfe-inner-section-2">
+                            <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                                <input type="text" readonly value='[wpfb_events page_id="YOUR_PAGE_ID" col="3" max_events="10" layout="style2"]' class="xtfe-shortcode-input" style="background: #f1f5f9; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; font-weight: 600; color: #334155; padding: 10px 14px; border-radius: 6px; flex-grow: 1;" />
                                 <button class="xtfe-btn-copy-shortcode xtfe_button" data-value='[wpfb_events page_id="YOUR_PAGE_ID" col="3" max_events="10" layout="style2"]' style="border: none; margin: 0; padding: 0 16px; font-weight: 600; cursor: pointer; height: 38px;">Copy</button>
                             </div>
+                            <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Display events with a modern inner-card layout.', 'xt-facebook-events' ); ?></div>
                         </div>
+                    </div>
+
+                    <!-- Live Feed Shortcode -->
+                    <div class="xtfe-setting-row" onmouseover="changePrimaryPreview('live_feed');">
+                        <div class="xtfe-inner-section-1">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <?php esc_html_e( 'Live Feed (New)', 'xt-facebook-events' ); ?>
+                                <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">NEW</span>
+                            </label>
+                        </div>
+                        <div class="xtfe-inner-section-2">
+                            <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                                <input type="text" readonly value='[xtfepro_live_feed id="YOUR_FEED_ID"]' class="xtfe-shortcode-input" style="background: #f1f5f9; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; font-weight: 600; color: #334155; padding: 10px 14px; border-radius: 6px; flex-grow: 1;" />
+                                <button class="xtfe-btn-copy-shortcode xtfe_button" data-value='[xtfepro_live_feed id="YOUR_FEED_ID"]' style="border: none; margin: 0; padding: 0 16px; font-weight: 600; cursor: pointer; height: 38px;">Copy</button>
+                            </div>
+                            <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Display the new no-auth live widget feed.', 'xt-facebook-events' ); ?></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Preview Column -->
+                <div style="flex: 0 0 350px;">
+                    <div style="position: sticky; top: 40px; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; padding: 20px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);">
+                        <h3 id="preview-primary-title" style="margin-top: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 20px;">Widget View Preview</h3>
+                        <div id="preview-primary-content" style="background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px;">
+                            <!-- Widget Layout Mockup (Default view) -->
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div style="display: flex; background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 10px; gap: 12px; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                    <div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 6px;"></div>
+                                    <div style="flex: 1;">
+                                        <div style="width: 70%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                                        <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 10px; gap: 12px; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                    <div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 6px;"></div>
+                                    <div style="flex: 1;">
+                                        <div style="width: 85%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                                        <div style="width: 50%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 10px; gap: 12px; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                    <div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 6px;"></div>
+                                    <div style="flex: 1;">
+                                        <div style="width: 60%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                                        <div style="width: 35%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 16px; font-style: italic;">Hover over any row to visualize the layout.</p>
                     </div>
                 </div>
             </div>
@@ -102,3 +159,126 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
     </div>
 </div>
+
+<script>
+function changePrimaryPreview(layout) {
+    let title = 'Widget View Preview';
+    let html = '';
+
+    if (layout === 'grid') {
+        title = 'Grid View Preview';
+        html = `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                <div style="height: 70px; background: #e2e8f0;"></div>
+                <div style="padding: 10px;">
+                    <div style="width: 80%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                    <div style="width: 50%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                <div style="height: 70px; background: #e2e8f0;"></div>
+                <div style="padding: 10px;">
+                    <div style="width: 70%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                    <div style="width: 60%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                <div style="height: 70px; background: #e2e8f0;"></div>
+                <div style="padding: 10px;">
+                    <div style="width: 90%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                    <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                <div style="height: 70px; background: #e2e8f0;"></div>
+                <div style="padding: 10px;">
+                    <div style="width: 75%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                    <div style="width: 55%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+        </div>`;
+    } else if (layout === 'style2') {
+        title = 'Style 2 Layout Preview';
+        html = `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            <div style="background: #e2e8f0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; position: relative; height: 110px;">
+                <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; background: #fff; border-radius: 6px; padding: 8px;">
+                    <div style="width: 80%; height: 6px; background: #94a3b8; border-radius: 4px; margin-bottom: 6px;"></div>
+                    <div style="width: 50%; height: 4px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="background: #e2e8f0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; position: relative; height: 110px;">
+                <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; background: #fff; border-radius: 6px; padding: 8px;">
+                    <div style="width: 70%; height: 6px; background: #94a3b8; border-radius: 4px; margin-bottom: 6px;"></div>
+                    <div style="width: 60%; height: 4px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="background: #e2e8f0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; position: relative; height: 110px;">
+                <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; background: #fff; border-radius: 6px; padding: 8px;">
+                    <div style="width: 90%; height: 6px; background: #94a3b8; border-radius: 4px; margin-bottom: 6px;"></div>
+                    <div style="width: 40%; height: 4px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="background: #e2e8f0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow:hidden; position: relative; height: 110px;">
+                <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; background: #fff; border-radius: 6px; padding: 8px;">
+                    <div style="width: 75%; height: 6px; background: #94a3b8; border-radius: 4px; margin-bottom: 6px;"></div>
+                    <div style="width: 55%; height: 4px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+        </div>`;
+    } else if (layout === 'widget') {
+        title = 'Widget View Preview';
+        html = `<div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 10px; gap: 12px; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 6px;"></div>
+                <div style="flex: 1;">
+                    <div style="width: 70%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                    <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="display: flex; background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 10px; gap: 12px; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 6px;"></div>
+                <div style="flex: 1;">
+                    <div style="width: 85%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                    <div style="width: 50%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+            <div style="display: flex; background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 10px; gap: 12px; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 6px;"></div>
+                <div style="flex: 1;">
+                    <div style="width: 60%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                    <div style="width: 35%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>
+        </div>`;
+    } else if (layout === 'live_feed') {
+        title = 'Live Feed Preview';
+        html = `<div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                <div style="width: 40%; height: 12px; background: #cbd5e1; border-radius: 6px;"></div>
+                <div style="width: 20%; height: 12px; background: #94a3b8; border-radius: 6px;"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow:hidden; border: 1px solid #e2e8f0;">
+                    <div style="height: 80px; background: #cbd5e1; position: relative;">
+                        <div style="position: absolute; top: 8px; right: 8px; width: 24px; height: 12px; background: #10b981; border-radius: 4px;"></div>
+                    </div>
+                    <div style="padding: 12px;">
+                        <div style="width: 80%; height: 8px; background: #0f172a; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 50%; height: 6px; background: #64748b; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow:hidden; border: 1px solid #e2e8f0;">
+                    <div style="height: 80px; background: #cbd5e1;"></div>
+                    <div style="padding: 12px;">
+                        <div style="width: 70%; height: 8px; background: #0f172a; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 60%; height: 6px; background: #64748b; border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+    
+    document.getElementById('preview-primary-title').innerText = title;
+    document.getElementById('preview-primary-content').innerHTML = html;
+}
+</script>

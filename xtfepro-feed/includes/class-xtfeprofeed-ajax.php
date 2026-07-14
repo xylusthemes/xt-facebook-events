@@ -94,7 +94,7 @@ class XTFEPRO_Feed_AJAX {
 				'body'      => array(
 					'action'  => 'xtfeprofeed_bg_full_fetch',
 					'feed_id' => $feed_id,
-					'nonce'   => wp_create_nonce( 'xtfeprofeed_full_fetch_' . $feed_id ),
+					'nonce'   => md5( 'xtfeprofeed_full_fetch_' . $feed_id . wp_salt() ),
 				),
 			)
 		);
@@ -111,8 +111,9 @@ class XTFEPRO_Feed_AJAX {
 	public function bg_full_fetch() {
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
 		$nonce   = sanitize_text_field( $_POST['nonce'] ?? '' );
+		$expected = md5( 'xtfeprofeed_full_fetch_' . $feed_id . wp_salt() );
 
-		if ( ! $feed_id || ! wp_verify_nonce( $nonce, 'xtfeprofeed_full_fetch_' . $feed_id ) ) {
+		if ( ! $feed_id || ! hash_equals( $expected, $nonce ) ) {
 			wp_die();
 		}
 
@@ -125,11 +126,17 @@ class XTFEPRO_Feed_AJAX {
 		// Only page_id and group_id sources need multi-page fetching
 		if ( ! in_array( $meta['source_type'] ?? '', array( 'page_id', 'group_id' ), true ) ) {
 			// For event_ids / ical: just do a fresh get_events to populate cache
-			$api->get_events( $feed_id, true );
+			$events = $api->get_events( $feed_id, true );
+			
+			// iCal needs HQ images fetched, event_ids already has them
+			if ( 'ical' === ( $meta['source_type'] ?? '' ) && ! is_wp_error( $events ) && ! empty( $events ) ) {
+				$this->fetch_hq_batch_sync( $feed_id, $events );
+			}
+			
 			wp_die();
 		}
 
-		$fetch_filter = 'group_id' === $meta['source_type'] ? 'xtfeprofeed_fetch_group_events' : 'xtfeprofeed_fetch_page_events';
+		$fetch_filter = 'group_id' === $meta['source_type'] ? 'xtfeprofeed_fetch_group' : 'xtfeprofeed_fetch_page';
 		$duration = absint( $meta['cache_duration'] ) * MINUTE_IN_SECONDS;
 
 		// --- Page 1: live scrape ---
@@ -146,10 +153,11 @@ class XTFEPRO_Feed_AJAX {
 		}
 
 		$page1_events = $api->dedup( $response['events'] ?? array() );
+		$page1_events = $api->sort_events( $page1_events );
 
-		// Save page 1
+		// Save page 1 to single transient
 		$api->clear_cache( $feed_id ); // Ensure clean slate
-		set_transient( 'xtfeprofeed_p_' . $feed_id . '_1', $page1_events, $duration );
+		$api->save_page_cache( $feed_id, 1, $page1_events, $duration );
 		update_post_meta( $feed_id, '_xtfeprofeed_last_fetched', time() );
 
 		// HQ images for page 1 — batch of 5, in same process (we have time here)
@@ -174,11 +182,8 @@ class XTFEPRO_Feed_AJAX {
 
 			$page_events = $api->dedup( $response['events'] ?? array() );
 
-			set_transient(
-				'xtfeprofeed_p_' . $feed_id . '_' . $scrape_page,
-				$page_events,
-				$duration
-			);
+			// Append to single transient using the API method so logs trigger
+			$api->save_page_cache( $feed_id, $scrape_page, $page_events, $duration );
 
 			// HQ images per page — batch sync
 			$this->fetch_hq_batch_sync( $feed_id, $page_events );
@@ -233,33 +238,26 @@ class XTFEPRO_Feed_AJAX {
 	}
 
 	/**
-	 * Update image_url in all paginated transients for a feed after HQ fetch.
+	 * Update image_url in the single transient for a feed after HQ fetch.
 	 */
 	private function update_event_image_in_transients( $feed_id, $event_id, $image_url ) {
-		$page  = 1;
-		$limit = 20;
+		$key    = 'xtfeprofeed_p_' . absint( $feed_id ) . '_all';
+		$events = get_transient( $key );
+		if ( ! is_array( $events ) ) return;
 
-		while ( $page <= $limit ) {
-			$key    = 'xtfeprofeed_p_' . $feed_id . '_' . $page;
-			$events = get_transient( $key );
-			if ( false === $events ) break;
-
-			$updated = false;
-			foreach ( $events as &$ev ) {
-				if ( (string) ( $ev['id'] ?? '' ) === (string) $event_id ) {
-					$ev['image_url'] = $image_url;
-					$updated = true;
-				}
+		$updated = false;
+		foreach ( $events as &$ev ) {
+			if ( (string) ( $ev['id'] ?? '' ) === (string) $event_id ) {
+				$ev['image_url'] = $image_url;
+				$updated = true;
 			}
-			unset( $ev );
+		}
+		unset( $ev );
 
-			if ( $updated ) {
-				$timeout   = get_option( '_transient_timeout_' . $key );
-				$remaining = $timeout ? max( 60, $timeout - time() ) : HOUR_IN_SECONDS;
-				set_transient( $key, $events, $remaining );
-			}
-
-			$page++;
+		if ( $updated ) {
+			$timeout   = get_option( '_transient_timeout_' . $key );
+			$remaining = $timeout ? max( 60, $timeout - time() ) : HOUR_IN_SECONDS;
+			set_transient( $key, $events, $remaining );
 		}
 	}
 

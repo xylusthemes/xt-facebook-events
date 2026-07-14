@@ -250,10 +250,18 @@ class XTFEPRO_Feed_Shortcode {
 			array(),
 			XTFEPRO_FEED_VERSION
 		);
+		
+		$deps = array();
+		if ( isset( $meta['layout'] ) && 'masonry' === $meta['layout'] ) {
+			wp_enqueue_script( 'masonry' );
+			wp_enqueue_script( 'imagesloaded' );
+			$deps = array( 'masonry', 'imagesloaded' );
+		}
+		
 		wp_enqueue_script(
 			'xtfeprofeed-public',
 			XTFEPRO_FEED_URL . 'assets/feed-public.js',
-			array(),
+			$deps,
 			XTFEPRO_FEED_VERSION,
 			true
 		);
@@ -340,7 +348,7 @@ class XTFEPRO_Feed_Shortcode {
 				);
 			} elseif ( $days > 1 ) {
 				return array(
-					'text'  => sprintf( _n( 'In %d Day', 'In %d Days', $days, 'xt-facebook-events-pro' ), $days ),
+					'text'  => sprintf( _n( '%d Day Left', '%d Days Left', $days, 'xt-facebook-events-pro' ), $days ),
 					'class' => 'future',
 				);
 			} else {

@@ -185,14 +185,14 @@ class XTFEPRO_Feed_CPT {
 				break;
 
 			case 'xtfeprofeed_cache_status':
-				$cache_key   = 'xtfeprofeed_' . $post_id;
+				$cache_key   = 'xtfeprofeed_p_' . $post_id . '_all';
 				$cached      = get_transient( $cache_key );
 				$timeout_key = '_transient_timeout_' . $cache_key;
 				$expires_at  = get_option( $timeout_key );
 				if ( false !== $cached && $expires_at ) {
 					$remaining = $expires_at - time();
 					if ( $remaining > 0 ) {
-						printf( '<span style="color:green;">&#9679; ' . esc_html__( 'Cached (%d min left)', 'xt-facebook-events-pro' ) . '</span>', ceil( $remaining / 60 ) );
+						printf( '<span style="color:green;">&#9679; ' . esc_html__( 'Cached (%s left)', 'xt-facebook-events-pro' ) . '</span>', human_time_diff( time(), $expires_at ) );
 					} else {
 						echo '<span style="color:orange;">&#9679; ' . esc_html__( 'Expired', 'xt-facebook-events-pro' ) . '</span>';
 					}

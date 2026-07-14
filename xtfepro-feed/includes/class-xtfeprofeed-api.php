@@ -134,40 +134,35 @@ class XTFEPRO_Feed_API {
 	// -------------------------------------------------------
 
 	/**
-	 * Get cache key for a specific scrape page (not display page).
-	 * We store FB scrape pages (50 events each) as separate transients.
+	 * Get cache key for a specific feed.
+	 * We store all FB scrape pages in a single transient.
 	 */
-	private function page_cache_key( $feed_id, $scrape_page ) {
-		return self::PAGE_CACHE_PREFIX . absint( $feed_id ) . '_' . absint( $scrape_page );
+	private function page_cache_key( $feed_id ) {
+		return self::PAGE_CACHE_PREFIX . absint( $feed_id ) . '_all';
 	}
 
 	/**
-	 * Save events for a scrape page into its own transient.
+	 * Save events by appending them to the single transient.
 	 */
-	private function save_page_cache( $feed_id, $scrape_page, $events, $duration ) {
-		set_transient( $this->page_cache_key( $feed_id, $scrape_page ), $events, $duration );
+	public function save_page_cache( $feed_id, $scrape_page, $events, $duration ) {
+		$existing = get_transient( $this->page_cache_key( $feed_id ) );
+		if ( ! is_array( $existing ) || 1 === $scrape_page ) {
+			$existing = array();
+		}
+		
+		$merged = array_merge( $existing, $events );
+		$merged = $this->dedup( $merged );
+		$merged = $this->sort_events( $merged );
+		
+		set_transient( $this->page_cache_key( $feed_id ), $merged, $duration );
 	}
 
 	/**
-	 * Merge all cached scrape pages into one flat array.
+	 * Get all cached events from the single transient.
 	 */
 	public function get_all_cached_events( $feed_id ) {
-		$all    = array();
-		$page   = 1;
-		$limit  = 20; // Max FB scrape pages we support
-
-		while ( $page <= $limit ) {
-			$cached = get_transient( $this->page_cache_key( $feed_id, $page ) );
-			if ( false === $cached ) {
-				break; // No more pages cached
-			}
-			if ( is_array( $cached ) ) {
-				$all = array_merge( $all, $cached );
-			}
-			$page++;
-		}
-
-		return $all;
+		$cached = get_transient( $this->page_cache_key( $feed_id ) );
+		return is_array( $cached ) ? $cached : array();
 	}
 
 	/**
@@ -210,7 +205,7 @@ class XTFEPRO_Feed_API {
 					'scrape_page'  => $scrape_page,
 					'cursor'       => $cursor,
 					'duration'     => $duration,
-					'nonce'        => wp_create_nonce( 'xtfeprofeed_bg_' . $feed_id ),
+					'nonce'        => md5( 'xtfeprofeed_bg_' . $feed_id . wp_salt() ),
 				),
 			)
 		);
@@ -226,8 +221,9 @@ class XTFEPRO_Feed_API {
 		$cursor     = sanitize_text_field( $_POST['cursor']   ?? '' );
 		$duration   = absint( $_POST['duration']  ?? HOUR_IN_SECONDS );
 		$nonce      = sanitize_text_field( $_POST['nonce']    ?? '' );
+		$expected   = md5( 'xtfeprofeed_bg_' . $feed_id . wp_salt() );
 
-		if ( ! $feed_id || ! wp_verify_nonce( $nonce, 'xtfeprofeed_bg_' . $feed_id ) ) {
+		if ( ! $feed_id || ! hash_equals( $expected, $nonce ) ) {
 			wp_die();
 		}
 
@@ -239,10 +235,13 @@ class XTFEPRO_Feed_API {
 		$max_pages = 20;
 
 		while ( $scrape_page <= $max_pages && $cursor ) {
-			// Check if this page already cached (prevent duplicate work)
-			if ( false !== get_transient( $this->page_cache_key( $feed_id, $scrape_page ) ) ) {
-				// Get next cursor from postmeta if there is one
-				$cursor = get_post_meta( $feed_id, '_xtfeprofeed_next_cursor', true );
+			// Check if we already fetched this page by checking postmeta cursor
+			$saved_next_cursor = get_post_meta( $feed_id, '_xtfeprofeed_next_cursor', true );
+			$saved_next_page   = get_post_meta( $feed_id, '_xtfeprofeed_next_page', true );
+			
+			if ( $saved_next_page > $scrape_page ) {
+				// We already processed this page
+				$cursor = $saved_next_cursor;
 				if ( ! $cursor ) break;
 				$scrape_page++;
 				continue;
@@ -368,7 +367,7 @@ class XTFEPRO_Feed_API {
 						'action'    => 'xtfeprofeed_bg_fetch_images',
 						'feed_id'   => $feed_id,
 						'event_ids' => implode( ',', $batch ),
-						'nonce'     => wp_create_nonce( 'xtfeprofeed_img_' . $feed_id ),
+						'nonce'     => md5( 'xtfeprofeed_img_' . $feed_id . wp_salt() ),
 					),
 				)
 			);
@@ -383,8 +382,9 @@ class XTFEPRO_Feed_API {
 		$feed_id   = absint( $_POST['feed_id']   ?? 0 );
 		$ids_raw   = sanitize_text_field( $_POST['event_ids'] ?? '' );
 		$nonce     = sanitize_text_field( $_POST['nonce']     ?? '' );
+		$expected  = md5( 'xtfeprofeed_img_' . $feed_id . wp_salt() );
 
-		if ( ! $feed_id || ! wp_verify_nonce( $nonce, 'xtfeprofeed_img_' . $feed_id ) ) {
+		if ( ! $feed_id || ! hash_equals( $expected, $nonce ) ) {
 			wp_die();
 		}
 
@@ -404,8 +404,13 @@ class XTFEPRO_Feed_API {
 					$db->save_image( $event_id, $data['cover_image'] );
 					// Update all paginated transient caches for this feed
 					$this->update_paginated_cache_image( $feed_id, $event_id, $data['cover_image'] );
+
+					$db->log_action( $feed_id, 'hq_image_fetch', 'Event: ' . $event_id, '', 1, 'success' );
+				} else {
+					$db->log_action( $feed_id, 'hq_image_fetch', 'Event: ' . $event_id, '', 0, 'error', 'No cover image found' );
 				}
 			} catch ( \Exception $e ) {
+				$db->log_action( $feed_id, 'hq_image_fetch', 'Event: ' . $event_id, '', 0, 'error', $e->getMessage() );
 				// Silently skip — will retry on next cache clear
 			}
 		}
@@ -439,51 +444,24 @@ class XTFEPRO_Feed_API {
 	 * Much faster than the old approach that scanned ALL transients.
 	 */
 	private function update_paginated_cache_image( $feed_id, $event_id, $image_url ) {
-		$page  = 1;
-		$limit = 20;
+		$key    = $this->page_cache_key( $feed_id );
+		$events = get_transient( $key );
+		if ( ! is_array( $events ) ) return;
 
-		while ( $page <= $limit ) {
-			$key    = $this->page_cache_key( $feed_id, $page );
-			$events = get_transient( $key );
-			if ( false === $events ) break;
-
-			$updated = false;
-			foreach ( $events as &$ev ) {
-				$ev_id = $this->extract_base_event_id( $ev );
-				if ( (string) $ev_id === (string) $event_id ) {
-					$ev['image_url'] = $image_url;
-					$updated = true;
-				}
+		$updated = false;
+		foreach ( $events as &$ev ) {
+			$ev_id = $this->extract_base_event_id( $ev );
+			if ( (string) $ev_id === (string) $event_id ) {
+				$ev['image_url'] = $image_url;
+				$updated = true;
 			}
-			unset( $ev );
-
-			if ( $updated ) {
-				$timeout   = get_option( '_transient_timeout_' . $key );
-				$remaining = $timeout ? max( 60, $timeout - time() ) : HOUR_IN_SECONDS;
-				set_transient( $key, $events, $remaining );
-			}
-
-			$page++;
 		}
+		unset( $ev );
 
-		// Also update legacy single-blob transient if exists
-		$legacy_key = $this->cache_key( $feed_id );
-		$legacy     = get_transient( $legacy_key );
-		if ( is_array( $legacy ) ) {
-			$updated = false;
-			foreach ( $legacy as &$ev ) {
-				$ev_id = $this->extract_base_event_id( $ev );
-				if ( (string) $ev_id === (string) $event_id ) {
-					$ev['image_url'] = $image_url;
-					$updated = true;
-				}
-			}
-			unset( $ev );
-			if ( $updated ) {
-				$timeout   = get_option( '_transient_timeout_' . $legacy_key );
-				$remaining = $timeout ? max( 60, $timeout - time() ) : HOUR_IN_SECONDS;
-				set_transient( $legacy_key, $legacy, $remaining );
-			}
+		if ( $updated ) {
+			$timeout   = get_option( '_transient_timeout_' . $key );
+			$remaining = $timeout ? max( 60, $timeout - time() ) : HOUR_IN_SECONDS;
+			set_transient( $key, $events, $remaining );
 		}
 	}
 
@@ -632,16 +610,8 @@ class XTFEPRO_Feed_API {
 	 * Clear all cache for a feed (paginated pages + legacy + postmeta).
 	 */
 	public function clear_cache( $feed_id ) {
-		// Clear paginated page transients
-		$page  = 1;
-		$limit = 20;
-		while ( $page <= $limit ) {
-			$key    = $this->page_cache_key( $feed_id, $page );
-			$exists = get_transient( $key );
-			delete_transient( $key );
-			if ( false === $exists ) break;
-			$page++;
-		}
+		// Clear single blob transient
+		delete_transient( $this->page_cache_key( $feed_id ) );
 
 		// Clear legacy single-blob transient
 		delete_transient( $this->cache_key( $feed_id ) );
@@ -724,10 +694,17 @@ class XTFEPRO_Feed_API {
 		}
 
 		if ( empty( $events ) && ! empty( $errors ) ) {
+			if ( ! empty( $meta['feed_id'] ) ) {
+				XTFEPRO_Feed_DB::instance()->log_action( $meta['feed_id'], 'fetch_event_ids', 'Event IDs: ' . $ids_raw, '', 0, 'error', implode( ' | ', array_unique( $errors ) ) );
+			}
 			return new WP_Error( 'xtfeprofeed_event_error', implode( ' | ', array_unique( $errors ) ) );
 		}
 
 		$events = $this->apply_local_filters( $events, $meta );
+
+		if ( ! empty( $meta['feed_id'] ) ) {
+			XTFEPRO_Feed_DB::instance()->log_action( $meta['feed_id'], 'fetch_event_ids', 'Event IDs: ' . $ids_raw, '', count( $events ), 'success' );
+		}
 
 		return array(
 			'events'   => $events,
@@ -748,6 +725,9 @@ class XTFEPRO_Feed_API {
 
 		$parsed_events = $this->parse_ical_feed( $ical_url );
 		if ( is_wp_error( $parsed_events ) ) {
+			if ( ! empty( $meta['feed_id'] ) ) {
+				XTFEPRO_Feed_DB::instance()->log_action( $meta['feed_id'], 'fetch_ical', $ical_url, '', 0, 'error', $parsed_events->get_error_message() );
+			}
 			return $parsed_events;
 		}
 
@@ -822,6 +802,10 @@ class XTFEPRO_Feed_API {
 		}
 
 		$events = $this->apply_local_filters( $events, $meta );
+
+		if ( ! empty( $meta['feed_id'] ) ) {
+			XTFEPRO_Feed_DB::instance()->log_action( $meta['feed_id'], 'fetch_ical', $ical_url, '', count( $events ), 'success' );
+		}
 
 		return array(
 			'events'   => $events,
@@ -1089,7 +1073,6 @@ class XTFEPRO_Feed_API {
 		] );
 		$response = curl_exec( $ch );
 		$httpCode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
 
 		if ( $httpCode === 200 && $response ) {
 			$data  = json_decode( $response, true );
@@ -1343,7 +1326,6 @@ class XTFEPRO_Feed_API {
 	// -------------------------------------------------------
 	// Feed meta
 	// -------------------------------------------------------
-
 	public function get_feed_meta( $feed_id ) {
 		$time_filter     = get_post_meta( $feed_id, '_xtfeprofeed_time_filter',    true ) ?: 'current_future';
 		$register_label  = get_post_meta( $feed_id, '_xtfeprofeed_register_label', true ) ?: __( 'View Event', 'xt-facebook-events-pro' );

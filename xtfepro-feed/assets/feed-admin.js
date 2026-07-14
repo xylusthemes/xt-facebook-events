@@ -224,6 +224,27 @@ jQuery(function ($) {
               }
             }
           });
+          
+          // Init Masonry if layout is masonry
+          $containers.find('.xtfeprofeed-layout-masonry').each(function() {
+            var feedWrap = this;
+            if (typeof Masonry !== 'undefined' && typeof imagesLoaded !== 'undefined') {
+              var eventsContainer = feedWrap.querySelector('.xtfeprofeed-events-grid');
+              if (eventsContainer) {
+                var gapStr = getComputedStyle(feedWrap).getPropertyValue('--xtfeprofeed-gap').trim();
+                var gap = parseInt(gapStr, 10) || 20;
+
+                var msnry = new Masonry(eventsContainer, {
+                  itemSelector: '.xtfeprofeed-event-card',
+                  percentPosition: true,
+                  gutter: gap
+                });
+                imagesLoaded(eventsContainer, function() {
+                  msnry.layout();
+                });
+              }
+            }
+          });
         } else {
           var errorMsg = res.data.message || 'Error loading preview';
           var errHtml = '<div class="xtfeprofeed-preview-error"><p>' + errorMsg + '</p></div>';
@@ -295,5 +316,189 @@ jQuery(function ($) {
     }
 
     updateLivePreview();
+  });
+
+  // -------------------------------------------------------
+  // Hover to preview Mockup for Layouts
+  // -------------------------------------------------------
+  $(document).on('mouseenter', '.xtfeprofeed-layout-option', function() {
+    var $layoutOpt = $(this);
+    
+    // Only show hover mockup for PRO layouts that are locked
+    if (!$layoutOpt.hasClass('xtfeprofeed-layout-pro-only')) {
+      return;
+    }
+    
+    var layout = $layoutOpt.find('input[type="radio"]').val();
+
+    var $container1 = $('#xtfeprofeed-preview-container').parent(); // .xtfeprofeed-preview-body
+    var $container2 = $('#xtfepro-builder-preview-container').parent(); // .xtfepro-builder__preview-body
+    var $parents = $container1.add($container2);
+
+    $parents.each(function() {
+      var $p = $(this);
+      if ($p.find('.xtfeprofeed-hover-overlay').length === 0) {
+        $p.prepend('<div class="xtfeprofeed-hover-overlay" style="display:none; background:#f8fafc; border: 1px solid #e2e8f0; padding:20px; border-radius:8px; box-sizing:border-box;"></div>');
+      }
+    });
+
+    var title = '';
+    var html = '';
+
+    if (layout === 'masonry') {
+      title = 'Masonry Preview (PRO)';
+      html = `<div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                        <div style="height: 150px; background: #e2e8f0;"></div>
+                        <div style="padding: 12px;">
+                            <div style="width: 80%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                            <div style="width: 50%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                        <div style="height: 100px; background: #e2e8f0;"></div>
+                        <div style="padding: 12px;">
+                            <div style="width: 90%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                            <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                        <div style="height: 100px; background: #e2e8f0;"></div>
+                        <div style="padding: 12px;">
+                            <div style="width: 70%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                            <div style="width: 60%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow:hidden; border: 1px solid #f1f5f9;">
+                        <div style="height: 160px; background: #e2e8f0;"></div>
+                        <div style="padding: 12px;">
+                            <div style="width: 75%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                            <div style="width: 55%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    } else if (layout === 'minimal-grid') {
+      title = 'Minimal Grid Preview (PRO)';
+      html = `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                <div style="background: #fff; border-radius: 4px; border: 1px solid #e2e8f0; padding: 20px; min-height: 160px; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="width: 100%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 16px;"></div>
+                    <div style="width: 60%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 24px;"></div>
+                    <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>
+                    <div style="width: 50%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+                <div style="background: #fff; border-radius: 4px; border: 1px solid #e2e8f0; padding: 20px; min-height: 160px; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="width: 80%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 16px;"></div>
+                    <div style="width: 90%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 24px;"></div>
+                    <div style="width: 50%; height: 6px; background: #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>
+                    <div style="width: 30%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+                <div style="background: #fff; border-radius: 4px; border: 1px solid #e2e8f0; padding: 20px; min-height: 160px; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="width: 90%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 16px;"></div>
+                    <div style="width: 70%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 24px;"></div>
+                    <div style="width: 60%; height: 6px; background: #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>
+                    <div style="width: 45%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                </div>
+            </div>`;
+    } else if (layout === 'compact-list') {
+      title = 'Compact List Preview (PRO)';
+      html = `<div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; background: #fff; border-radius: 6px; padding: 10px; align-items: center; gap: 12px; border: 1px solid #f1f5f9;">
+                    <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 4px;"></div>
+                    <div style="flex: 1;">
+                        <div style="width: 60%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 6px;"></div>
+                        <div style="width: 30%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; background: #fff; border-radius: 6px; padding: 10px; align-items: center; gap: 12px; border: 1px solid #f1f5f9;">
+                    <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 4px;"></div>
+                    <div style="flex: 1;">
+                        <div style="width: 75%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 6px;"></div>
+                        <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; background: #fff; border-radius: 6px; padding: 10px; align-items: center; gap: 12px; border: 1px solid #f1f5f9;">
+                    <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 4px;"></div>
+                    <div style="flex: 1;">
+                        <div style="width: 50%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 6px;"></div>
+                        <div style="width: 25%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>`;
+    } else if (layout === 'timeline') {
+      title = 'Timeline Preview (PRO)';
+      html = `<div style="padding-left: 20px; border-left: 2px solid #e2e8f0; position: relative; margin-left: 10px;">
+                <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; background: #94a3b8; border-radius: 50%; border: 2px solid #fff;"></div>
+                    <div style="background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="width: 70%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; background: #94a3b8; border-radius: 50%; border: 2px solid #fff;"></div>
+                    <div style="background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="width: 60%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 30%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div style="position: relative;">
+                    <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; background: #94a3b8; border-radius: 50%; border: 2px solid #fff;"></div>
+                    <div style="background: #fff; border-radius: 8px; border: 1px solid #f1f5f9; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="width: 80%; height: 8px; background: #94a3b8; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 50%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>`;
+    } else if (layout === 'ticket-list') {
+      title = 'Ticket Preview (PRO)';
+      html = `<div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #f1f5f9; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="width: 80px; background: #f1f5f9; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px;">
+                        <div style="width: 30px; height: 6px; background: #cbd5e1; border-radius: 4px; margin-bottom: 6px;"></div>
+                        <div style="width: 40px; height: 12px; background: #94a3b8; border-radius: 4px;"></div>
+                    </div>
+                    <div style="flex: 1; padding: 12px;">
+                        <div style="width: 70%; height: 10px; background: #94a3b8; border-radius: 4px; margin-bottom: 12px;"></div>
+                        <div style="width: 40%; height: 6px; background: #cbd5e1; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 80%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                    <div style="border-left: 2px dashed #e2e8f0; width: 80px; display: flex; align-items: center; justify-content: center; padding: 12px;">
+                        <div style="width: 80%; height: 24px; background: #e2e8f0; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #f1f5f9; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="width: 80px; background: #f1f5f9; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px;">
+                        <div style="width: 30px; height: 6px; background: #cbd5e1; border-radius: 4px; margin-bottom: 6px;"></div>
+                        <div style="width: 40px; height: 12px; background: #94a3b8; border-radius: 4px;"></div>
+                    </div>
+                    <div style="flex: 1; padding: 12px;">
+                        <div style="width: 80%; height: 10px; background: #94a3b8; border-radius: 4px; margin-bottom: 12px;"></div>
+                        <div style="width: 30%; height: 6px; background: #cbd5e1; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div style="width: 60%; height: 6px; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                    <div style="border-left: 2px dashed #e2e8f0; width: 80px; display: flex; align-items: center; justify-content: center; padding: 12px;">
+                        <div style="width: 80%; height: 24px; background: #e2e8f0; border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    if (html !== '') {
+      var headerHtml = '<h3 style="margin-top:0;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:20px;">' + title + '</h3>';
+      
+      $parents.find('#xtfeprofeed-preview-container, #xtfepro-builder-preview-container').hide();
+      $parents.find('.xtfeprofeed-hover-overlay').html(headerHtml + html).stop(true, true).fadeIn(150);
+    }
+  }).on('mouseleave', '.xtfeprofeed-layout-option', function() {
+    var $container1 = $('#xtfeprofeed-preview-container').parent();
+    var $container2 = $('#xtfepro-builder-preview-container').parent();
+    var $parents = $container1.add($container2);
+    
+    $parents.find('.xtfeprofeed-hover-overlay').stop(true, true).hide();
+    $parents.find('#xtfeprofeed-preview-container, #xtfepro-builder-preview-container').fadeIn(150);
   });
 });

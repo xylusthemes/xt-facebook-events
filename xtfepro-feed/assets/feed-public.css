@@ -63,25 +63,25 @@
 
 /* --- Masonry --- */
 .xtfeprofeed-layout-masonry .xtfeprofeed-events-grid {
-  column-gap: var(--xtfeprofeed-gap);
-  column-count: 1;
+  display: block; /* JS Masonry will absolutely position items inside */
 }
 
-.xtfeprofeed-layout-masonry.xtfeprofeed-cols-2 .xtfeprofeed-events-grid {
-  column-count: 2;
-}
-
-.xtfeprofeed-layout-masonry.xtfeprofeed-cols-3 .xtfeprofeed-events-grid {
-  column-count: 3;
-}
-
-.xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-events-grid {
-  column-count: 4;
-}
-
+/* Base item width - 1 column by default */
 .xtfeprofeed-layout-masonry .xtfeprofeed-event-card {
-  break-inside: avoid;
+  width: 100%;
   margin-bottom: var(--xtfeprofeed-gap);
+}
+
+.xtfeprofeed-layout-masonry.xtfeprofeed-cols-2 .xtfeprofeed-event-card {
+  width: calc(50% - (var(--xtfeprofeed-gap) * 1 / 2));
+}
+
+.xtfeprofeed-layout-masonry.xtfeprofeed-cols-3 .xtfeprofeed-event-card {
+  width: calc(33.333% - (var(--xtfeprofeed-gap) * 2 / 3));
+}
+
+.xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-event-card {
+  width: calc(25% - (var(--xtfeprofeed-gap) * 3 / 4));
 }
 
 /* --- List --- */
@@ -1122,8 +1122,8 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-events-grid {
-    column-count: 3;
+  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-event-card {
+    width: calc(33.333% - (var(--xtfeprofeed-gap) * 2 / 3));
   }
 }
 
@@ -1134,9 +1134,9 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-3 .xtfeprofeed-events-grid,
-  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-events-grid {
-    column-count: 2;
+  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-3 .xtfeprofeed-event-card,
+  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-event-card {
+    width: calc(50% - (var(--xtfeprofeed-gap) * 1 / 2));
   }
 
   .xtfeprofeed-list-image {
@@ -1158,11 +1158,11 @@
     grid-template-columns: 1fr;
   }
 
-  .xtfeprofeed-layout-masonry .xtfeprofeed-events-grid,
-  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-2 .xtfeprofeed-events-grid,
-  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-3 .xtfeprofeed-events-grid,
-  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-events-grid {
-    column-count: 1;
+  .xtfeprofeed-layout-masonry .xtfeprofeed-event-card,
+  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-2 .xtfeprofeed-event-card,
+  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-3 .xtfeprofeed-event-card,
+  .xtfeprofeed-layout-masonry.xtfeprofeed-cols-4 .xtfeprofeed-event-card {
+    width: 100%;
   }
 
   .xtfeprofeed-layout-minimal-grid.xtfeprofeed-cols-2 .xtfeprofeed-events-grid,

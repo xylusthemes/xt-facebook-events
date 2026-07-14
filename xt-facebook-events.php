@@ -293,6 +293,17 @@ $xtfe_errors = $xtfe_warnings = $xtfe_success_msg = $xtfe_info_msg = array();
  * @since 1.0.0
  */
 function xtfe_activate_facebook_events() {
-	
+	add_option( 'xtfe_do_activation_redirect', true );
 }
 register_activation_hook( __FILE__, 'xtfe_activate_facebook_events' );
+
+add_action( 'admin_init', 'xtfe_redirect_on_activation' );
+function xtfe_redirect_on_activation() {
+	if ( get_option( 'xtfe_do_activation_redirect', false ) ) {
+		delete_option( 'xtfe_do_activation_redirect' );
+		if ( ! isset( $_GET['activate-multi'] ) ) {
+			wp_safe_redirect( admin_url( 'edit.php?post_type=xtfepro_live_feed' ) );
+			exit;
+		}
+	}
+}

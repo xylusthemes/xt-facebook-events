@@ -41,6 +41,9 @@ class XTFEPRO_Feed_Builder_UI {
 		if ( ! $screen || XTFEPRO_FEED_CPT !== $screen->post_type ) return;
 		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) return;
 
+		wp_enqueue_script( 'masonry' );
+		wp_enqueue_script( 'imagesloaded' );
+
 		wp_enqueue_style(
 			'xtfeprofeed-builder-ui',
 			XTFEPRO_FEED_URL . 'assets/builder-ui.css',

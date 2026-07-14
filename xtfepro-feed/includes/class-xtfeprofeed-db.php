@@ -22,11 +22,14 @@ class XTFEPRO_Feed_DB {
 	/** @var string DB table name (with prefix) */
 	private $table_images;
 
+	/** @var string DB table name for logs (with prefix) */
+	private $table_logs;
+
 	/** @var string DB version option key */
 	private $db_version_key = 'xtfeprofeed_db_version';
 
 	/** @var string Current schema version */
-	private $db_version = '1.0';
+	private $db_version = '1.2';
 
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -38,6 +41,8 @@ class XTFEPRO_Feed_DB {
 	private function __construct() {
 		global $wpdb;
 		$this->table_images = $wpdb->prefix . 'xtfeprofeed_images';
+		$this->table_logs   = $wpdb->prefix . 'xtfeprofeed_logs';
+		add_action( 'delete_post', array( $this, 'delete_feed_logs' ) );
 	}
 
 	// -------------------------------------------------------
@@ -66,8 +71,24 @@ class XTFEPRO_Feed_DB {
 			KEY created_at (created_at)
 		) {$charset_collate};";
 
+		$sql_logs = "CREATE TABLE {$this->table_logs} (
+			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+			feed_id BIGINT UNSIGNED NOT NULL,
+			action_type VARCHAR(50) NOT NULL,
+			url TEXT,
+			api_cursor TEXT,
+			events_count INT DEFAULT 0,
+			status VARCHAR(20) DEFAULT 'success',
+			error_message TEXT,
+			created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY feed_id (feed_id),
+			KEY created_at (created_at)
+		) {$charset_collate};";
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+		dbDelta( $sql_logs );
 
 		update_option( $this->db_version_key, $this->db_version );
 	}
@@ -152,8 +173,61 @@ class XTFEPRO_Feed_DB {
 	}
 
 	// -------------------------------------------------------
-	// Weekly cleanup (auto-delete images older than 7 days)
+	// Logging
 	// -------------------------------------------------------
+
+	/**
+	 * Log an API action.
+	 */
+	public function log_action( $feed_id, $action_type, $url, $cursor = '', $events_count = 0, $status = 'success', $error_message = '' ) {
+		global $wpdb;
+		$wpdb->insert(
+			$this->table_logs,
+			array(
+				'feed_id'       => (int) $feed_id,
+				'action_type'   => $action_type,
+				'url'           => $url,
+				'api_cursor'    => (string) $cursor,
+				'events_count'  => (int) $events_count,
+				'status'        => $status,
+				'error_message' => (string) $error_message,
+				'created_at'    => current_time( 'mysql', true ),
+			),
+			array( '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s' )
+		);
+	}
+
+	/**
+	 * Delete logs for a deleted feed.
+	 */
+	public function delete_feed_logs( $post_id ) {
+		if ( get_post_type( $post_id ) !== XTFEPRO_FEED_CPT ) return;
+		global $wpdb;
+		$wpdb->delete(
+			$this->table_logs,
+			array( 'feed_id' => $post_id ),
+			array( '%d' )
+		);
+	}
+
+	/**
+	 * Get logs (for admin UI).
+	 */
+	public function get_logs( $limit = 50, $offset = 0 ) {
+		global $wpdb;
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$this->table_logs} ORDER BY created_at DESC LIMIT %d OFFSET %d",
+				$limit,
+				$offset
+			)
+		);
+	}
+	
+	public function get_logs_count() {
+		global $wpdb;
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_logs}" );
+	}
 
 	/**
 	 * Schedule the weekly cleanup cron if not already scheduled.
@@ -175,15 +249,23 @@ class XTFEPRO_Feed_DB {
 	}
 
 	/**
-	 * Run the weekly cleanup — delete images older than 3 days.
+	 * Run the weekly cleanup — delete images older than 3 days, and logs older than 7 days.
 	 */
 	public function run_weekly_cleanup() {
 		global $wpdb;
-		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( 3 * DAY_IN_SECONDS ) );
+		$image_cutoff = gmdate( 'Y-m-d H:i:s', time() - ( 3 * DAY_IN_SECONDS ) );
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$this->table_images} WHERE created_at < %s",
-				$cutoff
+				$image_cutoff
+			)
+		);
+		
+		$log_cutoff = gmdate( 'Y-m-d H:i:s', time() - ( 7 * DAY_IN_SECONDS ) );
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$this->table_logs} WHERE created_at < %s",
+				$log_cutoff
 			)
 		);
 	}

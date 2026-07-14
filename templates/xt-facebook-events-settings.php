@@ -10,6 +10,7 @@ $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
 $is_direct_auth         = isset( $xtfe_user_token_options['direct_auth'] ) ? ( 1 === $xtfe_user_token_options['direct_auth'] ) : false;
 $is_authenticated       = isset( $xtfe_user_token_options['authorize_status'] ) ? ( 1 === $xtfe_user_token_options['authorize_status'] ) : false;
 $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_app_secret ) );
+$is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_fb_authorize_user['name'] ) && ( ! isset( $xtfe_user_token_options['authorize_status'] ) || 1 === $xtfe_user_token_options['authorize_status'] ) );
 ?>
 <div class="xtfe-settings-container">
     <?php
@@ -20,24 +21,32 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
             <p><?php printf( '%1$s <b><a href="https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/" target="_blank">%2$s</a></b> %3$s', esc_html__( "It looks like you don't have HTTPS enabled on your website. Please enable it. HTTPS is required to authorize your facebook account.",'xt-facebook-events' ), esc_html__( 'Click here','xt-facebook-events' ), esc_html__( 'for more information.','xt-facebook-events' ) ); ?></p>
         </div>
     <?php
-    } ?>
+    }
 
-    <?php if ( ! $is_direct_auth ) { ?>
-        <div class="notice notice-info xtfe-notice" style="margin-bottom: 20px;">
-            <p>
-                <?php printf( '<b>%1$s</b> %2$s <b><a href="https://developers.facebook.com/apps" target="_blank">%3$s</a></b> %4$s', esc_html__( 'Note : ','xt-facebook-events' ), esc_html__( 'You have to create a Facebook application before filling the following details.','xt-facebook-events' ), esc_html__( 'Click here','xt-facebook-events' ), esc_html__( 'to create a new Facebook application.','xt-facebook-events' ) ); ?>
-                <br/>
-                <?php esc_html_e( 'For detailed step by step instructions ', 'xt-facebook-events' ); ?>
-                <strong><a href="https://docs.xylusthemes.com/docs/import-facebook-events/creating-facebook-application/" target="_blank"><?php esc_html_e( 'Click here', 'xt-facebook-events' ); ?></a></strong>.
-                <br/>
-                <strong><?php esc_html_e( 'Set the site url as : ', 'xt-facebook-events' ); ?></strong>
-                <span style="color: green; font-weight: 600;"><?php echo esc_url( get_site_url() ); ?></span>
-                <br/>
-                <strong><?php esc_html_e( 'Set Valid OAuth redirect URI : ', 'xt-facebook-events' ); ?></strong>
-                <span style="color: green; font-weight: 600;"><?php echo esc_url( admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' ) ); ?></span>
-            </p>
-        </div>
-    <?php } ?>
+    if ( isset( $_GET['authorize'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if ( '1' === $_GET['authorize'] ) {
+            echo '<div class="notice notice-success is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Facebook account securely connected!', 'xt-facebook-events' ) . '</strong></p></div>';
+        } else {
+            echo '<div class="notice notice-error is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Failed to connect Facebook account. Please try again.', 'xt-facebook-events' ) . '</strong></p></div>';
+        }
+    }
+
+    if ( isset( $_GET['xtauthorize'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if ( '1' === $_GET['xtauthorize'] ) {
+            echo '<div class="notice notice-success is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Facebook App securely authorized!', 'xt-facebook-events' ) . '</strong></p></div>';
+        } elseif ( '2' === $_GET['xtauthorize'] ) {
+            echo '<div class="notice notice-error is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Please insert a valid Facebook App ID and Secret.', 'xt-facebook-events' ) . '</strong></p></div>';
+        } else {
+            echo '<div class="notice notice-error is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Failed to authorize Facebook App. Please check your credentials.', 'xt-facebook-events' ) . '</strong></p></div>';
+        }
+    }
+
+    if ( isset( $_GET['deauthorize'] ) && '1' === $_GET['deauthorize'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        echo '<div class="notice notice-success is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Facebook account successfully disconnected.', 'xt-facebook-events' ) . '</strong></p></div>';
+    }
+    ?>
+
+
 
     <!-- Authorization Card -->
     <div class="xtfe-card mt-2" style="border-radius: 8px; overflow: hidden; border-color: #e2e8f0; margin-bottom: 24px;">
@@ -50,8 +59,49 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
             </div>
         </div>
         <div class="content" style="padding: 28px;gap:0;">
-            <div class="xtfe-settings-wrapper">
-                <?php if ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_fb_authorize_user['name'] ) && ( ! isset( $xtfe_user_token_options['authorize_status'] ) || 1 === $xtfe_user_token_options['authorize_status'] ) ) { 
+            <!-- New Widget Promo -->
+            <div style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="padding-right: 20px;">
+                    <h3 style="color: #3730a3; margin: 0 0 8px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <?php esc_html_e( 'Try Our New Facebook Widget', 'xt-facebook-events' ); ?>
+                        <span style="background: #4f46e5; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">New</span>
+                    </h3>
+                    <p style="margin: 0; color: #4338ca; font-size: 14px; line-height: 1.5;">
+                        <?php esc_html_e( 'No need Auth, Key, Token! Use Public Page ID, Public Group ID, iCal URL and Event IDs directly.', 'xt-facebook-events' ); ?>
+                    </p>
+                </div>
+                <div>
+                    <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=xtfepro_live_feed' ) ); ?>" style="display: inline-block; background: #4f46e5; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: background 0.2s; white-space: nowrap; border: 1px solid #4338ca;" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4f46e5'">
+                        <?php esc_html_e( 'Create Widget', 'xt-facebook-events' ); ?> &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <div class="xtfe-auth-toggle-trigger <?php echo $is_connected ? 'is-open' : ''; ?>" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px 20px; font-weight: 600; font-size: 15px; color: #0f172a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; <?php echo $is_connected ? '' : 'margin-bottom: 24px;'; ?>">
+                <span><?php esc_html_e( 'Facebook Authorization', 'xt-facebook-events' ); ?></span>
+                <svg class="xtfe-auth-toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s; <?php echo $is_connected ? 'transform: rotate(180deg);' : ''; ?>"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+
+            <div class="xtfe-auth-toggle-target <?php echo $is_connected ? 'is-open' : ''; ?>" style="<?php echo $is_connected ? 'display: block;' : 'display: none;'; ?>">
+                <?php if ( ! $is_direct_auth ) { ?>
+                    <div class="notice notice-info xtfe-notice" >
+                        <p>
+                            <?php printf( '<b>%1$s</b> %2$s <b><a href="https://developers.facebook.com/apps" target="_blank">%3$s</a></b> %4$s', esc_html__( 'Note : ','xt-facebook-events' ), esc_html__( 'You have to create a Facebook application before filling the following details.','xt-facebook-events' ), esc_html__( 'Click here','xt-facebook-events' ), esc_html__( 'to create a new Facebook application.','xt-facebook-events' ) ); ?>
+                            <br/>
+                            <?php esc_html_e( 'For detailed step by step instructions ', 'xt-facebook-events' ); ?>
+                            <strong><a href="https://docs.xylusthemes.com/docs/import-facebook-events/creating-facebook-application/" target="_blank"><?php esc_html_e( 'Click here', 'xt-facebook-events' ); ?></a></strong>.
+                            <br/>
+                            <strong><?php esc_html_e( 'Set the site url as : ', 'xt-facebook-events' ); ?></strong>
+                            <span style="color: green; font-weight: 600;"><?php echo esc_url( get_site_url() ); ?></span>
+                            <br/>
+                            <strong><?php esc_html_e( 'Set Valid OAuth redirect URI : ', 'xt-facebook-events' ); ?></strong>
+                            <span style="color: green; font-weight: 600;"><?php echo esc_url( admin_url( 'admin-post.php?action=xtfe_facebook_authorize_callback' ) ); ?></span>
+                        </p>
+                    </div>
+                <?php } ?>
+
+                <div class="xtfe-settings-wrapper" style="margin-top: 20px;<?php if ( $is_connected ) { echo 'margin-bottom: 0px;'; }else{ echo 'margin-bottom: 20px;'; } ?>">
+                <?php if ( $is_connected ) { 
                     $name  = $xtfe_fb_authorize_user['name'];
                     $avtar = $xtfe_fb_authorize_user['avtar'];
                     ?>
@@ -127,36 +177,42 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
                         </div>
                     </div>
                 <?php } ?>
+                </div>
             </div>
             
-            <form method="post" id="xtfe_setting_form">
-                <hr style="border: 0; border-top: 1px solid #E8E8EB; margin: 24px 0;">
-                <div class="xtfe-settings-wrapper">
-                    <?php if ( ! $is_direct_auth ) { ?>
-                        <!-- App ID -->
-                        <div class="xtfe-setting-row">
-                            <div class="xtfe-inner-section-1">
-                                <label for="facebook_app_id"><?php esc_html_e( 'Facebook App ID', 'xt-facebook-events' ); ?></label>
-                            </div>
-                            <div class="xtfe-inner-section-2">
-                                <input id="facebook_app_id" class="facebook_app_id" name="xtfe[facebook_app_id]" type="text" value="<?php echo esc_attr( $facebook_app_id ); ?>" />
-                                <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Enter your Facebook Application ID.', 'xt-facebook-events' ); ?></div>
-                            </div>
-                        </div>
-
-                        <!-- App Secret -->
-                        <div class="xtfe-setting-row">
-                            <div class="xtfe-inner-section-1">
-                                <label for="facebook_app_secret"><?php esc_html_e( 'Facebook App Secret', 'xt-facebook-events' ); ?></label>
-                            </div>
-                            <div class="xtfe-inner-section-2">
-                                <input id="facebook_app_secret" class="facebook_app_secret" name="xtfe[facebook_app_secret]" type="text" value="<?php echo esc_attr( $facebook_app_secret ); ?>" />
-                                <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Enter your Facebook Application Secret.', 'xt-facebook-events' ); ?></div>
-                            </div>
-                        </div>
-                        <hr style="border: 0; border-top: 1px solid #E8E8EB; margin: 0;">
+            <form method="post" id="xtfe_setting_form" style="display: contents;padding-bottom: 0;">
+                <div class="xtfe-auth-toggle-target <?php echo $is_connected ? 'is-open' : ''; ?>" style="<?php echo $is_connected ? 'display: block;padding-bottom: 0;' : 'display: none;'; ?>">
+                    <?php if ( ! $is_connected ) { ?>
+                        <hr style="border: 0; border-top: 1px solid #E8E8EB; margin: 0 0 24px 0;">
                     <?php } ?>
+                    <div class="xtfe-settings-wrapper" style="margin-top: 20px;">
+                        <?php if ( ! $is_direct_auth ) { ?>
+                            <!-- App ID -->
+                            <div class="xtfe-setting-row">
+                                <div class="xtfe-inner-section-1">
+                                    <label for="facebook_app_id"><?php esc_html_e( 'Facebook App ID', 'xt-facebook-events' ); ?></label>
+                                </div>
+                                <div class="xtfe-inner-section-2">
+                                    <input id="facebook_app_id" class="facebook_app_id" name="xtfe[facebook_app_id]" type="text" value="<?php echo esc_attr( $facebook_app_id ); ?>" />
+                                    <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Enter your Facebook Application ID.', 'xt-facebook-events' ); ?></div>
+                                </div>
+                            </div>
 
+                            <!-- App Secret -->
+                            <div class="xtfe-setting-row">
+                                <div class="xtfe-inner-section-1">
+                                    <label for="facebook_app_secret"><?php esc_html_e( 'Facebook App Secret', 'xt-facebook-events' ); ?></label>
+                                </div>
+                                <div class="xtfe-inner-section-2">
+                                    <input id="facebook_app_secret" class="facebook_app_secret" name="xtfe[facebook_app_secret]" type="text" value="<?php echo esc_attr( $facebook_app_secret ); ?>" />
+                                    <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Enter your Facebook Application Secret.', 'xt-facebook-events' ); ?></div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+
+                <div class="xtfe-settings-wrapper xtfe_accent_color_container" >
                     <!-- Accent Color -->
                     <div class="xtfe-setting-row">
                         <div class="xtfe-inner-section-1">
@@ -192,6 +248,54 @@ $is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_ap
             </form>
         </div>
     </div>
+    
+    <script>
+    jQuery(document).ready(function($){
+        $('.xtfe-auth-toggle-trigger').on('click', function(){
+            var $trigger = $(this);
+            var $targets = $('.xtfe-auth-toggle-target');
+            
+            $targets.slideToggle(300);
+            $trigger.toggleClass('is-open');
+            $targets.toggleClass('is-open');
+            
+            var icon = $trigger.find('.xtfe-auth-toggle-icon');
+            var $accentContainer = $('.xtfe_accent_color_container');
+            if ($trigger.hasClass('is-open')) {
+                icon.css('transform', 'rotate(180deg)');
+                $accentContainer.css('margin-top', '');
+            } else {
+                icon.css('transform', 'none');
+                $accentContainer.css('margin-top', '25px');
+            }
+        });
+    });
+    </script>
+    <style>
+        .xtfe-auth-toggle-trigger {
+            transition: all 0.2s ease;
+        }
+        .xtfe-auth-toggle-trigger.is-open {
+            margin-bottom: 0 !important;
+            border-bottom-color: transparent !important;
+            border-radius: 6px 6px 0 0 !important;
+        }
+        .xtfe-auth-toggle-target {
+            border-left: 1px solid transparent;
+            border-right: 1px solid transparent;
+        }
+        .xtfe-auth-toggle-target.is-open {
+            border-left-color: #e2e8f0;
+            border-right-color: #e2e8f0;
+            padding: 0 24px;
+        }
+        #xtfe_setting_form .xtfe-auth-toggle-target.is-open {
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 0 0 6px 6px;
+            padding-bottom: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
 
     <!-- Cache Card -->
     <div class="xtfe-card mt-2" style="border-radius: 8px; overflow: hidden; border-color: #e2e8f0; margin-bottom: 24px;">

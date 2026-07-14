@@ -19,8 +19,69 @@
 
   ready(function () {
     if (ticketStyle === 'modal') { initModals(); }
-    initPagination();
+    initFeedWraps();
   });
+
+  // -------------------------------------------------------
+  // Initialize Feed Wraps (Pagination + Masonry)
+  // -------------------------------------------------------
+  function initFeedWraps() {
+    var feedWraps = document.querySelectorAll('.xtfeprofeed-feed-wrap[data-feed-id]');
+    
+    feedWraps.forEach(function (feedWrap) {
+      if (feedWrap.getAttribute('data-pagination-init')) return;
+      feedWrap.setAttribute('data-pagination-init', 'true');
+
+      initMasonry(feedWrap);
+      bindPaginationEvents(feedWrap);
+    });
+  }
+
+  function initMasonry(feedWrap) {
+    if (!feedWrap.classList.contains('xtfeprofeed-layout-masonry')) return;
+    if (typeof Masonry === 'undefined' || typeof imagesLoaded === 'undefined') return;
+
+    var eventsContainer = feedWrap.querySelector('[data-events-container]');
+    if (!eventsContainer) return;
+
+    var gapStr = getComputedStyle(feedWrap).getPropertyValue('--xtfeprofeed-gap').trim();
+    var gap = parseInt(gapStr, 10) || 20;
+
+    var msnry = new Masonry(eventsContainer, {
+      itemSelector: '.xtfeprofeed-event-card',
+      percentPosition: true,
+      gutter: gap
+    });
+    feedWrap.xtfeprofeedMsnry = msnry;
+
+    imagesLoaded(eventsContainer, function() {
+      msnry.layout();
+    });
+  }
+
+  function bindPaginationEvents(feedWrap) {
+    // Event delegation for pagination buttons
+    feedWrap.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-page]');
+      if (!btn) return;
+
+      var page = parseInt(btn.getAttribute('data-page'), 10);
+      if (!page || btn.disabled) return;
+
+      var feedId = feedWrap.getAttribute('data-feed-id');
+      var perPage = parseInt(feedWrap.getAttribute('data-per-page'), 10) || 12;
+      var currentPage = parseInt(feedWrap.getAttribute('data-current-page'), 10) || 1;
+
+      if (page === currentPage && feedWrap.getAttribute('data-pagination-type') !== 'load_more') return;
+
+      loadPage(feedWrap, feedId, page, perPage);
+    });
+
+    // Init infinite scroll if needed
+    if (feedWrap.getAttribute('data-pagination-type') === 'infinite_scroll') {
+      initInfiniteScroll(feedWrap);
+    }
+  }
 
   // -------------------------------------------------------
   // Modal: eb_widgets checkout popup
@@ -67,40 +128,6 @@
     });
   }
 
-  // -------------------------------------------------------
-  // AJAX Pagination
-  // -------------------------------------------------------
-  function initPagination() {
-    var feedWraps = document.querySelectorAll('.xtfeprofeed-feed-wrap[data-feed-id]');
-    
-    feedWraps.forEach(function (feedWrap) {
-      if (feedWrap.getAttribute('data-pagination-init')) return;
-      feedWrap.setAttribute('data-pagination-init', 'true');
-
-      // Event delegation for pagination buttons
-      feedWrap.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-page]');
-        if (!btn) return;
-
-        var page = parseInt(btn.getAttribute('data-page'), 10);
-        if (!page || btn.disabled) return;
-
-        var feedId = feedWrap.getAttribute('data-feed-id');
-        var perPage = parseInt(feedWrap.getAttribute('data-per-page'), 10) || 12;
-        var currentPage = parseInt(feedWrap.getAttribute('data-current-page'), 10) || 1;
-
-        if (page === currentPage && feedWrap.getAttribute('data-pagination-type') !== 'load_more') return;
-
-        loadPage(feedWrap, feedId, page, perPage);
-      });
-
-      // Init infinite scroll if needed
-      if (feedWrap.getAttribute('data-pagination-type') === 'infinite_scroll') {
-        initInfiniteScroll(feedWrap);
-      }
-    });
-  }
-
   function loadPage(feedWrap, feedId, page, perPage) {
     if (feedWrap.getAttribute('data-loading') === 'true') return;
 
@@ -140,13 +167,32 @@
           // Append events instead of replacing
           var tempDiv = document.createElement('div');
           tempDiv.innerHTML = result.data.events_html;
-          var newEvents = tempDiv.children;
+          var newEvents = Array.prototype.slice.call(tempDiv.children);
+          var appendedElements = [];
+          
           while (newEvents.length > 0) {
-            eventsContainer.appendChild(newEvents[0]);
+            var el = newEvents.shift();
+            eventsContainer.appendChild(el);
+            appendedElements.push(el);
+          }
+
+          if (feedWrap.xtfeprofeedMsnry) {
+            feedWrap.xtfeprofeedMsnry.appended(appendedElements);
+            imagesLoaded(eventsContainer, function() {
+              feedWrap.xtfeprofeedMsnry.layout();
+            });
           }
         } else {
           // Replace events (numbered pagination)
           eventsContainer.innerHTML = result.data.events_html;
+          
+          if (feedWrap.xtfeprofeedMsnry) {
+            feedWrap.xtfeprofeedMsnry.reloadItems();
+            imagesLoaded(eventsContainer, function() {
+              feedWrap.xtfeprofeedMsnry.layout();
+            });
+          }
+
           // Scroll to top of feed for numbered pagination
           feedWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -229,7 +275,7 @@
   // Initialize on load
   ready(function () {
     if (ticketStyle === 'modal') { initModals(); }
-    initPagination();
+    initFeedWraps();
   });
 
 })();
