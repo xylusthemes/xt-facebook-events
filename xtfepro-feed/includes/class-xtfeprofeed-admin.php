@@ -520,6 +520,21 @@ class XTFEPRO_Feed_Admin {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
+		// Source fields — these are the only ones that require a fresh API fetch.
+		$source_fields = array(
+			'_xtfeprofeed_source_type',
+			'_xtfeprofeed_page_id',
+			'_xtfeprofeed_group_id',
+			'_xtfeprofeed_event_ids',
+			'_xtfeprofeed_ical_url',
+		);
+
+		// Snapshot existing source values BEFORE saving.
+		$old_source = array();
+		foreach ( $source_fields as $sf ) {
+			$old_source[ $sf ] = get_post_meta( $post_id, $sf, true );
+		}
+
 		$text_fields = array(
 			'_xtfeprofeed_source_type', '_xtfeprofeed_page_id', '_xtfeprofeed_group_id', '_xtfeprofeed_event_ids', '_xtfeprofeed_ical_url',
 			'_xtfeprofeed_time_filter', '_xtfeprofeed_start_date', '_xtfeprofeed_end_date',
@@ -580,7 +595,24 @@ class XTFEPRO_Feed_Admin {
 			update_post_meta( $post_id, '_xtfeprofeed_cache_duration', $cache_val );
 		}
 
-		XTFEPRO_Feed_API::instance()->clear_cache( $post_id );
+		// Check if any source field actually changed after saving.
+		$source_changed = false;
+		foreach ( $source_fields as $sf ) {
+			$new_val = get_post_meta( $post_id, $sf, true );
+			if ( (string) $old_source[ $sf ] !== (string) $new_val ) {
+				$source_changed = true;
+				break;
+			}
+		}
+
+		// Store the result for 30 seconds so trigger_full_fetch_after_save can read it.
+		set_transient( 'xtfeprofeed_source_changed_' . $post_id, $source_changed ? '1' : '0', 30 );
+
+		// Clear cache only when source data has actually changed.
+		if ( $source_changed ) {
+			XTFEPRO_Feed_API::instance()->clear_cache( $post_id );
+		}
+
 		do_action( 'xtfeprofeed_settings_saved', $post_id );
 	}
 

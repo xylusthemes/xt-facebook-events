@@ -2,13 +2,6 @@
 /**
  * XT Facebook Events Pro Live Feed - Facebook API / Scraper Handler
  *
- * OPTIMIZED: Paginated Transient Chain + Non-blocking background fetch
- * - Page 1 loads live on first visit (2-4 sec), then cached
- * - Pages 2-N fetched in background via non-blocking wp_remote_post
- * - HQ images fetched in batches of 5 (not 1-by-1 with 2s gaps)
- * - Image DB table kept for persistence across cache clears
- * - No Action Scheduler dependency for background page fetching
- *
  * @package XT_Facebook_Events_Pro\Feed
  */
 
@@ -565,6 +558,19 @@ class XTFEPRO_Feed_API {
 		$meta['is_preview'] = true;
 		$feed_id = absint( $meta['feed_id'] ?? 0 );
 
+		$preview_hash = md5( serialize( array(
+			$meta['source_type'] ?? '',
+			$meta['page_id'] ?? '',
+			$meta['group_id'] ?? '',
+			$meta['event_ids'] ?? '',
+			$meta['ical_url'] ?? '',
+			$meta['time_filter'] ?? '',
+			$meta['start_date'] ?? '',
+			$meta['end_date'] ?? '',
+			! empty( $meta['hide_online'] )
+		) ) );
+		$preview_cache_key = 'xtfeprofeed_prev_' . $preview_hash;
+
 		if ( $feed_id ) {
 			$saved = $this->get_feed_meta( $feed_id );
 			$is_same_source = (
@@ -587,6 +593,12 @@ class XTFEPRO_Feed_API {
 			}
 		}
 
+		// Check if we already fetched this exact source configuration for preview recently
+		$preview_cached = get_transient( $preview_cache_key );
+		if ( ! empty( $preview_cached ) && is_array( $preview_cached ) ) {
+			return $this->sort_events( $preview_cached );
+		}
+
 		$response = $this->fetch_page( $meta, '' );
 		if ( is_wp_error( $response ) ) return $response;
 
@@ -599,7 +611,12 @@ class XTFEPRO_Feed_API {
 			}
 		}
 
-		return $this->sort_events( $this->dedup( $events ) );
+		$events = $this->sort_events( $this->dedup( $events ) );
+		
+		// Cache this specific preview configuration for 5 minutes
+		set_transient( $preview_cache_key, $events, 5 * MINUTE_IN_SECONDS );
+
+		return $events;
 	}
 
 	// -------------------------------------------------------

@@ -63,8 +63,6 @@ class XTFEPRO_Feed_CPT {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_notices', array( $this, 'show_cache_cleared_notice' ) );
 		add_action( 'admin_post_xtfeprofeed_clear_cache', array( $this, 'handle_clear_cache_row_action' ) );
-
-		add_action( 'save_post_' . XTFEPRO_FEED_CPT, array( $this, 'clear_cache_on_save' ), 10, 3 );
 		add_action( 'before_delete_post', array( $this, 'clear_cache_on_delete' ), 10, 2 );
 		add_action( 'wp_trash_post', array( $this, 'clear_cache_on_trash' ) );
 		add_action( 'untrash_post', array( $this, 'clear_cache_on_untrash' ) );
@@ -259,12 +257,6 @@ class XTFEPRO_Feed_CPT {
 				'hard_cleared'  => __( 'Hard cache cleared! Re-fetching HQ images will start.', 'xt-facebook-events-pro' ),
 			),
 		) );
-	}
-
-	public function clear_cache_on_save( $post_id, $post, $update ) {
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-		if ( wp_is_post_revision( $post_id ) ) return;
-		XTFEPRO_Feed_API::instance()->clear_cache( $post_id );
 	}
 
 	public function clear_cache_on_delete( $post_id, $post ) {

@@ -2,9 +2,6 @@
 /**
  * XT Facebook Events Pro Live Feed - AJAX Handlers
  *
- * OPTIMIZED: Added background full-fetch handler (xtfeprofeed_bg_full_fetch)
- * triggered immediately after feed save — replaces slow Action Scheduler init.
- *
  * @package XT_Facebook_Events_Pro\Feed
  */
 
