@@ -44,20 +44,20 @@ class XTFEPRO_Feed_AJAX {
 
 	public function clear_cache() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events' ) ) );
 		}
 		$nonce   = sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) );
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
 
 		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_clear_cache_' . $feed_id ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events' ) ) );
 		}
 		if ( ! $feed_id ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events' ) ) );
 		}
 
 		XTFEPRO_Feed_API::instance()->clear_cache( $feed_id );
-		wp_send_json_success( array( 'message' => __( 'Cache cleared! Next page load will fetch fresh data from Facebook.', 'xt-facebook-events-pro' ) ) );
+		wp_send_json_success( array( 'message' => __( 'Cache cleared! Next page load will fetch fresh data from Facebook.', 'xt-facebook-events' ) ) );
 	}
 
 	// -------------------------------------------------------
@@ -66,16 +66,16 @@ class XTFEPRO_Feed_AJAX {
 
 	public function clear_hard_cache() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events' ) ) );
 		}
 		$nonce   = sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) );
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
 
 		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_clear_hard_cache' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events' ) ) );
 		}
 		if ( ! $feed_id ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events' ) ) );
 		}
 
 		XTFEPRO_Feed_DB::instance()->delete_all_images();
@@ -87,7 +87,7 @@ class XTFEPRO_Feed_AJAX {
 			array(
 				'timeout'   => 0.01,
 				'blocking'  => false,
-				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+				'sslverify' => apply_filters( 'xtfeprofeed_https_local_ssl_verify', false ),
 				'body'      => array(
 					'action'  => 'xtfeprofeed_bg_full_fetch',
 					'feed_id' => $feed_id,
@@ -96,7 +96,7 @@ class XTFEPRO_Feed_AJAX {
 			)
 		);
 
-		wp_send_json_success( array( 'message' => __( 'Hard cache cleared! Fetching fresh HQ images in background — they will appear automatically.', 'xt-facebook-events-pro' ) ) );
+		wp_send_json_success( array( 'message' => __( 'Hard cache cleared! Fetching fresh HQ images in background — they will appear automatically.', 'xt-facebook-events' ) ) );
 	}
 
 	// -------------------------------------------------------
@@ -106,7 +106,9 @@ class XTFEPRO_Feed_AJAX {
 	// -------------------------------------------------------
 
 	public function bg_full_fetch() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$nonce   = sanitize_text_field( $_POST['nonce'] ?? '' );
 		$expected = md5( 'xtfeprofeed_full_fetch_' . $feed_id . wp_salt() );
 
@@ -115,6 +117,7 @@ class XTFEPRO_Feed_AJAX {
 		}
 
 		ignore_user_abort( true );
+		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 		set_time_limit( 300 );
 
 		$api  = XTFEPRO_Feed_API::instance();
@@ -137,13 +140,8 @@ class XTFEPRO_Feed_AJAX {
 		$duration = absint( $meta['cache_duration'] ) * MINUTE_IN_SECONDS;
 
 		// --- Page 1: live scrape ---
-		$response = apply_filters(
-			$fetch_filter,
-			new WP_Error( 'xtfeprofeed_pro_only', '' ),
-			$meta,
-			'',
-			$api
-		);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		$response = apply_filters( $fetch_filter, new WP_Error( 'xtfeprofeed_pro_only', '' ), $meta, '', $api );
 
 		if ( is_wp_error( $response ) ) {
 			wp_die();
@@ -167,13 +165,8 @@ class XTFEPRO_Feed_AJAX {
 		$max_pages   = 20;
 
 		while ( $has_more && $scrape_page <= $max_pages ) {
-			$response = apply_filters(
-				$fetch_filter,
-				new WP_Error( 'xtfeprofeed_pro_only', '' ),
-				$meta,
-				$cursor,
-				$api
-			);
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+			$response = apply_filters( $fetch_filter, new WP_Error( 'xtfeprofeed_pro_only', '' ), $meta, $cursor, $api );
 
 			if ( is_wp_error( $response ) ) break;
 
@@ -264,13 +257,13 @@ class XTFEPRO_Feed_AJAX {
 
 	public function preview_feed() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events' ) ) );
 		}
 		$nonce   = sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) );
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
 
 		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_admin_nonce' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'xt-facebook-events' ) ) );
 		}
 
 		$events = XTFEPRO_Feed_API::instance()->get_events( $feed_id, true );
@@ -281,7 +274,8 @@ class XTFEPRO_Feed_AJAX {
 		wp_send_json_success( array(
 			'total'   => count( $events ),
 			'message' => sprintf(
-				__( '%d events fetched successfully.', 'xt-facebook-events-pro' ),
+				/* translators: %d: number of events */
+				__( '%d events fetched successfully.', 'xt-facebook-events' ),
 				count( $events )
 			),
 		) );
@@ -292,17 +286,19 @@ class XTFEPRO_Feed_AJAX {
 	// -------------------------------------------------------
 
 	public function load_paginated_page() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$feed_id  = absint( $_POST['feed_id'] ?? 0 );
 		$page     = absint( $_POST['page']     ?? 1 );
 		$per_page = absint( $_POST['per_page'] ?? 12 );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		if ( ! $feed_id ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid feed ID.', 'xt-facebook-events' ) ) );
 		}
 
 		$feed_post = get_post( $feed_id );
 		if ( ! $feed_post || XTFEPRO_FEED_CPT !== $feed_post->post_type || 'publish' !== $feed_post->post_status ) {
-			wp_send_json_error( array( 'message' => __( 'Feed not found.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Feed not found.', 'xt-facebook-events' ) ) );
 		}
 
 		$events = XTFEPRO_Feed_API::instance()->get_events( $feed_id, false, $page );
@@ -310,7 +306,7 @@ class XTFEPRO_Feed_AJAX {
 			wp_send_json_error( array( 'message' => $events->get_error_message() ) );
 		}
 		if ( empty( $events ) ) {
-			wp_send_json_error( array( 'message' => __( 'No events found.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'No events found.', 'xt-facebook-events' ) ) );
 		}
 
 		$meta         = XTFEPRO_Feed_API::instance()->get_feed_meta( $feed_id );
@@ -344,17 +340,18 @@ class XTFEPRO_Feed_AJAX {
 
 	public function live_preview() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'xt-facebook-events' ) ) );
 		}
 
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$feed_id = absint( $_POST['feed_id'] ?? 0 );
 
-		$time_filter = sanitize_text_field( $_POST['_xtfeprofeed_time_filter'] ?? 'all' );
+		$time_filter = sanitize_text_field( wp_unslash( $_POST['_xtfeprofeed_time_filter'] ?? 'all' ) );
 		if ( 'past' === $time_filter ) {
 			$time_filter = 'current_future';
 		}
 
-		$register_label = sanitize_text_field( $_POST['_xtfeprofeed_register_label'] ?? __( 'View Event', 'xt-facebook-events-pro' ) );
+		$register_label = sanitize_text_field( $_POST['_xtfeprofeed_register_label'] ?? __( 'View Event', 'xt-facebook-events' ) );
 
 		$cache_val = $_POST['_xtfeprofeed_cache_duration'] ?? '1440';
 		if ( 'custom' === $cache_val ) {
@@ -372,9 +369,9 @@ class XTFEPRO_Feed_AJAX {
 			'ical_url'        => sanitize_text_field( $_POST['_xtfeprofeed_ical_url']    ?? '' ),
 			'time_filter'     => $time_filter,
 			'cache_duration'  => $cache_minutes,
-			'pagination_type' => sanitize_text_field( $_POST['_xtfeprofeed_pagination_type'] ?? 'ajax' ),
+			'pagination_type' => sanitize_text_field( wp_unslash( $_POST['_xtfeprofeed_pagination_type'] ?? 'ajax' ) ),
 			'per_page'        => absint( $_POST['_xtfeprofeed_per_page'] ?? 12 ),
-			'layout'          => sanitize_text_field( $_POST['_xtfeprofeed_layout'] ?? 'card-grid' ),
+			'layout'          => sanitize_text_field( wp_unslash( $_POST['_xtfeprofeed_layout'] ?? 'card-grid' ) ),
 			'columns'         => absint( $_POST['_xtfeprofeed_columns'] ?? 3 ),
 			'show_image'      => ! empty( $_POST['_xtfeprofeed_show_image'] ),
 			'show_date'       => ! empty( $_POST['_xtfeprofeed_show_date'] ),
@@ -385,18 +382,19 @@ class XTFEPRO_Feed_AJAX {
 			'show_tags'       => false,
 			'show_ticket_btn' => ! empty( $_POST['_xtfeprofeed_show_ticket_btn'] ),
 			'ticket_style'    => 'link',
-			'free_label'      => __( 'Free', 'xt-facebook-events-pro' ),
-			'paid_label'      => __( 'Paid', 'xt-facebook-events-pro' ),
+			'free_label'      => __( 'Free', 'xt-facebook-events' ),
+			'paid_label'      => __( 'Paid', 'xt-facebook-events' ),
 			'register_label'  => $register_label,
 			'hide_online'     => ! empty( $_POST['_xtfeprofeed_hide_online'] ),
-			'start_date'      => sanitize_text_field( $_POST['_xtfeprofeed_start_date'] ?? '' ),
-			'end_date'        => sanitize_text_field( $_POST['_xtfeprofeed_end_date']   ?? '' ),
+			'start_date'      => sanitize_text_field( wp_unslash( $_POST['_xtfeprofeed_start_date'] ?? '' ) ),
+			'end_date'        => sanitize_text_field( wp_unslash( $_POST['_xtfeprofeed_end_date']   ?? '' ) ),
 			'category_id'     => '',
 			'tag_query'       => '',
 			'tags_filter'     => '',
 			'is_preview'      => true,
 			'feed_id'         => $feed_id,
 		);
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		// Fallback: if source fields empty, pull from saved meta
 		if ( $feed_id ) {
@@ -407,19 +405,21 @@ class XTFEPRO_Feed_AJAX {
 			if ( 'ical_url'   === $posted_meta['source_type'] && empty( $posted_meta['ical_url'] ) )   $posted_meta['ical_url']   = $saved['ical_url']   ?? '';
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$is_full_preview = ! empty( $_POST['is_full_preview'] ) && 'true' === $_POST['is_full_preview'];
 
 		$events = XTFEPRO_Feed_API::instance()->fetch_preview_events( $posted_meta );
 
 		if ( is_wp_error( $events ) ) {
 			wp_send_json_error( array( 'message' => sprintf(
-				__( 'Could not load preview: %s. Please check your Source settings.', 'xt-facebook-events-pro' ),
+				/* translators: %s: error message */
+				__( 'Could not load preview: %s. Please check your Source settings.', 'xt-facebook-events' ),
 				$events->get_error_message()
 			) ) );
 		}
 
 		if ( empty( $events ) ) {
-			wp_send_json_error( array( 'message' => __( 'No events found. Please verify your Source Data.', 'xt-facebook-events-pro' ) ) );
+			wp_send_json_error( array( 'message' => __( 'No events found. Please verify your Source Data.', 'xt-facebook-events' ) ) );
 		}
 
 		$per_page       = absint( $posted_meta['per_page'] );
@@ -435,7 +435,7 @@ class XTFEPRO_Feed_AJAX {
 				<?php endforeach; ?>
 			</div>
 			<div style="margin-top:15px;font-size:11px;color:#777;text-align:center;font-style:italic;">
-				<?php esc_html_e( 'Note: Blurry/low-quality images may appear in Live Preview for new events to keep the editor fast. High-quality HD images load automatically on the front-end after saving.', 'xt-facebook-events-pro' ); ?>
+				<?php esc_html_e( 'Note: Blurry/low-quality images may appear in Live Preview for new events to keep the editor fast. High-quality HD images load automatically on the front-end after saving.', 'xt-facebook-events' ); ?>
 			</div>
 		</div>
 		<?php

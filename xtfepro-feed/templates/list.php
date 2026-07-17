@@ -10,22 +10,22 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$is_free     = $event['is_free'];
-$btn_id      = 'xtfeprofeed-ticket-btn-' . esc_attr( $event['id'] );
+$xtfe_is_free     = $event['is_free'];
+$xtfe_btn_id      = 'xtfeprofeed-ticket-btn-' . esc_attr( $event['id'] );
 
-$btn_label = esc_html( $meta['register_label'] );
+$xtfe_btn_label = esc_html( $meta['register_label'] );
 
 // Days left display
-$days_left_info = XTFEPRO_Feed_Shortcode::get_days_left_info( $event['start_local'], $event['timezone'] ?? '' );
-$days_left_html = '';
-if ( ! empty( $days_left_info ) ) {
-	$days_left_html = '<span class="xtfeprofeed-badge xtfeprofeed-badge--days-left xtfeprofeed-badge--' . esc_attr( $days_left_info['class'] ) . '">' . esc_html( $days_left_info['text'] ) . '</span>';
+$xtfe_days_left_info = XTFEPRO_Feed_Shortcode::get_days_left_info( $event['start_local'], $event['timezone'] ?? '' );
+$xtfe_days_left_html = '';
+if ( ! empty( $xtfe_days_left_info ) ) {
+	$xtfe_days_left_html = '<span class="xtfeprofeed-badge xtfeprofeed-badge--days-left xtfeprofeed-badge--' . esc_attr( $xtfe_days_left_info['class'] ) . '">' . esc_html( $xtfe_days_left_info['text'] ) . '</span>';
 }
 
-$venue_text = '';
+$xtfe_venue_text = '';
 if ( $meta['show_venue'] ) {
-	if ( $event['is_online'] )       $venue_text = __( 'Online Event', 'xt-facebook-events-pro' );
-	elseif ( $event['venue_name'] )  $venue_text = $event['venue_name'] . ( $event['venue_city'] ? ' · ' . $event['venue_city'] : '' );
+	if ( $event['is_online'] )       $xtfe_venue_text = __( 'Online Event', 'xt-facebook-events' );
+	elseif ( $event['venue_name'] )  $xtfe_venue_text = $event['venue_name'] . ( $event['venue_city'] ? ' · ' . $event['venue_city'] : '' );
 }
 ?>
 
@@ -67,10 +67,10 @@ if ( $meta['show_venue'] ) {
 		</h3>
 
 		<div class="xtfeprofeed-list-meta-row">
-			<?php if ( $venue_text ) : ?>
+			<?php if ( $xtfe_venue_text ) : ?>
 			<span class="xtfeprofeed-list-venue">
 				<svg class="xtfeprofeed-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-				<?php echo esc_html( $venue_text ); ?>
+				<?php echo esc_html( $xtfe_venue_text ); ?>
 			</span>
 			<?php endif; ?>
 
@@ -92,25 +92,25 @@ if ( $meta['show_venue'] ) {
 
 	</div><!-- .xtfeprofeed-list-body -->
 
-	<?php if ( $meta['show_price'] || $meta['show_ticket_btn'] || ! empty( $days_left_html ) ) : ?>
+	<?php if ( $meta['show_price'] || $meta['show_ticket_btn'] || ! empty( $xtfe_days_left_html ) ) : ?>
 	<div class="xtfeprofeed-list-actions">
 
-		<?php if ( $meta['show_price'] || ! empty( $days_left_html ) ) : ?>
+		<?php if ( $meta['show_price'] || ! empty( $xtfe_days_left_html ) ) : ?>
 		<div class="xtfeprofeed-price-days-container">
-			<?php if ( $meta['show_price'] && ! $is_free ) : ?>
+			<?php if ( $meta['show_price'] && ! $xtfe_is_free ) : ?>
 			<span class="xtfeprofeed-price-wrapper">
 				<span class="xtfeprofeed-price"><?php echo esc_html( XTFEPRO_Feed_Shortcode::format_price( $event ) ); ?></span>
 			</span>
 			<?php endif; ?>
-			<?php echo $days_left_html; ?>
+			<?php echo wp_kses_post( $xtfe_days_left_html ); ?>
 		</div>
 		<?php endif; ?>
 
 		<?php if ( $meta['show_ticket_btn'] ) : ?>
 			<?php if ( 'modal' === $meta['ticket_style'] ) : ?>
-			<button id="<?php echo esc_attr( $btn_id ); ?>" class="xtfeprofeed-btn xtfeprofeed-btn--ticket" data-event-id="<?php echo esc_attr( $event['id'] ); ?>" data-ticket-style="modal"><?php echo $btn_label; ?></button>
+			<button id="<?php echo esc_attr( $xtfe_btn_id ); ?>" class="xtfeprofeed-btn xtfeprofeed-btn--ticket" data-event-id="<?php echo esc_attr( $event['id'] ); ?>" data-ticket-style="modal"><?php echo esc_html( $xtfe_btn_label ); ?></button>
 			<?php else : ?>
-			<a href="<?php echo esc_url( $event['url'] ); ?>" target="_blank" rel="noopener noreferrer" class="xtfeprofeed-btn xtfeprofeed-btn--ticket"><?php echo $btn_label; ?></a>
+			<a href="<?php echo esc_url( $event['url'] ); ?>" target="_blank" rel="noopener noreferrer" class="xtfeprofeed-btn xtfeprofeed-btn--ticket"><?php echo esc_html( $xtfe_btn_label ); ?></a>
 			<?php endif; ?>
 		<?php endif; ?>
 

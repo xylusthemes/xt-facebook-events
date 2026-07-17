@@ -47,13 +47,13 @@ class XTFEPRO_Feed_Admin {
 	public function add_meta_boxes() {
 		add_meta_box(
 			'xtfeprofeed_shortcode_box',
-			__( 'Your Shortcode', 'xt-facebook-events-pro' ),
+			__( 'Your Shortcode', 'xt-facebook-events' ),
 			array( $this, 'render_shortcode_box' ),
 			XTFEPRO_FEED_CPT, 'normal', 'high'
 		);
 		add_meta_box(
 			'xtfeprofeed_settings',
-			__( 'Feed Settings', 'xt-facebook-events-pro' ),
+			__( 'Feed Settings', 'xt-facebook-events' ),
 			array( $this, 'render_meta_box' ),
 			XTFEPRO_FEED_CPT, 'normal', 'default'
 		);
@@ -61,13 +61,13 @@ class XTFEPRO_Feed_Admin {
 
 	public function render_shortcode_box( $post ) {
 		if ( ! $post->ID || 'auto-draft' === $post->post_status ) {
-			echo '<p>' . esc_html__( 'Save the feed first to get your shortcode.', 'xt-facebook-events-pro' ) . '</p>';
+			echo '<p>' . esc_html__( 'Save the feed first to get your shortcode.', 'xt-facebook-events' ) . '</p>';
 			return;
 		}
 		$shortcode = '[xtfepro_live_feed id="' . $post->ID . '"]';
 		?>
 		<p style="margin-bottom:6px;font-size:12px;color:#666;">
-			<?php esc_html_e( 'Paste this shortcode into any page or post:', 'xt-facebook-events-pro' ); ?>
+			<?php esc_html_e( 'Paste this shortcode into any page or post:', 'xt-facebook-events' ); ?>
 		</p>
 		<div style="display:flex;gap:6px;align-items:center;">
 			<input type="text" readonly
@@ -77,11 +77,11 @@ class XTFEPRO_Feed_Admin {
 				onclick="this.select();"
 			/>
 			<button type="button" class="button" id="xtfeprofeed-copy-shortcode-btn">
-				<?php esc_html_e( 'Copy', 'xt-facebook-events-pro' ); ?>
+				<?php esc_html_e( 'Copy', 'xt-facebook-events' ); ?>
 			</button>
 		</div>
 		<p style="margin-top:8px;font-size:12px;color:#666;">
-			<?php esc_html_e( 'Override options inline:', 'xt-facebook-events-pro' ); ?><br>
+			<?php esc_html_e( 'Override options inline:', 'xt-facebook-events' ); ?><br>
 			<code style="font-size:11px;">[xtfepro_live_feed id="<?php echo esc_html( $post->ID ); ?>" columns="2" per_page="6"]</code>
 		</p>
 		<?php
@@ -99,25 +99,25 @@ class XTFEPRO_Feed_Admin {
 		<div class="xtfeprofeed-builder-left">
 		<div class="xtfeprofeed-tabs">
 			<ul class="xtfeprofeed-tabs-nav">
-				<li><a href="#xtfeprofeed-tab-source" class="active"><?php esc_html_e( 'Source', 'xt-facebook-events-pro' ); ?></a></li>
-				<li><a href="#xtfeprofeed-tab-display"><?php esc_html_e( 'Display', 'xt-facebook-events-pro' ); ?></a></li>
-				<li><a href="#xtfeprofeed-tab-tickets"><?php esc_html_e( 'Buttons', 'xt-facebook-events-pro' ); ?></a></li>
-				<li><a href="#xtfeprofeed-tab-filters"><?php esc_html_e( 'Filters', 'xt-facebook-events-pro' ); ?></a></li>
-				<li><a href="#xtfeprofeed-tab-settings"><?php esc_html_e( 'Settings', 'xt-facebook-events-pro' ); ?></a></li>
+				<li><a href="#xtfeprofeed-tab-source" class="active"><?php esc_html_e( 'Source', 'xt-facebook-events' ); ?></a></li>
+				<li><a href="#xtfeprofeed-tab-display"><?php esc_html_e( 'Display', 'xt-facebook-events' ); ?></a></li>
+				<li><a href="#xtfeprofeed-tab-tickets"><?php esc_html_e( 'Buttons', 'xt-facebook-events' ); ?></a></li>
+				<li><a href="#xtfeprofeed-tab-filters"><?php esc_html_e( 'Filters', 'xt-facebook-events' ); ?></a></li>
+				<li><a href="#xtfeprofeed-tab-settings"><?php esc_html_e( 'Settings', 'xt-facebook-events' ); ?></a></li>
 			</ul>
 
 			<?php // ===== TAB 1: SOURCE ===== ?>
 			<div id="xtfeprofeed-tab-source" class="xtfeprofeed-tab-content active">
 				<table class="form-table xtfeprofeed-form-table">
 					<tr>
-						<th><?php esc_html_e( 'Source Type', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Source Type', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php
 							$sources = array(
-								'page_id'   => __( 'Facebook Page ID/Slug', 'xt-facebook-events-pro' ),
-								'group_id'  => __( 'Facebook Group URL/ID', 'xt-facebook-events-pro' ),
-								'event_ids' => __( 'Specific Event IDs', 'xt-facebook-events-pro' ),
-								'ical_url'  => __( 'iCal URL', 'xt-facebook-events-pro' ),
+								'page_id'   => __( 'Facebook Page ID/Slug', 'xt-facebook-events' ),
+								'group_id'  => __( 'Facebook Group URL/ID', 'xt-facebook-events' ),
+								'event_ids' => __( 'Specific Event IDs', 'xt-facebook-events' ),
+								'ical_url'  => __( 'iCal URL', 'xt-facebook-events' ),
 							);
 							foreach ( $sources as $val => $label ) :
 								$disabled = '';
@@ -128,67 +128,77 @@ class XTFEPRO_Feed_Admin {
 									$label_suffix = ' <span class="xtfe-pro-badge" style="color:red;font-size:10px;font-weight:bold;text-transform:uppercase;">(' . __( 'Pro Only', 'xt-facebook-events' ) . ')</span>';
 								}
 							?>
-							<label style="margin-right:16px; <?php echo $disabled ? 'opacity:0.6; cursor:not-allowed;' : ''; ?>">
+							<label style="margin-right:16px; <?php echo esc_attr( $disabled ? 'opacity:0.6; cursor:not-allowed;' : '' ); ?>">
 								<input type="radio"
 									name="_xtfeprofeed_source_type"
 									value="<?php echo esc_attr( $val ); ?>"
 									<?php checked( $meta['source_type'], $val ); ?>
-									<?php echo $disabled; ?>
+									<?php echo esc_attr( $disabled ); ?>
 									class="xtfeprofeed-source-type-radio"
 								/>
-								<?php echo esc_html( $label ) . $label_suffix; ?>
+								<?php echo esc_html( $label ) . wp_kses_post( $label_suffix ); ?>
 							</label>
 							<?php endforeach; ?>
 						</td>
 					</tr>
 
 					<tr class="xtfeprofeed-source-row xtfeprofeed-source-page_id" <?php echo 'page_id' !== $meta['source_type'] ? 'style="display:none"' : ''; ?>>
-						<th><label for="xtfeprofeed_page_id"><?php esc_html_e( 'Facebook Page ID / Username', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_page_id"><?php esc_html_e( 'Facebook Page ID / Username', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<input type="text" id="xtfeprofeed_page_id" name="_xtfeprofeed_page_id"
 								value="<?php echo esc_attr( $meta['page_id'] ); ?>"
 								class="large-text" placeholder="e.g. Fashionmantraexhibitions or page numeric ID" <?php disabled( ! in_array( 'page_id', apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) ), true ) ); ?> />
 							<p class="description">
-								<?php esc_html_e( 'Enter the username slug or ID of the Facebook page.', 'xt-facebook-events-pro' ); ?>
+								<?php esc_html_e( 'Enter the username slug or ID of the Facebook page.', 'xt-facebook-events' ); ?>
 								<?php if ( ! in_array( 'page_id', apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) ), true ) ) : ?>
-									<br><span style="color:red;font-weight:bold;"><?php printf( __( 'Available in %s version.', 'xt-facebook-events' ), '<a href="https://xylusthemes.com/plugins/xt-facebook-events/" target="_blank">Pro</a>' ); ?></span>
+									<br><span style="color:red;font-weight:bold;">
+										<?php
+										/* translators: %s: link to pro version */
+										echo wp_kses_post( sprintf( __( 'Available in %s version.', 'xt-facebook-events' ), '<a href="https://xylusthemes.com/plugins/xt-facebook-events/" target="_blank">Pro</a>' ) );
+										?>
+									</span>
 								<?php endif; ?>
 							</p>
 						</td>
 					</tr>
 
 					<tr class="xtfeprofeed-source-row xtfeprofeed-source-group_id" <?php echo 'group_id' !== $meta['source_type'] ? 'style="display:none"' : ''; ?>>
-						<th><label for="xtfeprofeed_group_id"><?php esc_html_e( 'Facebook Group URL / ID', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_group_id"><?php esc_html_e( 'Facebook Group URL / ID', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<input type="text" id="xtfeprofeed_group_id" name="_xtfeprofeed_group_id"
 								value="<?php echo esc_attr( $meta['group_id'] ?? '' ); ?>"
 								class="large-text" placeholder="e.g. https://www.facebook.com/groups/629555443733186 or 629555443733186" <?php disabled( ! in_array( 'group_id', apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) ), true ) ); ?> />
 							<p class="description">
-								<?php esc_html_e( 'Enter the URL or numeric ID of a public Facebook Group.', 'xt-facebook-events-pro' ); ?>
+								<?php esc_html_e( 'Enter the URL or numeric ID of a public Facebook Group.', 'xt-facebook-events' ); ?>
 								<?php if ( ! in_array( 'group_id', apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) ), true ) ) : ?>
-									<br><span style="color:red;font-weight:bold;"><?php printf( __( 'Available in %s version.', 'xt-facebook-events' ), '<a href="https://xylusthemes.com/plugins/xt-facebook-events/" target="_blank">Pro</a>' ); ?></span>
+									<br><span style="color:red;font-weight:bold;">
+										<?php
+										/* translators: %s: link to pro version */
+										echo wp_kses_post( sprintf( __( 'Available in %s version.', 'xt-facebook-events' ), '<a href="https://xylusthemes.com/plugins/xt-facebook-events/" target="_blank">Pro</a>' ) );
+										?>
+									</span>
 								<?php endif; ?>
 							</p>
 						</td>
 					</tr>
 
 					<tr class="xtfeprofeed-source-row xtfeprofeed-source-event_ids" <?php echo 'event_ids' !== $meta['source_type'] ? 'style="display:none"' : ''; ?>>
-						<th><label for="xtfeprofeed_event_ids"><?php esc_html_e( 'Event IDs', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_event_ids"><?php esc_html_e( 'Event IDs', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<input type="text" id="xtfeprofeed_event_ids" name="_xtfeprofeed_event_ids"
 								value="<?php echo esc_attr( $meta['event_ids'] ); ?>"
 								class="large-text" placeholder="e.g. 3124795954373363, 1531644045138212" />
-							<p class="description"><?php esc_html_e( 'Comma-separated Facebook Event IDs.', 'xt-facebook-events-pro' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Comma-separated Facebook Event IDs.', 'xt-facebook-events' ); ?></p>
 						</td>
 					</tr>
 
 					<tr class="xtfeprofeed-source-row xtfeprofeed-source-ical_url" <?php echo 'ical_url' !== $meta['source_type'] ? 'style="display:none"' : ''; ?>>
-						<th><label for="xtfeprofeed_ical_url"><?php esc_html_e( 'Facebook iCal URL', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_ical_url"><?php esc_html_e( 'Facebook iCal URL', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<input type="text" id="xtfeprofeed_ical_url" name="_xtfeprofeed_ical_url"
 								value="<?php echo esc_attr( $meta['ical_url'] ); ?>"
 								class="large-text" placeholder="e.g. https://www.facebook.com/events/ical/upcoming/?uid=...&key=..." />
-							<p class="description"><?php esc_html_e( 'Enter your Facebook iCal export URL.', 'xt-facebook-events-pro' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Enter your Facebook iCal export URL.', 'xt-facebook-events' ); ?></p>
 						</td>
 					</tr>
 				</table>
@@ -198,18 +208,18 @@ class XTFEPRO_Feed_Admin {
 			<div id="xtfeprofeed-tab-display" class="xtfeprofeed-tab-content">
 				<table class="form-table xtfeprofeed-form-table">
 					<tr>
-						<th><?php esc_html_e( 'Layout', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Layout', 'xt-facebook-events' ); ?></th>
 						<td>
 							<div class="xtfeprofeed-layout-picker">
 								<?php
 								$layouts = array(
-									'card-grid'    => array( 'label' => __( 'Card Grid', 'xt-facebook-events-pro' ), 'icon' => '⊞' ),
-									'list'         => array( 'label' => __( 'List', 'xt-facebook-events-pro' ), 'icon' => '☰' ),
-									'masonry'      => array( 'label' => __( 'Masonry', 'xt-facebook-events-pro' ), 'icon' => '⊟' ),
-									'minimal-grid' => array( 'label' => __( 'Minimal Grid', 'xt-facebook-events-pro' ), 'icon' => '◫' ),
-									'compact-list' => array( 'label' => __( 'Compact List', 'xt-facebook-events-pro' ), 'icon' => '☶' ),
-									'timeline'     => array( 'label' => __( 'Timeline', 'xt-facebook-events-pro' ), 'icon' => '↧' ),
-									'ticket-list'  => array( 'label' => __( 'Ticket', 'xt-facebook-events-pro' ), 'icon' => '🎟' ),
+									'card-grid'    => array( 'label' => __( 'Card Grid', 'xt-facebook-events' ), 'icon' => '⊞' ),
+									'list'         => array( 'label' => __( 'List', 'xt-facebook-events' ), 'icon' => '☰' ),
+									'masonry'      => array( 'label' => __( 'Masonry', 'xt-facebook-events' ), 'icon' => '⊟' ),
+									'minimal-grid' => array( 'label' => __( 'Minimal Grid', 'xt-facebook-events' ), 'icon' => '◫' ),
+									'compact-list' => array( 'label' => __( 'Compact List', 'xt-facebook-events' ), 'icon' => '☶' ),
+									'timeline'     => array( 'label' => __( 'Timeline', 'xt-facebook-events' ), 'icon' => '↧' ),
+									'ticket-list'  => array( 'label' => __( 'Ticket', 'xt-facebook-events' ), 'icon' => '🎟' ),
 								);
 								foreach ( $layouts as $val => $data ) :
 									$allowed_layouts = apply_filters( 'xtfeprofeed_allowed_layouts', array( 'card-grid', 'list' ) );
@@ -232,30 +242,28 @@ class XTFEPRO_Feed_Admin {
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Columns', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Columns', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php $this->render_radio_row( '_xtfeprofeed_columns', $meta['columns'], array( 1, 2, 3, 4 ) ); ?>
-							<p class="description"><?php esc_html_e( 'Number of columns on desktop. Mobile is always 1 column.', 'xt-facebook-events-pro' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Number of columns on desktop. Mobile is always 1 column.', 'xt-facebook-events' ); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Show Fields', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Show Fields', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php
 							$toggles = array(
-								'_xtfeprofeed_show_image'      => array( 'label' => __( 'Event Cover Image', 'xt-facebook-events-pro' ), 'default' => true ),
-								'_xtfeprofeed_show_date'       => array( 'label' => __( 'Date & Time', 'xt-facebook-events-pro' ), 'default' => true ),
-								'_xtfeprofeed_show_venue'      => array( 'label' => __( 'Venue / Location', 'xt-facebook-events-pro' ), 'default' => true ),
-								'_xtfeprofeed_show_organizer'  => array( 'label' => __( 'Organizer Name', 'xt-facebook-events-pro' ), 'default' => false ),
-								'_xtfeprofeed_show_price'      => array( 'label' => __( 'Free / Paid Badge', 'xt-facebook-events-pro' ), 'default' => true ),
-								'_xtfeprofeed_show_ticket_btn' => array( 'label' => __( '"View Event" Button', 'xt-facebook-events-pro' ), 'default' => true ),
+								'_xtfeprofeed_show_image'      => array( 'label' => __( 'Event Cover Image', 'xt-facebook-events' ), 'default' => true ),
+								'_xtfeprofeed_show_date'       => array( 'label' => __( 'Date & Time', 'xt-facebook-events' ), 'default' => true ),
+								'_xtfeprofeed_show_venue'      => array( 'label' => __( 'Venue / Location', 'xt-facebook-events' ), 'default' => true ),
+								'_xtfeprofeed_show_organizer'  => array( 'label' => __( 'Organizer Name', 'xt-facebook-events' ), 'default' => false ),
+								'_xtfeprofeed_show_ticket_btn' => array( 'label' => __( '"View Event" Button', 'xt-facebook-events' ), 'default' => true ),
 							);
 							$meta_keys = array(
 								'_xtfeprofeed_show_image'      => $meta['show_image'],
 								'_xtfeprofeed_show_date'       => $meta['show_date'],
 								'_xtfeprofeed_show_venue'      => $meta['show_venue'],
 								'_xtfeprofeed_show_organizer'  => $meta['show_organizer'],
-								'_xtfeprofeed_show_price'      => $meta['show_price'],
 								'_xtfeprofeed_show_ticket_btn' => $meta['show_ticket_btn'],
 							);
 							foreach ( $toggles as $key => $info ) :
@@ -275,13 +283,13 @@ class XTFEPRO_Feed_Admin {
 			<div id="xtfeprofeed-tab-tickets" class="xtfeprofeed-tab-content">
 				<table class="form-table xtfeprofeed-form-table">
 					<tr>
-						<th><?php esc_html_e( 'Button Type', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Button Type', 'xt-facebook-events' ); ?></th>
 						<td>
-							<p class="description"><?php esc_html_e( 'Buttons link directly to the Facebook event page.', 'xt-facebook-events-pro' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Buttons link directly to the Facebook event page.', 'xt-facebook-events' ); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th><label for="xtfeprofeed_register_label"><?php esc_html_e( 'Button Label', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_register_label"><?php esc_html_e( 'Button Label', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<input type="text" id="xtfeprofeed_register_label" name="_xtfeprofeed_register_label"
 								value="<?php echo esc_attr( $meta['register_label'] ); ?>"
@@ -296,21 +304,21 @@ class XTFEPRO_Feed_Admin {
 			<div id="xtfeprofeed-tab-filters" class="xtfeprofeed-tab-content">
 				<table class="form-table xtfeprofeed-form-table">
 					<tr>
-						<th><?php esc_html_e( 'Time Filter', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Time Filter', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php $this->render_select( '_xtfeprofeed_time_filter', $meta['time_filter'], array(
-								'today'            => __( 'Today', 'xt-facebook-events-pro' ),
-								'upcoming_week'    => __( 'Upcoming Week', 'xt-facebook-events-pro' ),
-								'upcoming_15_days' => __( 'Upcoming 15 Days', 'xt-facebook-events-pro' ),
-								'upcoming_month'   => __( 'Upcoming Month', 'xt-facebook-events-pro' ),
-								'current_future'   => __( 'All Upcoming / Current', 'xt-facebook-events-pro' ),
-								'custom'           => __( 'Custom Date Range', 'xt-facebook-events-pro' ),
-								'all'              => __( 'All (No Filter)', 'xt-facebook-events-pro' ),
+								'today'            => __( 'Today', 'xt-facebook-events' ),
+								'upcoming_week'    => __( 'Upcoming Week', 'xt-facebook-events' ),
+								'upcoming_15_days' => __( 'Upcoming 15 Days', 'xt-facebook-events' ),
+								'upcoming_month'   => __( 'Upcoming Month', 'xt-facebook-events' ),
+								'current_future'   => __( 'All Upcoming / Current', 'xt-facebook-events' ),
+								'custom'           => __( 'Custom Date Range', 'xt-facebook-events' ),
+								'all'              => __( 'All (No Filter)', 'xt-facebook-events' ),
 							) ); ?>
 						</td>
 					</tr>
 					<tr class="xtfeprofeed-time-row xtfeprofeed-time-custom" <?php echo 'custom' !== $meta['time_filter'] ? 'style="display:none"' : ''; ?>>
-						<th><label for="xtfeprofeed_start_date"><?php esc_html_e( 'Start Date', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_start_date"><?php esc_html_e( 'Start Date', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<input type="text" id="xtfeprofeed_start_date" name="_xtfeprofeed_start_date"
 								value="<?php echo esc_attr( $meta['start_date'] ); ?>"
@@ -318,7 +326,7 @@ class XTFEPRO_Feed_Admin {
 						</td>
 					</tr>
 					<tr class="xtfeprofeed-time-row xtfeprofeed-time-custom" <?php echo 'custom' !== $meta['time_filter'] ? 'style="display:none"' : ''; ?>>
-						<th><label for="xtfeprofeed_end_date"><?php esc_html_e( 'End Date', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_end_date"><?php esc_html_e( 'End Date', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<input type="text" id="xtfeprofeed_end_date" name="_xtfeprofeed_end_date"
 								value="<?php echo esc_attr( $meta['end_date'] ); ?>"
@@ -326,28 +334,28 @@ class XTFEPRO_Feed_Admin {
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Events Per Page', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Events Per Page', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php $this->render_radio_row( '_xtfeprofeed_per_page', $meta['per_page'], array( 6, 9, 10, 12, 20, 30, 40, 50 ) ); ?>
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Pagination Type', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Pagination Type', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php $this->render_select( '_xtfeprofeed_pagination_type', $meta['pagination_type'], array(
-								'ajax'            => __( 'Numbered Pagination (AJAX)', 'xt-facebook-events-pro' ),
-								'load_more'       => __( 'Load More Button', 'xt-facebook-events-pro' ),
-								'infinite_scroll' => __( 'Infinite Scroll', 'xt-facebook-events-pro' ),
-								'none'            => __( 'No Pagination (Show All)', 'xt-facebook-events-pro' ),
+								'ajax'            => __( 'Numbered Pagination (AJAX)', 'xt-facebook-events' ),
+								'load_more'       => __( 'Load More Button', 'xt-facebook-events' ),
+								'infinite_scroll' => __( 'Infinite Scroll', 'xt-facebook-events' ),
+								'none'            => __( 'No Pagination (Show All)', 'xt-facebook-events' ),
 							) ); ?>
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Online Events', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Online Events', 'xt-facebook-events' ); ?></th>
 						<td>
 							<label>
 								<input type="checkbox" name="_xtfeprofeed_hide_online" value="1" <?php checked( $meta['hide_online'], '1' ); ?> />
-								<?php esc_html_e( 'Hide online-only events', 'xt-facebook-events-pro' ); ?>
+								<?php esc_html_e( 'Hide online-only events', 'xt-facebook-events' ); ?>
 							</label>
 						</td>
 					</tr>
@@ -358,10 +366,10 @@ class XTFEPRO_Feed_Admin {
 			<div id="xtfeprofeed-tab-settings" class="xtfeprofeed-tab-content">
 				<table class="form-table xtfeprofeed-form-table">
 					<tr>
-					<th><?php esc_html_e( 'Cache Duration', 'xt-facebook-events-pro' ); ?></th>
+					<th><?php esc_html_e( 'Cache Duration', 'xt-facebook-events' ); ?></th>
 					<td>
 						<?php
-						$presets      = array( 60 => __( '1 Hour', 'xt-facebook-events-pro' ), 360 => __( '6 Hours', 'xt-facebook-events-pro' ), 720 => __( '12 Hours', 'xt-facebook-events-pro' ), 1440 => __( '24 Hours', 'xt-facebook-events-pro' ) );
+						$presets      = array( 60 => __( '1 Hour', 'xt-facebook-events' ), 360 => __( '6 Hours', 'xt-facebook-events' ), 720 => __( '12 Hours', 'xt-facebook-events' ), 1440 => __( '24 Hours', 'xt-facebook-events' ) );
 						$current_val  = absint( $meta['cache_duration'] ?: 1440 );
 						$is_preset    = array_key_exists( $current_val, $presets );
 						$is_custom    = ! $is_preset;
@@ -379,44 +387,44 @@ class XTFEPRO_Feed_Admin {
 							<input type="radio" name="_xtfeprofeed_cache_duration" value="custom"
 								class="xtfeprofeed-cache-preset"
 								<?php checked( $is_custom ); ?> />
-							<?php esc_html_e( 'Custom', 'xt-facebook-events-pro' ); ?>
+							<?php esc_html_e( 'Custom', 'xt-facebook-events' ); ?>
 						</label>
 						<span class="xtfeprofeed-cache-custom-wrap" <?php echo ! $is_custom ? 'style="display:none"' : ''; ?>>
 							<input type="number" name="_xtfeprofeed_cache_duration_custom" id="xtfeprofeed_cache_custom"
 								value="<?php echo esc_attr( $custom_hours ); ?>"
 								min="1" step="1" class="small-text" placeholder="e.g. 5" />
-							<span><?php esc_html_e( 'hours', 'xt-facebook-events-pro' ); ?></span>
+							<span><?php esc_html_e( 'hours', 'xt-facebook-events' ); ?></span>
 						</span>
-						<p class="description"><?php esc_html_e( 'Events are fetched from Facebook once per this interval.', 'xt-facebook-events-pro' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Events are fetched from Facebook once per this interval.', 'xt-facebook-events' ); ?></p>
 					</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Auto-Refresh Cache', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Auto-Refresh Cache', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php $has_as = function_exists( 'as_schedule_recurring_action' ); ?>
 							<label>
 								<input type="checkbox" name="_xtfeprofeed_auto_refresh" value="1"
 									<?php checked( $meta['auto_refresh'], '1' ); ?>
 									<?php disabled( ! $has_as ); ?> />
-								<?php esc_html_e( 'Automatically refresh cache in background', 'xt-facebook-events-pro' ); ?>
-								<strong><?php esc_html_e( '(uses Action Scheduler)', 'xt-facebook-events-pro' ); ?></strong>
+								<?php esc_html_e( 'Automatically refresh cache in background', 'xt-facebook-events' ); ?>
+								<strong><?php esc_html_e( '(uses Action Scheduler)', 'xt-facebook-events' ); ?></strong>
 							</label>
 							<?php if ( ! $has_as ) : ?>
 							<p class="description" style="color:#d63638;">
-								<?php esc_html_e( 'Action Scheduler is not available. Please install it to use this feature.', 'xt-facebook-events-pro' ); ?>
+								<?php esc_html_e( 'Action Scheduler is not available. Please install it to use this feature.', 'xt-facebook-events' ); ?>
 							</p>
 							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Manual Cache Clear', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Manual Cache Clear', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php if ( $post->ID && 'auto-draft' !== $post->post_status ) : ?>
 							<button type="button" class="button button-secondary"
 								id="xtfeprofeed-clear-cache-btn"
 								data-feed-id="<?php echo esc_attr( $post->ID ); ?>"
 								data-nonce="<?php echo esc_attr( wp_create_nonce( 'xtfeprofeed_clear_cache_' . $post->ID ) ); ?>">
-								<?php esc_html_e( 'Clear Cache Now', 'xt-facebook-events-pro' ); ?>
+								<?php esc_html_e( 'Clear Cache Now', 'xt-facebook-events' ); ?>
 							</button>
 							<span id="xtfeprofeed-clear-cache-msg" style="margin-left:10px;display:none;"></span>
 							<?php
@@ -428,22 +436,23 @@ class XTFEPRO_Feed_Admin {
 								$remaining = $expires_at - time();
 								echo '<p class="description" style="margin-top:8px;">';
 								if ( $remaining > 0 ) {
-									echo '<span style="color:green;">&#9679; ' . sprintf( esc_html__( 'Cache active — expires in %d minutes.', 'xt-facebook-events-pro' ), ceil( $remaining / 60 ) ) . '</span>';
+									/* translators: %d: minutes */
+									echo '<span style="color:green;">&#9679; ' . esc_html( sprintf( __( 'Cache active — expires in %d minutes.', 'xt-facebook-events' ), ceil( $remaining / 60 ) ) ) . '</span>';
 								} else {
-									echo '<span style="color:orange;">&#9679; ' . esc_html__( 'Cache expired — will refresh on next page load.', 'xt-facebook-events-pro' ) . '</span>';
+									echo '<span style="color:orange;">&#9679; ' . esc_html__( 'Cache expired — will refresh on next page load.', 'xt-facebook-events' ) . '</span>';
 								}
 								echo '</p>';
 							} else {
-								echo '<p class="description" style="margin-top:8px;"><span style="color:#aaa;">&#9679; ' . esc_html__( 'No cache — will fetch on first page load.', 'xt-facebook-events-pro' ) . '</span></p>';
+								echo '<p class="description" style="margin-top:8px;"><span style="color:#aaa;">&#9679; ' . esc_html__( 'No cache — will fetch on first page load.', 'xt-facebook-events' ) . '</span></p>';
 							}
 							?>
 							<?php else : ?>
-							<p class="description"><?php esc_html_e( 'Save the feed first to manage cache.', 'xt-facebook-events-pro' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Save the feed first to manage cache.', 'xt-facebook-events' ); ?></p>
 							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>
-						<th><?php esc_html_e( 'Hard Cache (HQ Images)', 'xt-facebook-events-pro' ); ?></th>
+						<th><?php esc_html_e( 'Hard Cache (HQ Images)', 'xt-facebook-events' ); ?></th>
 						<td>
 							<?php if ( $post->ID && 'auto-draft' !== $post->post_status ) : ?>
 							<button type="button" class="button button-secondary"
@@ -451,37 +460,43 @@ class XTFEPRO_Feed_Admin {
 								data-feed-id="<?php echo esc_attr( $post->ID ); ?>"
 								data-nonce="<?php echo esc_attr( wp_create_nonce( 'xtfeprofeed_clear_hard_cache' ) ); ?>"
 								style="color:#d63638;border-color:#d63638;">
-								<?php esc_html_e( '🗑 Clear Hard Cache (Images)', 'xt-facebook-events-pro' ); ?>
+								<?php esc_html_e( '🗑 Clear Hard Cache (Images)', 'xt-facebook-events' ); ?>
 							</button>
 							<span id="xtfeprofeed-clear-hard-cache-msg" style="margin-left:10px;display:none;"></span>
 							<?php
 							$image_count = XTFEPRO_Feed_DB::instance()->get_image_count();
 							echo '<p class="description" style="margin-top:8px;">';
 							if ( $image_count > 0 ) {
-								echo '<span style="color:#2271b1;">&#9679; ' . sprintf(
-									esc_html__( '%d HQ images cached. Auto-cleans weekly.', 'xt-facebook-events-pro' ),
+								echo '<span style="color:#2271b1;">&#9679; ' . esc_html( sprintf(
+									/* translators: %d: image count */
+									__( '%d HQ images cached. Auto-cleans weekly.', 'xt-facebook-events' ),
 									$image_count
-								) . '</span>';
+								) ) . '</span>';
 							} else {
-								echo '<span style="color:#aaa;">&#9679; ' . esc_html__( 'No HQ images cached yet.', 'xt-facebook-events-pro' ) . '</span>';
+								echo '<span style="color:#aaa;">&#9679; ' . esc_html__( 'No HQ images cached yet.', 'xt-facebook-events' ) . '</span>';
 							}
 							echo '</p>';
 							?>
 							<p class="description" style="margin-top:4px;font-style:italic;color:#666;">
-								<?php esc_html_e( 'Clears all HQ event images. They will be re-fetched automatically on next page load.', 'xt-facebook-events-pro' ); ?>
+								<?php esc_html_e( 'Clears all HQ event images. They will be re-fetched automatically on next page load.', 'xt-facebook-events' ); ?>
 							</p>
 							<?php else : ?>
-							<p class="description"><?php esc_html_e( 'Save the feed first.', 'xt-facebook-events-pro' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Save the feed first.', 'xt-facebook-events' ); ?></p>
 							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>
-						<th><label for="xtfeprofeed_custom_css"><?php esc_html_e( 'Custom CSS', 'xt-facebook-events-pro' ); ?></label></th>
+						<th><label for="xtfeprofeed_custom_css"><?php esc_html_e( 'Custom CSS', 'xt-facebook-events' ); ?></label></th>
 						<td>
 							<textarea id="xtfeprofeed_custom_css" name="_xtfeprofeed_custom_css"
 								rows="8" class="large-text code"
 								placeholder="/* Add custom CSS for this feed only */"><?php echo esc_textarea( $meta['custom_css'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'Scoped to #xtfeprofeed-feed-' . $post->ID . '. Will not affect other feeds.', 'xt-facebook-events-pro' ); ?></p>
+							<p class="description">
+								<?php 
+								/* translators: %d: Post ID */
+								echo esc_html( sprintf( __( 'Scoped to #xtfeprofeed-feed-%d. Will not affect other feeds.', 'xt-facebook-events' ), $post->ID ) ); 
+								?>
+							</p>
 						</td>
 					</tr>
 				</table>
@@ -493,13 +508,13 @@ class XTFEPRO_Feed_Admin {
 		<div class="xtfeprofeed-builder-right">
 			<div class="xtfeprofeed-preview-panel">
 				<div class="xtfeprofeed-preview-header">
-					<h3><?php esc_html_e( 'Live Preview', 'xt-facebook-events-pro' ); ?></h3>
-					<span class="xtfeprofeed-preview-loading" style="display:none;"><?php esc_html_e( 'Updating...', 'xt-facebook-events-pro' ); ?></span>
+					<h3><?php esc_html_e( 'Live Preview', 'xt-facebook-events' ); ?></h3>
+					<span class="xtfeprofeed-preview-loading" style="display:none;"><?php esc_html_e( 'Updating...', 'xt-facebook-events' ); ?></span>
 				</div>
 				<div class="xtfeprofeed-preview-body">
 					<div id="xtfeprofeed-preview-container">
 						<div class="xtfeprofeed-preview-placeholder">
-							<p><?php esc_html_e( 'Select a source and display options to see a live preview.', 'xt-facebook-events-pro' ); ?></p>
+							<p><?php esc_html_e( 'Select a source and display options to see a live preview.', 'xt-facebook-events' ); ?></p>
 						</div>
 					</div>
 				</div>
@@ -617,12 +632,12 @@ class XTFEPRO_Feed_Admin {
 	}
 
 	public function handle_clear_cache_row_action() {
-		if ( ! current_user_can( 'manage_options' ) ) wp_die( esc_html__( 'Permission denied.', 'xt-facebook-events-pro' ) );
+		if ( ! current_user_can( 'manage_options' ) ) wp_die( esc_html__( 'Permission denied.', 'xt-facebook-events' ) );
 		$feed_id = absint( $_GET['feed_id'] ?? 0 );
 		$nonce   = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) );
-		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_clear_cache_' . $feed_id ) ) wp_die( esc_html__( 'Security check failed.', 'xt-facebook-events-pro' ) );
+		if ( ! wp_verify_nonce( $nonce, 'xtfeprofeed_clear_cache_' . $feed_id ) ) wp_die( esc_html__( 'Security check failed.', 'xt-facebook-events' ) );
 		XTFEPRO_Feed_API::instance()->clear_cache( $feed_id );
-		wp_redirect( admin_url( 'edit.php?post_type=' . XTFEPRO_FEED_CPT . '&xtfeprofeed_cache_cleared=1' ) );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=' . XTFEPRO_FEED_CPT . '&xtfeprofeed_cache_cleared=1' ) );
 		exit;
 	}
 

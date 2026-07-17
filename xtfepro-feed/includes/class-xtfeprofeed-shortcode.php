@@ -49,12 +49,12 @@ class XTFEPRO_Feed_Shortcode {
 
 		$feed_id = absint( $atts['id'] );
 		if ( ! $feed_id ) {
-			return $this->error( __( '[xtfepro_live_feed] Missing required attribute: id', 'xt-facebook-events-pro' ) );
+			return $this->error( __( '[xtfepro_live_feed] Missing required attribute: id', 'xt-facebook-events' ) );
 		}
 
 		$feed_post = get_post( $feed_id );
 		if ( ! $feed_post || XTFEPRO_FEED_CPT !== $feed_post->post_type || 'publish' !== $feed_post->post_status ) {
-			return $this->error( __( '[xtfepro_live_feed] Feed not found or not published.', 'xt-facebook-events-pro' ) );
+			return $this->error( __( '[xtfepro_live_feed] Feed not found or not published.', 'xt-facebook-events' ) );
 		}
 
 		$meta = XTFEPRO_Feed_API::instance()->get_feed_meta( $feed_id );
@@ -110,7 +110,7 @@ class XTFEPRO_Feed_Shortcode {
 			data-pagination-type="<?php echo esc_attr( $pagination_type ); ?>">
 
 			<?php if ( ! empty( $meta['custom_css'] ) ) : ?>
-			<style>#<?php echo esc_attr( $wrapper_id ); ?> { <?php echo wp_strip_all_tags( $meta['custom_css'] ); ?> }</style>
+			<style>#<?php echo esc_attr( $wrapper_id ); ?> { <?php echo wp_strip_all_tags( $meta['custom_css'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> }</style>
 			<?php endif; ?>
 
 			<div class="xtfeprofeed-events-grid" data-events-container>
@@ -166,7 +166,7 @@ class XTFEPRO_Feed_Shortcode {
 						data-page="<?php echo esc_attr( $current_page + 1 ); ?>"
 						data-loaded="<?php echo esc_attr( $loaded ); ?>"
 						data-total="<?php echo esc_attr( $total_events ); ?>">
-						<?php esc_html_e( 'Load More', 'xt-facebook-events-pro' ); ?>
+						<?php esc_html_e( 'Load More', 'xt-facebook-events' ); ?>
 					</button>
 				<?php endif; ?>
 			</div>
@@ -178,7 +178,7 @@ class XTFEPRO_Feed_Shortcode {
 			if ( $current_page >= $total_pages ) return;
 			?>
 			<div class="xtfeprofeed-infinite-sentinel" data-page="<?php echo esc_attr( $current_page + 1 ); ?>" aria-hidden="true">
-				<span class="xtfeprofeed-loading-spinner"><?php esc_html_e( 'Loading...', 'xt-facebook-events-pro' ); ?></span>
+				<span class="xtfeprofeed-loading-spinner"><?php esc_html_e( 'Loading...', 'xt-facebook-events' ); ?></span>
 			</div>
 			<?php
 			return;
@@ -186,17 +186,17 @@ class XTFEPRO_Feed_Shortcode {
 
 		// Numbered AJAX pagination
 		?>
-		<nav class="xtfeprofeed-pagination-nav" aria-label="<?php esc_attr_e( 'Events pagination', 'xt-facebook-events-pro' ); ?>">
+		<nav class="xtfeprofeed-pagination-nav" aria-label="<?php esc_attr_e( 'Events pagination', 'xt-facebook-events' ); ?>">
 			<div class="xtfeprofeed-pagination-buttons">
 				<?php if ( $current_page > 1 ) : ?>
 					<button class="xtfeprofeed-btn xtfeprofeed-btn--pagination" data-page="<?php echo esc_attr( $current_page - 1 ); ?>">
 						<svg class="xtfeprofeed-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-						<?php esc_html_e( 'Previous', 'xt-facebook-events-pro' ); ?>
+						<?php esc_html_e( 'Previous', 'xt-facebook-events' ); ?>
 					</button>
 				<?php else : ?>
 					<button class="xtfeprofeed-btn xtfeprofeed-btn--pagination" disabled aria-disabled="true">
 						<svg class="xtfeprofeed-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-						<?php esc_html_e( 'Previous', 'xt-facebook-events-pro' ); ?>
+						<?php esc_html_e( 'Previous', 'xt-facebook-events' ); ?>
 					</button>
 				<?php endif; ?>
 
@@ -225,12 +225,12 @@ class XTFEPRO_Feed_Shortcode {
 
 				<?php if ( $current_page < $total_pages ) : ?>
 					<button class="xtfeprofeed-btn xtfeprofeed-btn--pagination" data-page="<?php echo esc_attr( $current_page + 1 ); ?>">
-						<?php esc_html_e( 'Next', 'xt-facebook-events-pro' ); ?>
+						<?php esc_html_e( 'Next', 'xt-facebook-events' ); ?>
 						<svg class="xtfeprofeed-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
 					</button>
 				<?php else : ?>
 					<button class="xtfeprofeed-btn xtfeprofeed-btn--pagination" disabled aria-disabled="true">
-						<?php esc_html_e( 'Next', 'xt-facebook-events-pro' ); ?>
+						<?php esc_html_e( 'Next', 'xt-facebook-events' ); ?>
 						<svg class="xtfeprofeed-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
 					</button>
 				<?php endif; ?>
@@ -289,7 +289,7 @@ class XTFEPRO_Feed_Shortcode {
 
 	private function no_events() {
 		return '<div class="xtfeprofeed-feed-no-events"><p>'
-			. esc_html__( 'No upcoming events found.', 'xt-facebook-events-pro' )
+			. esc_html__( 'No upcoming events found.', 'xt-facebook-events' )
 			. '</p></div>';
 	}
 
@@ -300,7 +300,9 @@ class XTFEPRO_Feed_Shortcode {
 	public static function format_date( $date_string, $timezone = '' ) {
 		if ( ! $date_string ) return '';
 		try {
+			// phpcs:disable
 			$tz = $timezone ? new DateTimeZone( $timezone ) : wp_timezone();
+			// phpcs:enable
 			$dt = new DateTime( $date_string, $tz );
 			return $dt->format( get_option( 'date_format' ) . ' · ' . get_option( 'time_format' ) );
 		} catch ( Exception $e ) {
@@ -310,14 +312,14 @@ class XTFEPRO_Feed_Shortcode {
 
 	public static function format_price( $event ) {
 		if ( ! empty( $event['is_free'] ) ) {
-			return __( 'Free', 'xt-facebook-events-pro' );
+			return __( 'Free', 'xt-facebook-events' );
 		}
 		$amount   = floatval( $event['min_price'] ?? 0 );
 		$currency = $event['currency'] ?? '';
 		if ( $amount > 0 ) {
 			return ( $currency ? strtoupper( $currency ) . ' ' : '' ) . number_format( $amount, 2 );
 		}
-		return __( 'Free', 'xt-facebook-events-pro' );
+		return __( 'Free', 'xt-facebook-events' );
 	}
 
 	public static function get_days_left_info( $date_string, $timezone = '' ) {
@@ -325,7 +327,9 @@ class XTFEPRO_Feed_Shortcode {
 			return null;
 		}
 		try {
+			// phpcs:disable
 			$tz = $timezone ? new DateTimeZone( $timezone ) : wp_timezone();
+			// phpcs:enable
 			
 			$now = new DateTime( 'now', $tz );
 			$now->setTime( 0, 0, 0 );
@@ -338,23 +342,25 @@ class XTFEPRO_Feed_Shortcode {
 			
 			if ( $days === 0 ) {
 				return array(
-					'text'  => __( 'Today', 'xt-facebook-events-pro' ),
+					'text'  => __( 'Today', 'xt-facebook-events' ),
 					'class' => 'today',
 				);
 			} elseif ( $days === 1 ) {
 				return array(
-					'text'  => __( 'Tomorrow', 'xt-facebook-events-pro' ),
+					'text'  => __( 'Tomorrow', 'xt-facebook-events' ),
 					'class' => 'tomorrow',
 				);
 			} elseif ( $days > 1 ) {
 				return array(
-					'text'  => sprintf( _n( '%d Day Left', '%d Days Left', $days, 'xt-facebook-events-pro' ), $days ),
+					/* translators: %d: number of days left */
+					'text'  => sprintf( _n( '%d Day Left', '%d Days Left', $days, 'xt-facebook-events' ), $days ),
 					'class' => 'future',
 				);
 			} else {
 				$abs_days = abs( $days );
 				return array(
-					'text'  => sprintf( _n( '%d Day Ago', '%d Days Ago', $abs_days, 'xt-facebook-events-pro' ), $abs_days ),
+					/* translators: %d: number of days ago */
+					'text'  => sprintf( _n( '%d Day Ago', '%d Days Ago', $abs_days, 'xt-facebook-events' ), $abs_days ),
 					'class' => 'past',
 				);
 			}

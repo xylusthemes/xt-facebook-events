@@ -61,20 +61,21 @@ class XTFEPRO_Feed_Builder_UI {
 			'backUrl'   => admin_url( 'edit.php?post_type=' . XTFEPRO_FEED_CPT ),
 			'isNewPost' => ( 'post-new.php' === $hook ),
 			'i18n'      => array(
-				'back'            => __( 'Back to Facebook Widgets', 'xt-facebook-events-pro' ),
-				'save'            => __( 'Save Widget', 'xt-facebook-events-pro' ),
-				'saving'          => __( 'Saving…', 'xt-facebook-events-pro' ),
-				'next'            => __( 'Continue', 'xt-facebook-events-pro' ),
-				'prev'            => __( 'Previous', 'xt-facebook-events-pro' ),
-				'step_of'         => __( 'Step %1$s of %2$s', 'xt-facebook-events-pro' ),
-				'titlePlh'        => __( 'Enter widget name…', 'xt-facebook-events-pro' ),
-				'shortcode_label' => __( 'Your Shortcode', 'xt-facebook-events-pro' ),
-				'copied'          => __( 'Copied!', 'xt-facebook-events-pro' ),
-				'reqTitle'        => __( 'Widget name is required.', 'xt-facebook-events-pro' ),
-				'reqPageId'       => __( 'Facebook Page ID or Slug is required.', 'xt-facebook-events-pro' ),
-				'reqGroupId'      => __( 'Facebook Group URL or ID is required.', 'xt-facebook-events-pro' ),
-				'reqEventIds'     => __( 'At least one Event ID is required.', 'xt-facebook-events-pro' ),
-				'reqIcalUrl'      => __( 'iCal URL is required.', 'xt-facebook-events-pro' ),
+				'back'            => __( 'Back to Facebook Widgets', 'xt-facebook-events' ),
+				'save'            => __( 'Save Widget', 'xt-facebook-events' ),
+				'saving'          => __( 'Saving…', 'xt-facebook-events' ),
+				'next'            => __( 'Continue', 'xt-facebook-events' ),
+				'prev'            => __( 'Previous', 'xt-facebook-events' ),
+				/* translators: 1: step number, 2: total steps */
+				'step_of'         => __( 'Step %1$s of %2$s', 'xt-facebook-events' ),
+				'titlePlh'        => __( 'Enter widget name…', 'xt-facebook-events' ),
+				'shortcode_label' => __( 'Your Shortcode', 'xt-facebook-events' ),
+				'copied'          => __( 'Copied!', 'xt-facebook-events' ),
+				'reqTitle'        => __( 'Widget name is required.', 'xt-facebook-events' ),
+				'reqPageId'       => __( 'Facebook Page ID or Slug is required.', 'xt-facebook-events' ),
+				'reqGroupId'      => __( 'Facebook Group URL or ID is required.', 'xt-facebook-events' ),
+				'reqEventIds'     => __( 'At least one Event ID is required.', 'xt-facebook-events' ),
+				'reqIcalUrl'      => __( 'iCal URL is required.', 'xt-facebook-events' ),
 			),
 		) );
 	}
@@ -83,11 +84,11 @@ class XTFEPRO_Feed_Builder_UI {
 		if ( XTFEPRO_FEED_CPT !== $post->post_type ) return;
 
 		$steps = array(
-			array( 'id' => 'source',   'label' => __( 'Source', 'xt-facebook-events-pro' ),   'icon' => 'dashicons-admin-site',    'desc' => __( 'Choose where to pull Facebook events from', 'xt-facebook-events-pro' ) ),
-			array( 'id' => 'display',  'label' => __( 'Display', 'xt-facebook-events-pro' ),  'icon' => 'dashicons-layout',        'desc' => __( 'Customize layout and visible fields', 'xt-facebook-events-pro' ) ),
-			array( 'id' => 'tickets',  'label' => __( 'Buttons', 'xt-facebook-events-pro' ),  'icon' => 'dashicons-tickets-alt',   'desc' => __( 'Configure event links and button labels', 'xt-facebook-events-pro' ) ),
-			array( 'id' => 'filters',  'label' => __( 'Filters', 'xt-facebook-events-pro' ),  'icon' => 'dashicons-filter',        'desc' => __( 'Narrow down which events to show', 'xt-facebook-events-pro' ) ),
-			array( 'id' => 'settings', 'label' => __( 'Settings', 'xt-facebook-events-pro' ), 'icon' => 'dashicons-admin-generic', 'desc' => __( 'Cache settings and custom CSS', 'xt-facebook-events-pro' ) ),
+			array( 'id' => 'source',   'label' => __( 'Source', 'xt-facebook-events' ),   'icon' => 'dashicons-admin-site',    'desc' => __( 'Choose where to pull Facebook events from', 'xt-facebook-events' ) ),
+			array( 'id' => 'display',  'label' => __( 'Display', 'xt-facebook-events' ),  'icon' => 'dashicons-layout',        'desc' => __( 'Customize layout and visible fields', 'xt-facebook-events' ) ),
+			array( 'id' => 'tickets',  'label' => __( 'Buttons', 'xt-facebook-events' ),  'icon' => 'dashicons-tickets-alt',   'desc' => __( 'Configure event links and button labels', 'xt-facebook-events' ) ),
+			array( 'id' => 'filters',  'label' => __( 'Filters', 'xt-facebook-events' ),  'icon' => 'dashicons-filter',        'desc' => __( 'Narrow down which events to show', 'xt-facebook-events' ) ),
+			array( 'id' => 'settings', 'label' => __( 'Settings', 'xt-facebook-events' ), 'icon' => 'dashicons-admin-generic', 'desc' => __( 'Cache settings and custom CSS', 'xt-facebook-events' ) ),
 		);
 
 		$total_steps = count( $steps );
@@ -101,7 +102,7 @@ class XTFEPRO_Feed_Builder_UI {
 			<!-- Global Warning Notice for Restricted Pages -->
 			<div id="xtfepro-builder-global-warning" style="display: none; background: #fff8e5; border-left: 4px solid #f0b849; padding: 12px 15px; margin-bottom: 15px; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 				<p style="margin: 0; font-size: 13px; color: #3c434a;">
-					<strong><?php esc_html_e( 'Warning:', 'xt-facebook-events-pro' ); ?></strong>
+					<strong><?php esc_html_e( 'Warning:', 'xt-facebook-events' ); ?></strong>
 					<span class="xtfepro-warning-text"></span>
 				</p>
 			</div>
@@ -110,17 +111,17 @@ class XTFEPRO_Feed_Builder_UI {
 			<div class="xtfepro-builder__topbar">
 				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . XTFEPRO_FEED_CPT ) ); ?>" class="xtfepro-builder__back">
 					<span class="dashicons dashicons-arrow-left-alt2"></span>
-					<?php esc_html_e( 'Back to Facebook Widgets', 'xt-facebook-events-pro' ); ?>
+					<?php esc_html_e( 'Back to Facebook Widgets', 'xt-facebook-events' ); ?>
 				</a>
 
 				<?php if ( $shortcode ) : ?>
 				<div class="xtfepro-builder__shortcode-bar">
 					<span class="xtfepro-builder__shortcode-label">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-						<?php esc_html_e( 'Shortcode:', 'xt-facebook-events-pro' ); ?>
+						<?php esc_html_e( 'Shortcode:', 'xt-facebook-events' ); ?>
 					</span>
 					<code class="xtfepro-builder__shortcode-code" id="xtfepro-builder-shortcode"><?php echo esc_html( $shortcode ); ?></code>
-					<button type="button" class="xtfepro-builder__shortcode-copy" id="xtfepro-builder-copy-sc" title="<?php esc_attr_e( 'Copy shortcode', 'xt-facebook-events-pro' ); ?>">
+					<button type="button" class="xtfepro-builder__shortcode-copy" id="xtfepro-builder-copy-sc" title="<?php esc_attr_e( 'Copy shortcode', 'xt-facebook-events' ); ?>">
 						<span class="xtfepro-copy-icon-wrap" style="display:flex;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
 					</button>
 				</div>
@@ -172,18 +173,18 @@ class XTFEPRO_Feed_Builder_UI {
 					<div class="xtfepro-builder__preview-card">
 						<div class="xtfepro-builder__preview-card-header">
 							<div class="xtfepro-builder__preview-title-wrap" style="display:flex;align-items:center;gap:10px;">
-								<h3><?php esc_html_e( 'Live Preview', 'xt-facebook-events-pro' ); ?></h3>
-								<span class="xtfeprofeed-preview-loading" style="display:none;"><?php esc_html_e( 'Updating...', 'xt-facebook-events-pro' ); ?></span>
+								<h3><?php esc_html_e( 'Live Preview', 'xt-facebook-events' ); ?></h3>
+								<span class="xtfeprofeed-preview-loading" style="display:none;"><?php esc_html_e( 'Updating...', 'xt-facebook-events' ); ?></span>
 							</div>
 							<button type="button" class="xtfepro-builder__full-preview-btn" id="xtfepro-builder-toggle-full-preview" style="display:inline-flex;align-items:center;gap:6px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:#334155;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.02);transition:all 0.2s ease;">
 								<span class="xtfepro-preview-icon-wrap" style="display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></span>
-								<span class="btn-text"><?php esc_html_e( 'Full Preview', 'xt-facebook-events-pro' ); ?></span>
+								<span class="btn-text"><?php esc_html_e( 'Full Preview', 'xt-facebook-events' ); ?></span>
 							</button>
 						</div>
 						<div class="xtfepro-builder__preview-card-body">
 							<div id="xtfepro-builder-preview-container">
 								<div class="xtfepro-builder__preview-placeholder">
-									<p><?php esc_html_e( 'Interactive preview shows up here', 'xt-facebook-events-pro' ); ?></p>
+									<p><?php esc_html_e( 'Interactive preview shows up here', 'xt-facebook-events' ); ?></p>
 								</div>
 							</div>
 						</div>
@@ -196,23 +197,27 @@ class XTFEPRO_Feed_Builder_UI {
 				<div class="xtfepro-builder__footer-inner">
 					<button type="button" class="xtfepro-builder__btn xtfepro-builder__btn--prev" id="xtfepro-builder-prev" style="visibility:hidden;">
 						<span class="dashicons dashicons-arrow-left-alt2"></span>
-						<?php esc_html_e( 'Previous', 'xt-facebook-events-pro' ); ?>
+						<?php esc_html_e( 'Previous', 'xt-facebook-events' ); ?>
 					</button>
 					<div class="xtfepro-builder__step-counter" id="xtfepro-builder-counter">
-						<?php printf(
-							esc_html__( 'Step %1$s of %2$s', 'xt-facebook-events-pro' ),
+						<?php
+						$step_text = sprintf(
+							/* translators: 1: step number, 2: total steps */
+							__( 'Step %1$s of %2$s', 'xt-facebook-events' ),
 							'<strong>1</strong>',
 							'<strong>' . esc_html( $total_steps ) . '</strong>'
-						); ?>
+						);
+						echo wp_kses_post( $step_text );
+						?>
 					</div>
 					<div class="xtfepro-builder__footer-actions">
 						<button type="button" class="xtfepro-builder__btn xtfepro-builder__btn--next" id="xtfepro-builder-next">
-							<?php esc_html_e( 'Continue', 'xt-facebook-events-pro' ); ?>
+							<?php esc_html_e( 'Continue', 'xt-facebook-events' ); ?>
 							<span class="dashicons dashicons-arrow-right-alt2"></span>
 						</button>
 						<button type="button" class="xtfepro-builder__btn xtfepro-builder__btn--save" id="xtfepro-builder-save">
 							<span class="dashicons dashicons-saved"></span>
-							<?php esc_html_e( 'Save Widget', 'xt-facebook-events-pro' ); ?>
+							<?php esc_html_e( 'Save Widget', 'xt-facebook-events' ); ?>
 						</button>
 					</div>
 				</div>
