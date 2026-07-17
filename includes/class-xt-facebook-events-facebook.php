@@ -553,7 +553,7 @@ class XT_Facebook_Events_Facebook {
 		if ( ! empty( $_POST ) && isset( $_POST['xtfe_clear_cache_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['xtfe_clear_cache_nonce'] ) ), 'xtfe_clear_cache_action' ) ) {
 			$this->xtfe_purge_transient();
 			$redirect_url = admin_url('admin.php?page=wpfb_events&xtcleared=1');
-			wp_redirect($redirect_url);
+			wp_safe_redirect($redirect_url);
 			exit();
 		} else {
 			die( esc_attr__('You have not access to doing this operations.', 'xt-facebook-events' ) );

@@ -148,7 +148,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <div class="xtfe_widget_info" style="font-size: 14px; line-height: 1.6; color: #334155;">
                     <?php 
                         $xtfe_widget_section = sprintf(
-                            __( '<a class="xtfe_widget_link" href="%s" style="font-weight: 600; color: #005ae0;">Click Here</a> to go to the Widget section, or read our <a target="_blank" class="xtfe_widget_link" href="%s" style="font-weight: 600; color: #005ae0;">detailed comprehensive documentation</a> on how to use widgets effectively.', 'xt-facebook-events' ),
+                            /* translators: 1: Widget page link, 2: Documentation link */
+                            __( '<a class="xtfe_widget_link" href="%1$s" style="font-weight: 600; color: #005ae0;">Click Here</a> to go to the Widget section, or read our <a target="_blank" class="xtfe_widget_link" href="%2$s" style="font-weight: 600; color: #005ae0;">detailed comprehensive documentation</a> on how to use widgets effectively.', 'xt-facebook-events' ),
                             esc_url( admin_url( 'widgets.php' ) ),
                             esc_url( 'https://docs.xylusthemes.com/docs/facebookevents/display-using-widget/' )
                         );

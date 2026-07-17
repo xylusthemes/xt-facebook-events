@@ -51,7 +51,6 @@ class XT_Facebook_Events{
 			self::$instance = new XT_Facebook_Events;
 			self::$instance->setup_constants();
 
-			add_action( 'plugins_loaded', array( self::$instance, 'load_textdomain' ) );
 			add_action( 'plugins_loaded', array( self::$instance, 'load_authorize_class' ), 20 );
 			add_action( 'wp_enqueue_scripts', array( self::$instance, 'xtfe_enqueue_style' ) );
 			add_action( 'wp_enqueue_scripts', array( self::$instance, 'xtfe_enqueue_script' ) );
@@ -156,23 +155,6 @@ class XT_Facebook_Events{
 	}
 
 	/**
-	 * Loads the plugin language files.
-	 * 
-	 * @access public
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function load_textdomain(){
-
-		load_plugin_textdomain(
-			'xt-facebook-events',
-			false,
-			basename( dirname( __FILE__ ) ) . '/languages'
-		);
-
-	}
-
-	/**
 	 * Loads the facebook authorize class
 	 *
 	 * @access public
@@ -266,6 +248,7 @@ endif; // End If class exists check.
  * @since 1.0.0
  * @return object|XT_Facebook_Events The one true XT_Facebook_Events Instance.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function run_xt_facebook_events() {
 	return XT_Facebook_Events::instance();
 }
@@ -301,6 +284,7 @@ add_action( 'admin_init', 'xtfe_redirect_on_activation' );
 function xtfe_redirect_on_activation() {
 	if ( get_option( 'xtfe_do_activation_redirect', false ) ) {
 		delete_option( 'xtfe_do_activation_redirect' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['activate-multi'] ) ) {
 			wp_safe_redirect( admin_url( 'edit.php?post_type=xtfepro_live_feed' ) );
 			exit;

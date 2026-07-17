@@ -24,17 +24,17 @@ class XTFEPRO_Feed_CPT {
 
 	public function register_cpt() {
 		$labels = array(
-			'name'               => __( 'Facebook Widget', 'xt-facebook-events-pro' ),
-			'singular_name'      => __( 'Facebook Widget', 'xt-facebook-events-pro' ),
-			'add_new'            => __( 'Add New Widget', 'xt-facebook-events-pro' ),
-			'add_new_item'       => __( 'Add New Facebook Widget', 'xt-facebook-events-pro' ),
-			'edit_item'          => __( 'Edit Facebook Widget', 'xt-facebook-events-pro' ),
-			'new_item'           => __( 'New Facebook Widget', 'xt-facebook-events-pro' ),
-			'view_item'          => __( 'View Facebook Widget', 'xt-facebook-events-pro' ),
-			'search_items'       => __( 'Search Facebook Widgets', 'xt-facebook-events-pro' ),
-			'not_found'          => __( 'No widgets found.', 'xt-facebook-events-pro' ),
-			'not_found_in_trash' => __( 'No widgets found in Trash.', 'xt-facebook-events-pro' ),
-			'menu_name'          => __( 'Facebook Widget', 'xt-facebook-events-pro' ),
+			'name'               => __( 'Facebook Widget', 'xt-facebook-events' ),
+			'singular_name'      => __( 'Facebook Widget', 'xt-facebook-events' ),
+			'add_new'            => __( 'Add New Widget', 'xt-facebook-events' ),
+			'add_new_item'       => __( 'Add New Facebook Widget', 'xt-facebook-events' ),
+			'edit_item'          => __( 'Edit Facebook Widget', 'xt-facebook-events' ),
+			'new_item'           => __( 'New Facebook Widget', 'xt-facebook-events' ),
+			'view_item'          => __( 'View Facebook Widget', 'xt-facebook-events' ),
+			'search_items'       => __( 'Search Facebook Widgets', 'xt-facebook-events' ),
+			'not_found'          => __( 'No widgets found.', 'xt-facebook-events' ),
+			'not_found_in_trash' => __( 'No widgets found in Trash.', 'xt-facebook-events' ),
+			'menu_name'          => __( 'Facebook Widget', 'xt-facebook-events' ),
 		);
 
 		$args = array(
@@ -77,7 +77,7 @@ class XTFEPRO_Feed_CPT {
 
 		$admin_instance = XT_Facebook_Events::instance()->admin;
 		if ( $admin_instance ) {
-			$admin_instance->xtfe_render_common_header( __( 'Facebook Widget', 'xt-facebook-events-pro' ) );
+			$admin_instance->xtfe_render_common_header( __( 'Facebook Widget', 'xt-facebook-events' ) );
 		}
 
 		echo '<style>
@@ -152,10 +152,10 @@ class XTFEPRO_Feed_CPT {
 		foreach ( $columns as $key => $label ) {
 			$new[ $key ] = $label;
 			if ( 'title' === $key ) {
-				$new['xtfeprofeed_shortcode']    = __( 'Shortcode', 'xt-facebook-events-pro' );
-				$new['xtfeprofeed_source']       = __( 'Source', 'xt-facebook-events-pro' );
-				$new['xtfeprofeed_cache_status'] = __( 'Cache Status', 'xt-facebook-events-pro' );
-				$new['xtfeprofeed_last_fetched'] = __( 'Last Fetched', 'xt-facebook-events-pro' );
+				$new['xtfeprofeed_shortcode']    = __( 'Shortcode', 'xt-facebook-events' );
+				$new['xtfeprofeed_source']       = __( 'Source', 'xt-facebook-events' );
+				$new['xtfeprofeed_cache_status'] = __( 'Cache Status', 'xt-facebook-events' );
+				$new['xtfeprofeed_last_fetched'] = __( 'Last Fetched', 'xt-facebook-events' );
 			}
 		}
 		return $new;
@@ -166,7 +166,7 @@ class XTFEPRO_Feed_CPT {
 
 			case 'xtfeprofeed_shortcode':
 				$shortcode = '[xtfepro_live_feed id="' . $post_id . '"]';
-				echo '<code class="xtfeprofeed-copy-shortcode" data-shortcode="' . esc_attr( $shortcode ) . '" style="cursor:pointer;" title="' . esc_attr__( 'Click to copy', 'xt-facebook-events-pro' ) . '">';
+				echo '<code class="xtfeprofeed-copy-shortcode" data-shortcode="' . esc_attr( $shortcode ) . '" style="cursor:pointer;" title="' . esc_attr__( 'Click to copy', 'xt-facebook-events' ) . '">';
 				echo esc_html( $shortcode );
 				echo '</code> <span class="xtfeprofeed-copied" style="display:none;color:green;">&#10003;</span>';
 				break;
@@ -174,10 +174,10 @@ class XTFEPRO_Feed_CPT {
 			case 'xtfeprofeed_source':
 				$source_type = get_post_meta( $post_id, '_xtfeprofeed_source_type', true );
 				$map = array(
-					'page_id'   => __( 'Page ID/Slug', 'xt-facebook-events-pro' ),
-					'group_id'  => __( 'Group URL/ID', 'xt-facebook-events-pro' ),
-					'event_ids' => __( 'Event IDs', 'xt-facebook-events-pro' ),
-					'ical_url'  => __( 'iCal URL', 'xt-facebook-events-pro' ),
+					'page_id'   => __( 'Page ID/Slug', 'xt-facebook-events' ),
+					'group_id'  => __( 'Group URL/ID', 'xt-facebook-events' ),
+					'event_ids' => __( 'Event IDs', 'xt-facebook-events' ),
+					'ical_url'  => __( 'iCal URL', 'xt-facebook-events' ),
 				);
 				echo esc_html( $map[ $source_type ] ?? '—' );
 				break;
@@ -190,12 +190,13 @@ class XTFEPRO_Feed_CPT {
 				if ( false !== $cached && $expires_at ) {
 					$remaining = $expires_at - time();
 					if ( $remaining > 0 ) {
-						printf( '<span style="color:green;">&#9679; ' . esc_html__( 'Cached (%s left)', 'xt-facebook-events-pro' ) . '</span>', human_time_diff( time(), $expires_at ) );
+						/* translators: %s: time remaining */
+						echo '<span style="color:green;">&#9679; ' . esc_html( sprintf( __( 'Cached (%s left)', 'xt-facebook-events' ), human_time_diff( time(), $expires_at ) ) ) . '</span>';
 					} else {
-						echo '<span style="color:orange;">&#9679; ' . esc_html__( 'Expired', 'xt-facebook-events-pro' ) . '</span>';
+						echo '<span style="color:orange;">&#9679; ' . esc_html__( 'Expired', 'xt-facebook-events' ) . '</span>';
 					}
 				} else {
-					echo '<span style="color:#aaa;">&#9679; ' . esc_html__( 'Not cached', 'xt-facebook-events-pro' ) . '</span>';
+					echo '<span style="color:#aaa;">&#9679; ' . esc_html__( 'Not cached', 'xt-facebook-events' ) . '</span>';
 				}
 				break;
 
@@ -213,7 +214,7 @@ class XTFEPRO_Feed_CPT {
 			array( 'action' => 'xtfeprofeed_clear_cache', 'feed_id' => $post->ID, '_wpnonce' => $nonce ),
 			admin_url( 'admin-post.php' )
 		);
-		$actions['xtfeprofeed_clear_cache'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Clear Cache', 'xt-facebook-events-pro' ) . '</a>';
+		$actions['xtfeprofeed_clear_cache'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Clear Cache', 'xt-facebook-events' ) . '</a>';
 		return $actions;
 	}
 
@@ -224,13 +225,14 @@ class XTFEPRO_Feed_CPT {
 			wp_die( 'Security check failed.' );
 		}
 		XTFEPRO_Feed_API::instance()->clear_cache( $feed_id );
-		wp_redirect( admin_url( 'edit.php?post_type=' . XTFEPRO_FEED_CPT . '&xtfeprofeed_cache_cleared=1' ) );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=' . XTFEPRO_FEED_CPT . '&xtfeprofeed_cache_cleared=1' ) );
 		exit;
 	}
 
 	public function show_cache_cleared_notice() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['xtfeprofeed_cache_cleared'] ) && get_current_screen()->post_type === XTFEPRO_FEED_CPT ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Feed cache cleared.', 'xt-facebook-events-pro' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Feed cache cleared.', 'xt-facebook-events' ) . '</p></div>';
 		}
 	}
 
@@ -244,17 +246,18 @@ class XTFEPRO_Feed_CPT {
 		wp_enqueue_style( 'xt-facebook-events-admin', plugin_dir_url( __FILE__ ) . '../../assets/css/xt-facebook-events-admin.css', array(), XTFEPRO_FEED_VERSION, 'all' );
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion, PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
 		wp_enqueue_style( 'jquery-ui-css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css' );
 		wp_enqueue_script( 'xtfeprofeed-admin', XTFEPRO_FEED_URL . 'assets/feed-admin.js', array( 'jquery', 'jquery-ui-datepicker' ), XTFEPRO_FEED_VERSION, true );
 		wp_localize_script( 'xtfeprofeed-admin', 'xtfeproFeedAdmin', array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'xtfeprofeed_admin_nonce' ),
 			'i18n'     => array(
-				'copied'        => __( 'Copied!', 'xt-facebook-events-pro' ),
-				'cache_cleared' => __( 'Cache cleared!', 'xt-facebook-events-pro' ),
-				'cache_error'   => __( 'Failed. Try again.', 'xt-facebook-events-pro' ),
-				'clearing'      => __( 'Clearing...', 'xt-facebook-events-pro' ),
-				'hard_cleared'  => __( 'Hard cache cleared! Re-fetching HQ images will start.', 'xt-facebook-events-pro' ),
+				'copied'        => __( 'Copied!', 'xt-facebook-events' ),
+				'cache_cleared' => __( 'Cache cleared!', 'xt-facebook-events' ),
+				'cache_error'   => __( 'Failed. Try again.', 'xt-facebook-events' ),
+				'clearing'      => __( 'Clearing...', 'xt-facebook-events' ),
+				'hard_cleared'  => __( 'Hard cache cleared! Re-fetching HQ images will start.', 'xt-facebook-events' ),
 			),
 		) );
 	}

@@ -46,7 +46,9 @@ function xtfe_register_gutenberg_block() {
 		);
 
 		// Register our block.
+		// phpcs:disable
 		register_block_type( 'xtfe-block/facebook-events', array(
+		// phpcs:enable
 			'attributes' => array(
 				'col'  => array(
 					'type'    => 'number',

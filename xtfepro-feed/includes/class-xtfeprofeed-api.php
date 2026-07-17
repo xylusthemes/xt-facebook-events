@@ -191,7 +191,7 @@ class XTFEPRO_Feed_API {
 			array(
 				'timeout'   => 0.01,   // Fire & forget
 				'blocking'  => false,
-				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+				'sslverify' => apply_filters( 'xtfeprofeed_https_local_ssl_verify', false ),
 				'body'      => array(
 					'action'       => 'xtfeprofeed_bg_fetch_page',
 					'feed_id'      => $feed_id,
@@ -209,11 +209,16 @@ class XTFEPRO_Feed_API {
 	 * Loops through all remaining FB pages until done, saves each as its own transient.
 	 */
 	public function ajax_bg_fetch_page() {
-		$feed_id    = absint( $_POST['feed_id']     ?? 0 );
-		$scrape_page = absint( $_POST['scrape_page'] ?? 2 );
-		$cursor     = sanitize_text_field( $_POST['cursor']   ?? '' );
-		$duration   = absint( $_POST['duration']  ?? HOUR_IN_SECONDS );
-		$nonce      = sanitize_text_field( $_POST['nonce']    ?? '' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$feed_id     = isset( $_POST['feed_id'] ) ? absint( wp_unslash( $_POST['feed_id'] ) ) : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$scrape_page = isset( $_POST['scrape_page'] ) ? absint( wp_unslash( $_POST['scrape_page'] ) ) : 2;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$cursor      = isset( $_POST['cursor'] ) ? sanitize_text_field( wp_unslash( $_POST['cursor'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$duration    = isset( $_POST['duration'] ) ? absint( wp_unslash( $_POST['duration'] ) ) : HOUR_IN_SECONDS;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$nonce       = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
 		$expected   = md5( 'xtfeprofeed_bg_' . $feed_id . wp_salt() );
 
 		if ( ! $feed_id || ! hash_equals( $expected, $nonce ) ) {
@@ -221,6 +226,7 @@ class XTFEPRO_Feed_API {
 		}
 
 		ignore_user_abort( true );
+		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 		set_time_limit( 300 );
 
 		$meta     = $this->get_feed_meta( $feed_id );
@@ -337,7 +343,13 @@ class XTFEPRO_Feed_API {
 		foreach ( $events as $event ) {
 			$event_id = $this->extract_base_event_id( $event );
 			if ( empty( $event_id ) ) continue;
-			if ( $db->get_image( $event_id ) ) continue; // Already have HQ image
+
+			$cache_key   = 'xtfepro_event_details_' . $event_id;
+			$has_details = ( false !== get_transient( $cache_key ) );
+			$has_image   = $db->get_image( $event_id );
+
+			if ( $has_details && $has_image ) continue;
+
 			$pending_ids[] = $event_id;
 		}
 
@@ -355,7 +367,7 @@ class XTFEPRO_Feed_API {
 				array(
 					'timeout'   => 0.01,
 					'blocking'  => false,
-					'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+					'sslverify' => apply_filters( 'xtfeprofeed_https_local_ssl_verify', false ),
 					'body'      => array(
 						'action'    => 'xtfeprofeed_bg_fetch_images',
 						'feed_id'   => $feed_id,
@@ -372,9 +384,12 @@ class XTFEPRO_Feed_API {
 	 * Fetches up to 5 event images, saves to DB, updates transient caches.
 	 */
 	public function ajax_bg_fetch_images() {
-		$feed_id   = absint( $_POST['feed_id']   ?? 0 );
-		$ids_raw   = sanitize_text_field( $_POST['event_ids'] ?? '' );
-		$nonce     = sanitize_text_field( $_POST['nonce']     ?? '' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$feed_id   = isset( $_POST['feed_id'] ) ? absint( wp_unslash( $_POST['feed_id'] ) ) : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$ids_raw   = isset( $_POST['event_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['event_ids'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$nonce     = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
 		$expected  = md5( 'xtfeprofeed_img_' . $feed_id . wp_salt() );
 
 		if ( ! $feed_id || ! hash_equals( $expected, $nonce ) ) {
@@ -382,26 +397,35 @@ class XTFEPRO_Feed_API {
 		}
 
 		ignore_user_abort( true );
+		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 		set_time_limit( 120 );
 
 		$event_ids = array_filter( array_map( 'trim', explode( ',', $ids_raw ) ) );
 		$db        = XTFEPRO_Feed_DB::instance();
 
 		foreach ( $event_ids as $event_id ) {
-			// Skip if already in DB
-			if ( $db->get_image( $event_id ) ) continue;
+			$cache_key   = 'xtfepro_event_details_' . $event_id;
+			$has_details = ( false !== get_transient( $cache_key ) );
+			$has_image   = $db->get_image( $event_id );
+
+			// Skip if already have both
+			if ( $has_details && $has_image ) continue;
 
 			try {
 				$data = $this->getEventById( $event_id );
+				if ( ! empty( $data['name'] ) ) {
+					set_transient( $cache_key, $data, DAY_IN_SECONDS );
+				}
+
 				if ( ! empty( $data['cover_image'] ) ) {
 					$db->save_image( $event_id, $data['cover_image'] );
-					// Update all paginated transient caches for this feed
-					$this->update_paginated_cache_image( $feed_id, $event_id, $data['cover_image'] );
-
 					$db->log_action( $feed_id, 'hq_image_fetch', 'Event: ' . $event_id, '', 1, 'success' );
 				} else {
 					$db->log_action( $feed_id, 'hq_image_fetch', 'Event: ' . $event_id, '', 0, 'error', 'No cover image found' );
 				}
+
+				// Update all paginated transient caches for this feed
+				$this->update_paginated_cache_event_data( $feed_id, $event_id, $data );
 			} catch ( \Exception $e ) {
 				$db->log_action( $feed_id, 'hq_image_fetch', 'Event: ' . $event_id, '', 0, 'error', $e->getMessage() );
 				// Silently skip — will retry on next cache clear
@@ -436,7 +460,7 @@ class XTFEPRO_Feed_API {
 	 * Update image in all paginated transients for ONE specific feed.
 	 * Much faster than the old approach that scanned ALL transients.
 	 */
-	private function update_paginated_cache_image( $feed_id, $event_id, $image_url ) {
+	private function update_paginated_cache_event_data( $feed_id, $event_id, $data ) {
 		$key    = $this->page_cache_key( $feed_id );
 		$events = get_transient( $key );
 		if ( ! is_array( $events ) ) return;
@@ -445,7 +469,24 @@ class XTFEPRO_Feed_API {
 		foreach ( $events as &$ev ) {
 			$ev_id = $this->extract_base_event_id( $ev );
 			if ( (string) $ev_id === (string) $event_id ) {
-				$ev['image_url'] = $image_url;
+				if ( ! empty( $data['cover_image'] ) ) {
+					$ev['image_url'] = $data['cover_image'];
+				}
+				if ( ! empty( $data['place']['lat'] ) ) {
+					$ev['venue_lat'] = $data['place']['lat'];
+				}
+				if ( ! empty( $data['place']['lng'] ) ) {
+					$ev['venue_lng'] = $data['place']['lng'];
+				}
+				if ( ! empty( $data['place']['address'] ) ) {
+					$ev['venue_address'] = $data['place']['address'];
+				}
+				if ( isset( $data['is_online'] ) ) {
+					$ev['is_online'] = $data['is_online'];
+				}
+				if ( ! empty( $data['place']['name'] ) ) {
+					$ev['venue_name'] = $data['place']['name'];
+				}
 				$updated = true;
 			}
 		}
@@ -464,6 +505,7 @@ class XTFEPRO_Feed_API {
 	private function update_all_feeds_image( $event_id, $image_url ) {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$transient_keys = $wpdb->get_col(
 			"SELECT option_name FROM {$wpdb->options}
 			 WHERE option_name LIKE '_transient_xtfeprofeed_%'
@@ -535,7 +577,7 @@ class XTFEPRO_Feed_API {
 				array(
 					'timeout'   => 0.01,
 					'blocking'  => false,
-					'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+					'sslverify' => apply_filters( 'xtfeprofeed_https_local_ssl_verify', false ),
 					'body'      => array(
 						'action'    => 'xtfeprofeed_bg_fetch_images',
 						'feed_id'   => 0,
@@ -656,10 +698,10 @@ class XTFEPRO_Feed_API {
 
 		switch ( $source_type ) {
 			case 'page_id':
-				return apply_filters( 'xtfeprofeed_fetch_page_events', new WP_Error( 'xtfeprofeed_pro_only', __( 'Facebook Page ID source is only available in the Pro version.', 'xt-facebook-events-pro' ) ), $meta, $cursor, $this );
+				return apply_filters( 'xtfeprofeed_fetch_page_events', new WP_Error( 'xtfeprofeed_pro_only', __( 'Facebook Page ID source is only available in the Pro version.', 'xt-facebook-events' ) ), $meta, $cursor, $this );
 
 			case 'group_id':
-				return apply_filters( 'xtfeprofeed_fetch_group_events', new WP_Error( 'xtfeprofeed_pro_only', __( 'Facebook Group source is only available in the Pro version.', 'xt-facebook-events-pro' ) ), $meta, $cursor, $this );
+				return apply_filters( 'xtfeprofeed_fetch_group_events', new WP_Error( 'xtfeprofeed_pro_only', __( 'Facebook Group source is only available in the Pro version.', 'xt-facebook-events' ) ), $meta, $cursor, $this );
 
 			case 'event_ids':
 				return $this->fetch_by_ids( $meta );
@@ -668,7 +710,7 @@ class XTFEPRO_Feed_API {
 				return $this->fetch_by_ical( $meta );
 
 			default:
-				return new WP_Error( 'xtfeprofeed_invalid_source', __( 'Invalid feed source type.', 'xt-facebook-events-pro' ) );
+				return new WP_Error( 'xtfeprofeed_invalid_source', __( 'Invalid feed source type.', 'xt-facebook-events' ) );
 		}
 	}
 
@@ -681,7 +723,7 @@ class XTFEPRO_Feed_API {
 		$ids     = array_filter( array_map( 'trim', explode( ',', $ids_raw ) ) );
 
 		if ( empty( $ids ) ) {
-			return new WP_Error( 'xtfeprofeed_no_ids', __( 'At least one Event ID is required.', 'xt-facebook-events-pro' ) );
+			return new WP_Error( 'xtfeprofeed_no_ids', __( 'At least one Event ID is required.', 'xt-facebook-events' ) );
 		}
 
 		$events = array();
@@ -706,7 +748,8 @@ class XTFEPRO_Feed_API {
 			if ( ! empty( $event_data['name'] ) ) {
 				$events[] = $this->normalize_event_details( $event_data );
 			} else {
-				$errors[] = sprintf( __( 'Event ID %s did not return any data.', 'xt-facebook-events-pro' ), $event_id );
+				/* translators: %s: event ID */
+				$errors[] = sprintf( __( 'Event ID %s did not return any data.', 'xt-facebook-events' ), $event_id );
 			}
 		}
 
@@ -737,7 +780,7 @@ class XTFEPRO_Feed_API {
 	private function fetch_by_ical( $meta ) {
 		$ical_url = trim( $meta['ical_url'] ?? '' );
 		if ( ! $ical_url ) {
-			return new WP_Error( 'xtfeprofeed_no_ical', __( 'iCal URL is required.', 'xt-facebook-events-pro' ) );
+			return new WP_Error( 'xtfeprofeed_no_ical', __( 'iCal URL is required.', 'xt-facebook-events' ) );
 		}
 
 		$parsed_events = $this->parse_ical_feed( $ical_url );
@@ -780,12 +823,23 @@ class XTFEPRO_Feed_API {
 								'name'    => $parsed['location'],
 								'address' => '',
 							),
+							'creator'     => array(
+								'name' => $parsed['organizer_name'] ?? '',
+								'id'   => $parsed['organizer_url']  ?? '',
+							),
 						);
 					}
 				}
 			}
 
 			if ( $event_data ) {
+				// Fallback to iCal organizer if Facebook scrape didn't provide one
+				if ( empty( $event_data['creator']['name'] ) && ! empty( $parsed['organizer_name'] ) ) {
+					$event_data['creator']['name'] = $parsed['organizer_name'];
+				}
+				if ( empty( $event_data['creator']['id'] ) && ! empty( $parsed['organizer_url'] ) ) {
+					$event_data['creator']['id'] = $parsed['organizer_url'];
+				}
 				$events[] = $this->normalize_event_details( $event_data );
 			} else {
 				$events[] = array(
@@ -804,8 +858,8 @@ class XTFEPRO_Feed_API {
 					'venue_name'     => $parsed['location'],
 					'venue_address'  => '',
 					'venue_city'     => '',
-					'organizer_name' => '',
-					'organizer_url'  => '',
+					'organizer_name' => $parsed['organizer_name'] ?? '',
+					'organizer_url'  => $parsed['organizer_url']  ?? '',
 					'category'       => '',
 					'category_id'    => '',
 					'tags'           => array(),
@@ -847,7 +901,8 @@ class XTFEPRO_Feed_API {
 
 		$code = wp_remote_retrieve_response_code( $response );
 		if ( 200 !== $code ) {
-			return new WP_Error( 'xtfeprofeed_ical_http_error', sprintf( __( 'HTTP error code: %d', 'xt-facebook-events-pro' ), $code ) );
+			/* translators: %d: HTTP status code */
+			return new WP_Error( 'xtfeprofeed_ical_http_error', sprintf( __( 'HTTP error code: %d', 'xt-facebook-events' ), $code ) );
 		}
 
 		$body = wp_remote_retrieve_body( $response );
@@ -897,6 +952,13 @@ class XTFEPRO_Feed_API {
 				$key_parts = explode( ';', $parts[0], 2 );
 				$key       = trim( $key_parts[0] );
 				$val       = trim( $parts[1] );
+				
+				if ( $key === 'ORGANIZER' && isset( $key_parts[1] ) ) {
+					if ( preg_match( '/CN=([^;:]+)/', $key_parts[1], $m ) ) {
+						$current_event['ORGANIZER_NAME'] = trim( $m[1] );
+					}
+				}
+
 				$current_event[ $key ] = $val;
 			}
 		}
@@ -923,14 +985,22 @@ class XTFEPRO_Feed_API {
 			$location    = $raw['LOCATION'] ?? '';
 			$location    = str_replace( array( '\\,', '\\;', '\\\\', '\\N', '\\n' ), array( ',', ';', '\\', "\n", "\n" ), $location );
 
+			$organizer_name = $raw['ORGANIZER_NAME'] ?? '';
+			$organizer_url  = '';
+			if ( ! empty( $raw['ORGANIZER'] ) ) {
+				$organizer_url = str_replace( 'MAILTO:', 'mailto:', $raw['ORGANIZER'] );
+			}
+
 			$normalized[] = array(
-				'id'          => $id,
-				'name'        => $name,
-				'url'         => $url,
-				'start_local' => $this->parse_ical_date( $start_raw ),
-				'end_local'   => $this->parse_ical_date( $end_raw ),
-				'location'    => $location,
-				'description' => $description,
+				'id'             => $id,
+				'name'           => $name,
+				'url'            => $url,
+				'start_local'    => $this->parse_ical_date( $start_raw ),
+				'end_local'      => $this->parse_ical_date( $end_raw ),
+				'location'       => $location,
+				'description'    => $description,
+				'organizer_name' => $organizer_name,
+				'organizer_url'  => $organizer_url,
 			);
 		}
 
@@ -972,6 +1042,8 @@ class XTFEPRO_Feed_API {
 			'venue_name'      => sanitize_text_field( $raw['place']['name'] ?? ( $is_online ? 'Online Event' : '' ) ),
 			'venue_address'   => '',
 			'venue_city'      => sanitize_text_field( $raw['place']['city'] ?? '' ),
+			'venue_lat'       => sanitize_text_field( $raw['place']['latitude'] ?? '' ),
+			'venue_lng'       => sanitize_text_field( $raw['place']['longitude'] ?? '' ),
 			'organizer_name'  => sanitize_text_field( $raw['organizer']     ?? '' ),
 			'organizer_url'   => esc_url_raw( $raw['organizer_url'] ?? '' ),
 			'category'        => '',
@@ -997,12 +1069,14 @@ class XTFEPRO_Feed_API {
 			'end_utc'         => sanitize_text_field( $raw['end_date'] ?? $raw['start_date'] ?? '' ),
 			'timezone'        => '',
 			'image_url'       => esc_url_raw( $raw['cover_image'] ?? '' ),
-			'is_online'       => empty( $raw['place']['name'] ) && empty( $raw['place']['address'] ),
+			'is_online'       => ! empty( $raw['is_online'] ) || ( empty( $raw['place']['name'] ) && empty( $raw['place']['address'] ) ) || ( stripos( $raw['place']['name'] ?? '', 'online' ) !== false ) || ( mb_strpos( mb_strtolower( $raw['place']['name'] ?? '', 'UTF-8' ), 'ઓનલાઇન' ) !== false ),
 			'venue_name'      => sanitize_text_field( $raw['place']['name']    ?? '' ),
 			'venue_address'   => sanitize_text_field( $raw['place']['address'] ?? '' ),
 			'venue_city'      => '',
+			'venue_lat'       => sanitize_text_field( $raw['place']['lat']     ?? '' ),
+			'venue_lng'       => sanitize_text_field( $raw['place']['lng']     ?? '' ),
 			'organizer_name'  => sanitize_text_field( $raw['creator']['name'] ?? '' ),
-			'organizer_url'   => ( ! empty( $raw['creator']['id'] ) ) ? esc_url_raw( 'https://www.facebook.com/' . $raw['creator']['id'] ) : '',
+			'organizer_url'   => ( ! empty( $raw['creator']['id'] ) ) ? esc_url_raw( preg_match( '/^(http|mailto)/i', $raw['creator']['id'] ) ? $raw['creator']['id'] : 'https://www.facebook.com/' . $raw['creator']['id'] ) : '',
 			'category'        => '',
 			'category_id'     => '',
 			'tags'            => array(),
@@ -1029,16 +1103,32 @@ class XTFEPRO_Feed_API {
 			$hq = $db->get_image( $event_id );
 			if ( $hq ) {
 				$event['image_url'] = $hq;
-				continue;
 			}
 
 			// 2. Per-event transient cache
 			$cache_key     = 'xtfepro_event_details_' . $event_id;
 			$event_details = get_transient( $cache_key );
 
-			if ( $event_details && ! empty( $event_details['cover_image'] ) ) {
-				$db->save_image( $event_id, $event_details['cover_image'] );
-				$event['image_url'] = $event_details['cover_image'];
+			if ( $event_details ) {
+				if ( ! empty( $event_details['cover_image'] ) ) {
+					$db->save_image( $event_id, $event_details['cover_image'] );
+					$event['image_url'] = $event_details['cover_image'];
+				}
+				if ( ! empty( $event_details['place']['lat'] ) ) {
+					$event['venue_lat'] = $event_details['place']['lat'];
+				}
+				if ( ! empty( $event_details['place']['lng'] ) ) {
+					$event['venue_lng'] = $event_details['place']['lng'];
+				}
+				if ( ! empty( $event_details['place']['address'] ) ) {
+					$event['venue_address'] = $event_details['place']['address'];
+				}
+				if ( isset( $event_details['is_online'] ) ) {
+					$event['is_online'] = $event_details['is_online'];
+				}
+				if ( ! empty( $event_details['place']['name'] ) ) {
+					$event['venue_name'] = $event_details['place']['name'];
+				}
 				continue;
 			}
 
@@ -1057,9 +1147,26 @@ class XTFEPRO_Feed_API {
 				}
 			}
 
-			if ( $event_details && ! empty( $event_details['cover_image'] ) ) {
-				$db->save_image( $event_id, $event_details['cover_image'] );
-				$event['image_url'] = $event_details['cover_image'];
+			if ( $event_details ) {
+				if ( ! empty( $event_details['cover_image'] ) ) {
+					$db->save_image( $event_id, $event_details['cover_image'] );
+					$event['image_url'] = $event_details['cover_image'];
+				}
+				if ( ! empty( $event_details['place']['lat'] ) ) {
+					$event['venue_lat'] = $event_details['place']['lat'];
+				}
+				if ( ! empty( $event_details['place']['lng'] ) ) {
+					$event['venue_lng'] = $event_details['place']['lng'];
+				}
+				if ( ! empty( $event_details['place']['address'] ) ) {
+					$event['venue_address'] = $event_details['place']['address'];
+				}
+				if ( isset( $event_details['is_online'] ) ) {
+					$event['is_online'] = $event_details['is_online'];
+				}
+				if ( ! empty( $event_details['place']['name'] ) ) {
+					$event['venue_name'] = $event_details['place']['name'];
+				}
 			}
 		}
 		unset( $event );
@@ -1079,6 +1186,7 @@ class XTFEPRO_Feed_API {
 			'doc_id'    => '33843234555263685',
 		];
 
+		// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_init, WordPress.WP.AlternativeFunctions.curl_curl_setopt_array, WordPress.WP.AlternativeFunctions.curl_curl_exec, WordPress.WP.AlternativeFunctions.curl_curl_getinfo
 		$ch = curl_init( $graphql_url );
 		curl_setopt_array( $ch, [
 			CURLOPT_POST           => true,
@@ -1090,6 +1198,7 @@ class XTFEPRO_Feed_API {
 		] );
 		$response = curl_exec( $ch );
 		$httpCode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		// phpcs:enable WordPress.WP.AlternativeFunctions.curl_curl_init, WordPress.WP.AlternativeFunctions.curl_curl_setopt_array, WordPress.WP.AlternativeFunctions.curl_curl_exec, WordPress.WP.AlternativeFunctions.curl_curl_getinfo
 
 		if ( $httpCode === 200 && $response ) {
 			$data  = json_decode( $response, true );
@@ -1101,18 +1210,27 @@ class XTFEPRO_Feed_API {
 				$cover_media = $event['cover_media_renderer']    ?? [];
 				$cover_image_url = $this->extract_cover_image( $cover_media );
 
+				$is_online = ! empty( $event['is_online'] ) || ! empty( $event['is_online_or_detected_online'] );
+				if ( ! $is_online && ! empty( $event_place['name'] ) ) {
+					$lower_name = mb_strtolower( $event_place['name'], 'UTF-8' );
+					if ( strpos( $lower_name, 'online' ) !== false || strpos( $lower_name, 'ઓનલાઇન' ) !== false ) {
+						$is_online = true;
+					}
+				}
+
 				return [
 					'id'          => $eventId,
 					'name'        => $event['name'],
-					'start_date'  => $start_ts ? date( 'Y-m-d H:i:s', $start_ts ) : null,
+					'start_date'  => $start_ts ? gmdate( 'Y-m-d H:i:s', $start_ts ) : null,
 					'end_date'    => null,
 					'description' => null,
 					'cover_image' => $cover_image_url,
+					'is_online'   => $is_online,
 					'place'       => [
-						'name'    => $event_place['name'] ?? null,
-						'address' => null,
-						'lat'     => null,
-						'lng'     => null,
+						'name'    => $event_place['name'] ?? $event_place['contextual_name'] ?? null,
+						'address' => $event_place['contextual_name'] ?? null,
+						'lat'     => $event_place['location']['latitude'] ?? null,
+						'lng'     => $event_place['location']['longitude'] ?? null,
 					],
 					'creator'     => [ 'id' => null, 'name' => null ],
 				];
@@ -1131,7 +1249,7 @@ class XTFEPRO_Feed_API {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			throw new \RuntimeException( $response->get_error_message() );
+			throw new \RuntimeException( esc_html( $response->get_error_message() ) );
 		}
 
 		$html = wp_remote_retrieve_body( $response );
@@ -1165,15 +1283,24 @@ class XTFEPRO_Feed_API {
 		$start_ts      = $this->findKey( $cover_data ?? [], 'start_timestamp' );
 		$end_ts        = $this->findKey( $cover_data ?? [], 'end_timestamp' );
 
+		$is_online = false;
+		if ( ! empty( $event_place['name'] ) ) {
+			$lower_name = mb_strtolower( $event_place['name'], 'UTF-8' );
+			if ( strpos( $lower_name, 'online' ) !== false || strpos( $lower_name, 'ઓનલાઇન' ) !== false ) {
+				$is_online = true;
+			}
+		}
+
 		return [
 			'id'          => $eventId,
 			'name'        => $this->findKey( $cover_data ?? [], 'name' ),
-			'start_date'  => $start_ts ? date( 'Y-m-d H:i:s', $start_ts ) : null,
-			'end_date'    => $end_ts   ? date( 'Y-m-d H:i:s', $end_ts )   : null,
+			'start_date'  => $start_ts ? gmdate( 'Y-m-d H:i:s', $start_ts ) : null,
+			'end_date'    => $end_ts   ? gmdate( 'Y-m-d H:i:s', $end_ts )   : null,
 			'description' => $description['text'] ?? null,
 			'cover_image' => $this->extract_cover_image( $cover_media ?? [] ),
+			'is_online'   => $is_online,
 			'place'       => [
-				'name'    => $event_place['name']              ?? null,
+				'name'    => $event_place['name']              ?? $event_place['contextual_name'] ?? null,
 				'address' => $one_line_addr                    ?? null,
 				'lat'     => $event_place['location']['latitude']  ?? null,
 				'lng'     => $event_place['location']['longitude'] ?? null,
@@ -1273,7 +1400,9 @@ class XTFEPRO_Feed_API {
 			}
 
 			if ( $id === '' && ( $name === '' || $start === '' ) ) {
+				// phpcs:disable
 				$raw_key = 'raw:' . md5( wp_json_encode( $event ) );
+				// phpcs:enable
 				if ( isset( $seen[ $raw_key ] ) ) continue;
 				$seen[ $raw_key ] = true;
 			}
@@ -1320,7 +1449,9 @@ class XTFEPRO_Feed_API {
 		$page_url = trim( $page_url );
 		if ( ! $page_url ) return '';
 		if ( strpos( $page_url, 'facebook.com' ) !== false ) {
+			// phpcs:disable
 			$parsed = wp_parse_url( $page_url );
+			// phpcs:enable
 			$path   = trim( $parsed['path'] ?? '', '/' );
 			$parts  = explode( '/', $path );
 			if ( 'pages' === $parts[0] && isset( $parts[2] ) ) {
@@ -1345,7 +1476,7 @@ class XTFEPRO_Feed_API {
 	// -------------------------------------------------------
 	public function get_feed_meta( $feed_id ) {
 		$time_filter     = get_post_meta( $feed_id, '_xtfeprofeed_time_filter',    true ) ?: 'current_future';
-		$register_label  = get_post_meta( $feed_id, '_xtfeprofeed_register_label', true ) ?: __( 'View Event', 'xt-facebook-events-pro' );
+		$register_label  = get_post_meta( $feed_id, '_xtfeprofeed_register_label', true ) ?: __( 'View Event', 'xt-facebook-events' );
 
 		$allowed_sources = apply_filters( 'xtfeprofeed_allowed_sources', array( 'event_ids', 'ical_url' ) );
 		$source_type     = get_post_meta( $feed_id, '_xtfeprofeed_source_type', true );
@@ -1386,8 +1517,8 @@ class XTFEPRO_Feed_API {
 			'show_tags'       => false,
 			'show_ticket_btn' => get_post_meta( $feed_id, '_xtfeprofeed_show_ticket_btn', true ) !== '0',
 			'ticket_style'    => 'link',
-			'free_label'      => __( 'Free', 'xt-facebook-events-pro' ),
-			'paid_label'      => __( 'Paid', 'xt-facebook-events-pro' ),
+			'free_label'      => __( 'Free', 'xt-facebook-events' ),
+			'paid_label'      => __( 'Paid', 'xt-facebook-events' ),
 			'register_label'  => $register_label,
 			'pagination_type' => get_post_meta( $feed_id, '_xtfeprofeed_pagination_type', true ) ?: 'ajax',
 			'per_page'        => absint( get_post_meta( $feed_id, '_xtfeprofeed_per_page', true ) ?: 12 ),

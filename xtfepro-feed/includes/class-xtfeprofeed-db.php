@@ -105,8 +105,10 @@ class XTFEPRO_Feed_DB {
 	 */
 	public function get_image( $event_id ) {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$url = $wpdb->get_var(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT image_url FROM {$this->table_images} WHERE event_id = %s LIMIT 1",
 				(string) $event_id
 			)
@@ -125,6 +127,7 @@ class XTFEPRO_Feed_DB {
 		global $wpdb;
 
 		// REPLACE INTO = upsert (event_id has UNIQUE key)
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->replace(
 			$this->table_images,
 			array(
@@ -145,6 +148,7 @@ class XTFEPRO_Feed_DB {
 	 */
 	public function delete_image( $event_id ) {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->delete(
 			$this->table_images,
 			array( 'event_id' => (string) $event_id ),
@@ -159,6 +163,7 @@ class XTFEPRO_Feed_DB {
 	 */
 	public function delete_all_images() {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return (int) $wpdb->query( "TRUNCATE TABLE {$this->table_images}" );
 	}
 
@@ -169,6 +174,7 @@ class XTFEPRO_Feed_DB {
 	 */
 	public function get_image_count() {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_images}" );
 	}
 
@@ -181,6 +187,7 @@ class XTFEPRO_Feed_DB {
 	 */
 	public function log_action( $feed_id, $action_type, $url, $cursor = '', $events_count = 0, $status = 'success', $error_message = '' ) {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->insert(
 			$this->table_logs,
 			array(
@@ -203,6 +210,7 @@ class XTFEPRO_Feed_DB {
 	public function delete_feed_logs( $post_id ) {
 		if ( get_post_type( $post_id ) !== XTFEPRO_FEED_CPT ) return;
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->delete(
 			$this->table_logs,
 			array( 'feed_id' => $post_id ),
@@ -215,8 +223,10 @@ class XTFEPRO_Feed_DB {
 	 */
 	public function get_logs( $limit = 50, $offset = 0 ) {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT * FROM {$this->table_logs} ORDER BY created_at DESC LIMIT %d OFFSET %d",
 				$limit,
 				$offset
@@ -226,6 +236,7 @@ class XTFEPRO_Feed_DB {
 	
 	public function get_logs_count() {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_logs}" );
 	}
 
@@ -254,16 +265,20 @@ class XTFEPRO_Feed_DB {
 	public function run_weekly_cleanup() {
 		global $wpdb;
 		$image_cutoff = gmdate( 'Y-m-d H:i:s', time() - ( 3 * DAY_IN_SECONDS ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"DELETE FROM {$this->table_images} WHERE created_at < %s",
 				$image_cutoff
 			)
 		);
 		
 		$log_cutoff = gmdate( 'Y-m-d H:i:s', time() - ( 7 * DAY_IN_SECONDS ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"DELETE FROM {$this->table_logs} WHERE created_at < %s",
 				$log_cutoff
 			)

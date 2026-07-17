@@ -41,6 +41,7 @@ $xtfeprofeed_classes = array(
 	'XTFEPRO_Feed_Builder_UI' => XTFEPRO_FEED_DIR . 'includes/class-xtfeprofeed-builder-ui.php',
 );
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 foreach ( $xtfeprofeed_classes as $class => $file ) {
 	if ( file_exists( $file ) ) {
 		require_once $file;

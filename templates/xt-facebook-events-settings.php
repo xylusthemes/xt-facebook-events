@@ -3,19 +3,19 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 global $xtfe_events;
 $xtfe_options = get_option( XTFE_OPTIONS, array() );
-$facebook_app_id = isset($xtfe_options['facebook_app_id']) ? $xtfe_options['facebook_app_id'] : '';
-$facebook_app_secret = isset($xtfe_options['facebook_app_secret']) ? $xtfe_options['facebook_app_secret'] : '';
+$xtfe_facebook_app_id = isset($xtfe_options['facebook_app_id']) ? $xtfe_options['facebook_app_id'] : '';
+$xtfe_facebook_app_secret = isset($xtfe_options['facebook_app_secret']) ? $xtfe_options['facebook_app_secret'] : '';
 $xtfe_user_token_options = get_option( 'xtfe_user_token_options', array() );
 $xtfe_fb_authorize_user = get_option( 'xtfe_fb_authorize_user', array() );
-$is_direct_auth         = isset( $xtfe_user_token_options['direct_auth'] ) ? ( 1 === $xtfe_user_token_options['direct_auth'] ) : false;
-$is_authenticated       = isset( $xtfe_user_token_options['authorize_status'] ) ? ( 1 === $xtfe_user_token_options['authorize_status'] ) : false;
-$is_key_saved           = ( ! empty( $facebook_app_id ) && ! empty( $facebook_app_secret ) );
-$is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_fb_authorize_user['name'] ) && ( ! isset( $xtfe_user_token_options['authorize_status'] ) || 1 === $xtfe_user_token_options['authorize_status'] ) );
+$xtfe_is_direct_auth         = isset( $xtfe_user_token_options['direct_auth'] ) ? ( 1 === $xtfe_user_token_options['direct_auth'] ) : false;
+$xtfe_is_authenticated       = isset( $xtfe_user_token_options['authorize_status'] ) ? ( 1 === $xtfe_user_token_options['authorize_status'] ) : false;
+$xtfe_is_key_saved           = ( ! empty( $xtfe_facebook_app_id ) && ! empty( $xtfe_facebook_app_secret ) );
+$xtfe_is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_fb_authorize_user['name'] ) && ( ! isset( $xtfe_user_token_options['authorize_status'] ) || 1 === $xtfe_user_token_options['authorize_status'] ) );
 ?>
 <div class="xtfe-settings-container">
     <?php
-    $site_url = get_home_url();
-    if( !isset( $_SERVER['HTTPS'] ) && false === stripos( $site_url, 'https' ) ) {
+    $xtfe_site_url = get_home_url();
+    if( !isset( $_SERVER['HTTPS'] ) && false === stripos( $xtfe_site_url, 'https' ) ) {
         ?>
         <div class="notice notice-error xtfe-notice">
             <p><?php printf( '%1$s <b><a href="https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/" target="_blank">%2$s</a></b> %3$s', esc_html__( "It looks like you don't have HTTPS enabled on your website. Please enable it. HTTPS is required to authorize your facebook account.",'xt-facebook-events' ), esc_html__( 'Click here','xt-facebook-events' ), esc_html__( 'for more information.','xt-facebook-events' ) ); ?></p>
@@ -23,25 +23,31 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
     <?php
     }
 
-    if ( isset( $_GET['authorize'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if ( '1' === $_GET['authorize'] ) {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $xtfe_authorize = isset( $_GET['authorize'] ) ? sanitize_text_field( wp_unslash( $_GET['authorize'] ) ) : '';
+    if ( $xtfe_authorize !== '' ) {
+        if ( '1' === $xtfe_authorize ) {
             echo '<div class="notice notice-success is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Facebook account securely connected!', 'xt-facebook-events' ) . '</strong></p></div>';
         } else {
             echo '<div class="notice notice-error is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Failed to connect Facebook account. Please try again.', 'xt-facebook-events' ) . '</strong></p></div>';
         }
     }
 
-    if ( isset( $_GET['xtauthorize'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if ( '1' === $_GET['xtauthorize'] ) {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $xtfe_xtauthorize = isset( $_GET['xtauthorize'] ) ? sanitize_text_field( wp_unslash( $_GET['xtauthorize'] ) ) : '';
+    if ( $xtfe_xtauthorize !== '' ) {
+        if ( '1' === $xtfe_xtauthorize ) {
             echo '<div class="notice notice-success is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Facebook App securely authorized!', 'xt-facebook-events' ) . '</strong></p></div>';
-        } elseif ( '2' === $_GET['xtauthorize'] ) {
+        } elseif ( '2' === $xtfe_xtauthorize ) {
             echo '<div class="notice notice-error is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Please insert a valid Facebook App ID and Secret.', 'xt-facebook-events' ) . '</strong></p></div>';
         } else {
             echo '<div class="notice notice-error is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Failed to authorize Facebook App. Please check your credentials.', 'xt-facebook-events' ) . '</strong></p></div>';
         }
     }
 
-    if ( isset( $_GET['deauthorize'] ) && '1' === $_GET['deauthorize'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $xtfe_deauthorize = isset( $_GET['deauthorize'] ) ? sanitize_text_field( wp_unslash( $_GET['deauthorize'] ) ) : '';
+    if ( '1' === $xtfe_deauthorize ) {
         echo '<div class="notice notice-success is-dismissible xtfe-notice"><p><strong>' . esc_html__( 'Facebook account successfully disconnected.', 'xt-facebook-events' ) . '</strong></p></div>';
     }
     ?>
@@ -77,13 +83,13 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                 </div>
             </div>
 
-            <div class="xtfe-auth-toggle-trigger <?php echo $is_connected ? 'is-open' : ''; ?>" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px 20px; font-weight: 600; font-size: 15px; color: #0f172a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; <?php echo $is_connected ? '' : 'margin-bottom: 24px;'; ?>">
+            <div class="xtfe-auth-toggle-trigger <?php echo $xtfe_is_connected ? 'is-open' : ''; ?>" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px 20px; font-weight: 600; font-size: 15px; color: #0f172a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; <?php echo $xtfe_is_connected ? '' : 'margin-bottom: 24px;'; ?>">
                 <span><?php esc_html_e( 'Facebook Authorization', 'xt-facebook-events' ); ?></span>
-                <svg class="xtfe-auth-toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s; <?php echo $is_connected ? 'transform: rotate(180deg);' : ''; ?>"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg class="xtfe-auth-toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s; <?php echo $xtfe_is_connected ? 'transform: rotate(180deg);' : ''; ?>"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
 
-            <div class="xtfe-auth-toggle-target <?php echo $is_connected ? 'is-open' : ''; ?>" style="<?php echo $is_connected ? 'display: block;' : 'display: none;'; ?>">
-                <?php if ( ! $is_direct_auth ) { ?>
+            <div class="xtfe-auth-toggle-target <?php echo $xtfe_is_connected ? 'is-open' : ''; ?>" style="<?php echo $xtfe_is_connected ? 'display: block;' : 'display: none;'; ?>">
+                <?php if ( ! $xtfe_is_direct_auth ) { ?>
                     <div class="notice notice-info xtfe-notice" >
                         <p>
                             <?php printf( '<b>%1$s</b> %2$s <b><a href="https://developers.facebook.com/apps" target="_blank">%3$s</a></b> %4$s', esc_html__( 'Note : ','xt-facebook-events' ), esc_html__( 'You have to create a Facebook application before filling the following details.','xt-facebook-events' ), esc_html__( 'Click here','xt-facebook-events' ), esc_html__( 'to create a new Facebook application.','xt-facebook-events' ) ); ?>
@@ -100,10 +106,10 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                     </div>
                 <?php } ?>
 
-                <div class="xtfe-settings-wrapper" style="margin-top: 20px;<?php if ( $is_connected ) { echo 'margin-bottom: 0px;'; }else{ echo 'margin-bottom: 20px;'; } ?>">
-                <?php if ( $is_connected ) { 
-                    $name  = $xtfe_fb_authorize_user['name'];
-                    $avtar = $xtfe_fb_authorize_user['avtar'];
+                <div class="xtfe-settings-wrapper" style="margin-top: 20px;<?php if ( $xtfe_is_connected ) { echo 'margin-bottom: 0px;'; }else{ echo 'margin-bottom: 20px;'; } ?>">
+                <?php if ( $xtfe_is_connected ) { 
+                    $xtfe_name  = $xtfe_fb_authorize_user['name'];
+                    $xtfe_avtar = $xtfe_fb_authorize_user['avtar'];
                     ?>
                     <div class="xtfe-setting-row">
                         <div class="xtfe-inner-section-1">
@@ -113,14 +119,14 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                             <div class="xtfe_connection_wrapper" style="background-color: #ecfdf5; border: 1px solid #34d399; border-radius: 8px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box;">
                                 <div style="display: flex; align-items: center; gap: 16px;">
                                     <div class="image_wrap" style="position: relative; width: 50px; height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-                                        <img src="<?php echo esc_url( $avtar ); ?>" alt="<?php echo esc_attr( $name ); ?>" style="border-radius: 50%; object-fit: cover; border: 2px solid #10b981; box-sizing: border-box; display: block; margin: 0; padding: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" />
+                                        <img src="<?php echo esc_url( $xtfe_avtar ); ?>" alt="<?php echo esc_attr( $xtfe_name ); ?>" style="border-radius: 50%; object-fit: cover; border: 2px solid #10b981; box-sizing: border-box; display: block; margin: 0; padding: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" />
                                         <div style="position: absolute; bottom: 0; right: -4px; width: 14px; height: 14px; background-color: #10b981; border: 2px solid #ecfdf5; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-sizing: content-box;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                         </div>
                                     </div>
                                     <div class="name_wrap">
                                         <div style="font-weight: 700; color: #065f46; font-size: 15px; margin-bottom: 4px;">
-                                            <?php echo esc_html( $name ); ?>
+                                            <?php echo esc_html( $xtfe_name ); ?>
                                         </div>
                                         <div style="font-size: 12px; color: #047857; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
@@ -135,11 +141,11 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                         </div>
                     </div>
                 <?php } else { 
-                    $button_value = esc_html__( 'Log in With Facebook', 'xt-facebook-events' );
-                    $redirect_url = wp_nonce_url( add_query_arg( 'action', 'xtfe_fb_login_action', admin_url( 'admin-post.php' ) ), 'xtfe_fb_login_action', 'xtfe_fb_login_nonce' );
-                    $fb_login_url = add_query_arg(
+                    $xtfe_button_value = esc_html__( 'Log in With Facebook', 'xt-facebook-events' );
+                    $xtfe_redirect_url = wp_nonce_url( add_query_arg( 'action', 'xtfe_fb_login_action', admin_url( 'admin-post.php' ) ), 'xtfe_fb_login_action', 'xtfe_fb_login_nonce' );
+                    $xtfe_fb_login_url = add_query_arg(
                         array(
-                            'redirect' => rawurlencode( $redirect_url ),
+                            'redirect' => rawurlencode( $xtfe_redirect_url ),
                         ),
                         'https://connect.xylusthemes.com/login/facebook'
                     );
@@ -149,7 +155,7 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                             <label><?php esc_html_e( 'Direct Login', 'xt-facebook-events' ); ?></label>
                         </div>
                         <div class="xtfe-inner-section-2">
-                            <a href="<?php echo esc_url( $fb_login_url ); ?>" class="xtfe_button" style="display: inline-block; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; height: auto;"><?php echo esc_html( $button_value ); ?></a>
+                            <a href="<?php echo esc_url( $xtfe_fb_login_url ); ?>" class="xtfe_button" style="display: inline-block; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; height: auto;"><?php echo esc_html( $xtfe_button_value ); ?></a>
                             <div class="xtfe_small" style="margin-top: 6px;">
                                 <?php esc_html_e( 'Please authorize your Facebook account to import Facebook events.', 'xt-facebook-events' ); ?>
                             </div>
@@ -157,7 +163,7 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                     </div>
                 <?php } ?>
 
-                <?php if ( $is_key_saved ) { ?>
+                <?php if ( $xtfe_is_key_saved ) { ?>
                     <div class="xtfe-setting-row">
                         <div class="xtfe-inner-section-1">
                             <label><?php esc_html_e( 'App Reauthorization', 'xt-facebook-events' ); ?></label>
@@ -167,12 +173,12 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                                 <input type="hidden" name="action" value="xtfe_facebook_authorize_action"/>
                                 <?php wp_nonce_field('xtfe_facebook_authorize_action', 'xtfe_facebook_authorize_nonce'); ?>
                                 <?php
-                                $button_value = esc_html__('Authorize', 'xt-facebook-events');
+                                $xtfe_button_value = esc_html__('Authorize', 'xt-facebook-events');
                                 if( isset( $xtfe_user_token_options['authorize_status'] ) && $xtfe_user_token_options['authorize_status'] == 1 && isset(  $xtfe_user_token_options['access_token'] ) &&  $xtfe_user_token_options['access_token'] != '' ){
-                                    $button_value = esc_html__('Reauthorize App', 'xt-facebook-events');
+                                    $xtfe_button_value = esc_html__('Reauthorize App', 'xt-facebook-events');
                                 }
                                 ?>
-                                <input type="submit" class="xtfe_button" name="xtfe_facebook_authorize" value="<?php echo esc_attr( $button_value ); ?>" />
+                                <input type="submit" class="xtfe_button" name="xtfe_facebook_authorize" value="<?php echo esc_attr( $xtfe_button_value ); ?>" />
                             </form>
                         </div>
                     </div>
@@ -181,19 +187,19 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
             </div>
             
             <form method="post" id="xtfe_setting_form" style="display: contents;padding-bottom: 0;">
-                <div class="xtfe-auth-toggle-target <?php echo $is_connected ? 'is-open' : ''; ?>" style="<?php echo $is_connected ? 'display: block;padding-bottom: 0;' : 'display: none;'; ?>">
-                    <?php if ( ! $is_connected ) { ?>
+                <div class="xtfe-auth-toggle-target <?php echo $xtfe_is_connected ? 'is-open' : ''; ?>" style="<?php echo $xtfe_is_connected ? 'display: block;padding-bottom: 0;' : 'display: none;'; ?>">
+                    <?php if ( ! $xtfe_is_connected ) { ?>
                         <hr style="border: 0; border-top: 1px solid #E8E8EB; margin: 0 0 24px 0;">
                     <?php } ?>
                     <div class="xtfe-settings-wrapper" style="margin-top: 20px;">
-                        <?php if ( ! $is_direct_auth ) { ?>
+                        <?php if ( ! $xtfe_is_direct_auth ) { ?>
                             <!-- App ID -->
                             <div class="xtfe-setting-row">
                                 <div class="xtfe-inner-section-1">
                                     <label for="facebook_app_id"><?php esc_html_e( 'Facebook App ID', 'xt-facebook-events' ); ?></label>
                                 </div>
                                 <div class="xtfe-inner-section-2">
-                                    <input id="facebook_app_id" class="facebook_app_id" name="xtfe[facebook_app_id]" type="text" value="<?php echo esc_attr( $facebook_app_id ); ?>" />
+                                    <input id="facebook_app_id" class="facebook_app_id" name="xtfe[facebook_app_id]" type="text" value="<?php echo esc_attr( $xtfe_facebook_app_id ); ?>" />
                                     <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Enter your Facebook Application ID.', 'xt-facebook-events' ); ?></div>
                                 </div>
                             </div>
@@ -204,7 +210,7 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                                     <label for="facebook_app_secret"><?php esc_html_e( 'Facebook App Secret', 'xt-facebook-events' ); ?></label>
                                 </div>
                                 <div class="xtfe-inner-section-2">
-                                    <input id="facebook_app_secret" class="facebook_app_secret" name="xtfe[facebook_app_secret]" type="text" value="<?php echo esc_attr( $facebook_app_secret ); ?>" />
+                                    <input id="facebook_app_secret" class="facebook_app_secret" name="xtfe[facebook_app_secret]" type="text" value="<?php echo esc_attr( $xtfe_facebook_app_secret ); ?>" />
                                     <div class="xtfe_small" style="margin-top: 6px;"><?php esc_html_e( 'Enter your Facebook Application Secret.', 'xt-facebook-events' ); ?></div>
                                 </div>
                             </div>
@@ -220,11 +226,11 @@ $is_connected           = ( ! empty( $xtfe_fb_authorize_user ) && isset( $xtfe_f
                         </div>
                         <div class="xtfe-inner-section-2">
                             <?php
-                            $accent_color = isset( $xtfe_options['accent_color'] ) ? $xtfe_options['accent_color'] : '#039ED7';
+                            $xtfe_accent_color = isset( $xtfe_options['accent_color'] ) ? $xtfe_options['accent_color'] : '#039ED7';
                             ?>
                             <div class="xtfe-color-picker-wrap" style="display: flex; align-items: center; gap: 10px;">
-                                <input type="color" class="xtfe-color-input" id="xtfe_accent_color" name="xtfe[accent_color]" value="<?php echo esc_attr( $accent_color ); ?>" style="width: 44px; height: 34px; padding: 0; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; background: none;">
-                                <span class="xtfe-color-val" style="font-family: SFMono-Regular, Consolas, monospace; font-size: 12.5px; color: #475569; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: 600;"><?php echo esc_html( strtoupper( $accent_color ) ); ?></span>
+                                <input type="color" class="xtfe-color-input" id="xtfe_accent_color" name="xtfe[accent_color]" value="<?php echo esc_attr( $xtfe_accent_color ); ?>" style="width: 44px; height: 34px; padding: 0; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; background: none;">
+                                <span class="xtfe-color-val" style="font-family: SFMono-Regular, Consolas, monospace; font-size: 12.5px; color: #475569; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: 600;"><?php echo esc_html( strtoupper( $xtfe_accent_color ) ); ?></span>
                             </div>
                             <script>
                             jQuery(document).ready(function($) {
