@@ -503,7 +503,49 @@ class XT_Facebook_Events_Facebook {
 			}
 		}
 		ksort($events);
+		$events = $this->dedup_events($events);
 		return array_slice( $events, 0, $max_events );
+	}
+
+	private function dedup_events( $events ) {
+		$unique = array();
+		$seen   = array();
+		foreach ( $events as $event ) {
+			$id  = isset( $event->id ) ? (string) $event->id : '';
+			
+			// 1. Check by ID
+			if ( $id !== '' ) {
+				if ( isset( $seen[ 'id:' . $id ] ) ) {
+					continue;
+				}
+				$seen[ 'id:' . $id ] = true;
+			}
+			
+			// 2. Check by Name + Date
+			$name = isset( $event->name ) ? $event->name : '';
+			$start = isset( $event->start_time ) ? $event->start_time : '';
+			if ( $name !== '' && $start !== '' ) {
+				$day = substr( $start, 0, 10 ); // YYYY-MM-DD
+				$norm_name = preg_replace( '/[^\p{L}\p{N}]/u', '', mb_strtolower( $name, 'UTF-8' ) );
+				$name_date_key = 'name_date:' . $norm_name . '_' . $day;
+				if ( isset( $seen[ $name_date_key ] ) ) {
+					continue;
+				}
+				$seen[ $name_date_key ] = true;
+			}
+			
+			// 3. Fallback
+			if ( $id === '' && ( $name === '' || $start === '' ) ) {
+				$raw_key = 'raw:' . md5( serialize( $event ) );
+				if ( isset( $seen[ $raw_key ] ) ) {
+					continue;
+				}
+				$seen[ $raw_key ] = true;
+			}
+			
+			$unique[] = $event;
+		}
+		return $unique;
 	}
 
 	function xtfe_clear_events_cache(){
