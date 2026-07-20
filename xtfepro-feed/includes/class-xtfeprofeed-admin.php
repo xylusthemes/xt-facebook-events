@@ -350,15 +350,15 @@ class XTFEPRO_Feed_Admin {
 							) ); ?>
 						</td>
 					</tr>
-					<tr>
-						<th><?php esc_html_e( 'Online Events', 'xt-facebook-events' ); ?></th>
+					<!-- <tr>
+						<th><?php //esc_html_e( 'Online Events', 'xt-facebook-events' ); ?></th>
 						<td>
 							<label>
-								<input type="checkbox" name="_xtfeprofeed_hide_online" value="1" <?php checked( $meta['hide_online'], '1' ); ?> />
-								<?php esc_html_e( 'Hide online-only events', 'xt-facebook-events' ); ?>
+								<input type="checkbox" name="_xtfeprofeed_hide_online" value="1" <?php //checked( $meta['hide_online'], '1' ); ?> />
+								<?php //esc_html_e( 'Hide online-only events', 'xt-facebook-events' ); ?>
 							</label>
 						</td>
-					</tr>
+					</tr> -->
 				</table>
 			</div>
 
