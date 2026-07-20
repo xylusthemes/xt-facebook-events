@@ -1,7 +1,7 @@
 === XT Event Widget for Social Events ==
 Contributors: xylus,Dharm1025,Rajat1192
 Donate link: http://xylusthemes.com/
-Tags: facebook events, facebook widget, facebook feed, event calendar, social events
+Tags: facebook events, facebook widget, facebook feed, event calendar, events
 Requires at least: 6.0
 Tested up to: 7.0
 Stable tag: 2.0.0
@@ -9,7 +9,7 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The easiest way to display Facebook events on your WordPress website. Create beautiful, auto-updating event feeds using the Live Feed Builder — no API key required.
+Display Facebook events on your WordPress site with beautiful, auto-updating event feeds using the Live Feed Builder. No API key required.
 
 == Description ==
 
