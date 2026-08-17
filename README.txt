@@ -3,7 +3,7 @@ Contributors: xylus,Dharm1025,Rajat1192
 Donate link: http://xylusthemes.com/
 Tags: facebook events, facebook widget, facebook feed, event calendar, events
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Stable tag: 2.0.0
 Requires PHP: 7.4
 License: GPLv2 or later
